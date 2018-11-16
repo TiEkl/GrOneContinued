@@ -14,7 +14,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/grischal/express-template.git"
+    "url": "git+http://github.com/hanien/GroneVisualizationSoftware.git"
   },
   "dependencies": {
     "axios": "^0.18.0",
