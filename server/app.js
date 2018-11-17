@@ -7,9 +7,9 @@ var path = require('path');
 // fork can only create new NodeJs processes. You give it a js file
 // to execute
 const { fork } = require('child_process');
-const child = fork('otherApp.js');
+const child = fork('server/otherApp.js');
 
-// process.on receives a message while process.send sends a message to 
+// process.on receives a message while process.send sends a message to
 // another process
 child.on('message', message => {
     console.log('message from child: ', message);
