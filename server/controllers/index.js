@@ -13,13 +13,13 @@ router.route('/').get(function (req, res) { //??
 //router.use('/api/camels', require('./camels'));
 
 // All other routes redirect to the index.html
-router.route('/owner').get(function (req, res) {
-    res.sendfile(req.app.get('appPath') + '/owner.html');
-});
+// router.route('/owner').get(function (req, res) {
+//     res.sendfile(req.app.get('appPath') + '/owner.html');
+// });
 
-router.route('/buyer').get(function (req, res) {
-    res.sendfile(req.app.get('appPath') + '/buyer.html');
-});
+// router.route('/buyer').get(function (req, res) {
+//     res.sendfile(req.app.get('appPath') + '/buyer.html');
+// });
 
 router.route('/*').get(function (req, res) {
     var relativeAppPath = req.app.get('appPath');
