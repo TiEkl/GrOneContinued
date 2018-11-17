@@ -5,16 +5,16 @@
     "node": "10.7.0"
   },
   "private": true,
-  "description": "ExpressJS with Mongoose Template",
+  "description": "GrOne Vis",
   "main": "server/app.js",
   "scripts": {
-    "postinstall": "browserify -t vueify -e client/ownerMain.js -o client/build/ownerBuild.js",
+    "postinstall": "browserify -t vueify -e client/main.js -o client/build/mainBuild.js",
     "start": "node ./server/app.js",
     "test": "newman run ./tests/api-tests.postman.json"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://gitlab.com/grischal/express-template.git"
+    "url": "git+https://github.com/hanien/GroneVisualizationSoftware.git"
   },
   "dependencies": {
     "axios": "^0.18.0",
