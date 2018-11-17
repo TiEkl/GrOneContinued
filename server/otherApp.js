@@ -4,21 +4,9 @@ var mongoose = require('mongoose');
 var morgan = require('morgan');
 var path = require('path');
 
-// fork can only create new NodeJs processes. You give it a js file
-// to execute
-const { fork } = require('child_process');
-const child = fork('otherApp.js');
-
-// process.on receives a message while process.send sends a message to 
-// another process
-child.on('message', message => {
-    console.log('message from child: ', message);
-    child.send("parent says hello.");
-});
-
 // Variables
-var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
-var port = process.env.PORT || 3000;
+var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/animals';
+var port = process.env.PORT || 3001;
 
 // Connect to MongoDB
 mongoose.connect(mongoURI, { useNewUrlParser: true }, function(err) {
@@ -61,9 +49,19 @@ app.use(function(err, req, res, next) {
 
 app.listen(port, function(err) {
     if (err) throw err;
-    console.log(`Express server listening on port ${port}, in ${env} mode`);
+    console.log(`Express other app server listening on port ${port}, in ${env} mode`);
     console.log(`Backend: http://localhost:${port}/api/`);
     console.log(`Frontend: http://localhost:${port}/`);
 });
+
+// child sends message to parent
+if(process.send){
+    process.send("child's message is Hello");
+}
+
+process.on('message', message => {
+    console.log('message from parent: ', message);
+})
+
 
 module.exports = app;
