@@ -17,7 +17,7 @@ child.on('message', message => {
 });
 
 // Variables
-var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/animals';
+var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
 var port = process.env.PORT || 3000;
 
 // Connect to MongoDB
