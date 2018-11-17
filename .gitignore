@@ -150,5 +150,9 @@ $RECYCLE.BIN/
 #ignore browserified JS
 client/build/*
 
+<<<<<<< HEAD
 #ignore package-lock
+=======
+#ignore package-lock file - should run npm install when you switch to another branch
+>>>>>>> 65098b03ad41f3dafc548afed6a7c768c4445373
 package-lock.json
