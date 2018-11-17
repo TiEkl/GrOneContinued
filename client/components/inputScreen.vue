@@ -91,15 +91,7 @@
                     console.log('inside else');
                     this.wrong_url = true;
                 }
-            },
-/*             valid_url(string) { //method to check if a string is a valid url or not
-                var pattern = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
-                if(pattern.test(string)) {
-                    return true;
-                } else {
-                    return false;
-                }
-            } */
+            }
         },
         mounted(){
 
