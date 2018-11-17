@@ -10,7 +10,8 @@
   "scripts": {
     "postinstall": "browserify -t vueify -e client/ownerMain.js -o client/build/ownerBuild.js",
     "start": "node ./server/app.js",
-    "test": "newman run ./tests/api-tests.postman.json"
+    "test": "newman run ./tests/api-tests.postman.json",
+   "dev": "nodemon ./server/app.js"
   },
   "repository": {
     "type": "git",
