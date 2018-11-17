@@ -11,17 +11,21 @@ module.exports.getUrls = router.get('/', function(req, res, next) {
    });
 });
 
-module.exports.getUrlById = router.get('/:_id', function(req, res, next) {
-   Url_Input.findById(req.params._id, function(err, urls){
-      if (err) { return next(err); }
-      if (urls == null) {
+// module.exports.getUrlById =
+router.get('/:_id', function(req, res, next) {
+   var id = req.params._id;
+   Url_Input.findById(id, function(err, url) {
+      if (err) { return next(err);
+      }
+      if (url == null) {
          return res.status(404).json({
             "message": "Url not found"
          });
       }
-      res.json({urls});
+      res.json(url);
    });
 });
+
 
 module.exports.postUrl = router.post('/', function(req, res, next) {
     let url_input = new Url_Input(req.body);
