@@ -65,12 +65,10 @@
                 //If saved successfully we assume that it will be taken to be filtered and prepared
                 //thus we will proceed to display the progress bar
                 //(I don't know if we are going to use this or not)
-                console.log('inside save url');
 
                 var pattern = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
 
                 if(pattern.test(this.Url_Input.url)){
-                    console.log('inside if');
                     let new_url = {
                     url: this.Url_Input.url
                     }
@@ -88,7 +86,6 @@
                     });
                 }
                 else{
-                    console.log('inside else');
                     this.wrong_url = true;
                 }
             }
