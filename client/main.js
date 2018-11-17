@@ -8,16 +8,17 @@ var router = new VueRouter({
       {
         path: '/',
         name: 'url_input',
-        component: require("./src/components/inputScreen.vue")
+        component: require("./components/inputScreen.vue")
       }
     ]
   });
   
-  var userBaseRouter = require("./src/components/baseRouter.vue");
+  var baseRouter = require("./components/baseRouter.vue");
   
   new Vue({
     router: router,
     render: function(createElement) {
-      return createElement(userBaseRouter);
+      return createElement(baseRouter);
     }
   }).$mount("#mountpoint");
+

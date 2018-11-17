@@ -5,7 +5,7 @@ var router = express.Router()
 
 router.use('/api/urls', require('./url_inputs.js'));
 
-router.route('/').get(function (req, res) { //??
+router.route('/main').get(function (req, res) { //??
     res.sendfile(req.app.get('appPath') + '/index.html');
 });
 
