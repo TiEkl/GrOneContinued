@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+let Schema = mongoose.Schema;
 
-var url_input_schema = new Schema({
+let url_input_schema = new Schema({
   url: {
     type: String,
     minLength: 10,

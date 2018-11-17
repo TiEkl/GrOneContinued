@@ -1,16 +1,18 @@
 <template>
     <div>
-        <!-- base router (if we want a header or footer etc) -->
-        <!-- header -->
+    <!-- base router (holds header, footer, and dynamic content in router-view) -->    
+    <!-- bootstrap is used -->
+
+        <!-- header below -->
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top">
           <a href="http://localhost:3000/" class="navbar-brand"> 
             GrOne
           </a>
         </nav>
 
-        <!-- router view -->
-        <!--this is where we input vue components-->
-        <!--middle div is surrounded by 2 empty side divs for side padding-->
+        <!-- router view below -->
+        <!-- this is where we input vue components -->
+        <!-- middle div is surrounded by 2 empty side divs for side padding -->
         <div class="row">
           <div class="col-sm-2">
           </div>
@@ -25,7 +27,7 @@
           </div>
         </div>
 
-        <!-- footer -->
+        <!-- footer below (not yet implemented) -->
         
     </div>
 </template>
@@ -44,6 +46,5 @@
 
 
 <style>
-
 </style>
 
