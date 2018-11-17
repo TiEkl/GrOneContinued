@@ -3,15 +3,20 @@ var mongoose = require('mongoose');
 var router = express.Router();
 
 //do i need this?
-Url_Input = require('../../models/url_input.js')
+var Url_Input = require('../../models/url_input.js');
+
+var Url_Controller = require('../url_inputs.js');
 
 //gets the full url_input object's url attribute
-router.get('/_id', function(req, res, next) {
-   var url = getUrlById(req.params._id, function(req, res, next) {
+router.get('/:_id', function(req, res, next) {
+   var id = req.params._id;
+   var url = Url_Controller.getUrlById(id, function(req, res, next) {
       if (err) {
          return next(err);
       }
-   }).url;  //.url gets the actual url string
+   }).url
+
+//.url gets the actual url string
    if (url === null) {
       return res.status(404).json({
          "Message" : "Url not found"

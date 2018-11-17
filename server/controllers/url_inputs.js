@@ -11,8 +11,7 @@ module.exports.getUrls = router.get('/', function(req, res, next) {
    });
 });
 
-// module.exports.getUrlById =
-router.get('/:_id', function(req, res, next) {
+module.exports.getUrlById = router.get('/:_id', function(req, res, next) {
    var id = req.params._id;
    Url_Input.findById(id, function(err, url) {
       if (err) { return next(err);
@@ -25,6 +24,8 @@ router.get('/:_id', function(req, res, next) {
       res.json(url);
    });
 });
+
+
 
 
 module.exports.postUrl = router.post('/', function(req, res, next) {
