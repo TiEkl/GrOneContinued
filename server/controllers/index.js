@@ -2,10 +2,9 @@ var path = require('path');
 var express = require('express');
 var router = express.Router()
 
-
 router.use('/api/urls', require('./url_inputs.js'));
 
-router.route('/main').get(function (req, res) { //??
+router.route('/').get(function (req, res) { //??
     res.sendfile(req.app.get('appPath') + '/index.html');
 });
 
@@ -28,7 +27,7 @@ router.route('/*').get(function (req, res) {
 });
 
 router.get('/api', function(req, res) {
-    res.json({"message": "Welcome to your DIT341 backend project!"});
+    res.json({"message": "Welcome to your backend"});
 });
 
 module.exports = router
