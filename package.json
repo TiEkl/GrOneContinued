@@ -22,12 +22,12 @@
     "browserify": "^16.2.2",
     "express": "^4.16.3",
     "mongoose": "^5.2.12",
-    "morgan": "^1.9.0",
+    "morgan": "^1.9.1",
     "vue": "^2.5.17",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
-    "newman": "^4.1.0",
+    "newman": "^4.2.2",
     "nodemon": "^1.18.4",
     "vueify": "^9.4.1"
   }
