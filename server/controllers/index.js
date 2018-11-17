@@ -6,6 +6,12 @@ router.get('/api', function(req, res) {
     res.json({"message": "Welcome to your DIT341 backend project!"});
 });
 
+router.use('/api/urls', require('./url_input.js'));
+
+router.route('/').get(function (req, res) { //??
+    res.sendfile(req.app.get('appPath') + '/index.html');
+});
+
 // Insert routes below
 router.use('/api/camels', require('./camels'));
 
