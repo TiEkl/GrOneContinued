@@ -149,3 +149,6 @@ $RECYCLE.BIN/
 
 #ignore browserified JS
 client/build/*
+
+#ignore package-lock
+package-lock.json
