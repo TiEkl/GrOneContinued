@@ -11,3 +11,5 @@ router.post('/', function(req, res, next) {
         res.status(201).json(url_input);
     });
 });
+
+module.exports = router;

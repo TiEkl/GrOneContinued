@@ -10,6 +10,9 @@
         <div class="col-sm-3"></div>
         <div class="col-sm-6">
 
+            <h1>GrOne Visualization Software</h1>
+            <p>See how good your code is by checking its dependencies, all with one single click of a button!</p>
+
             <div v-if="url_accepted===false">   
                 <form>
                     <label for="url_input_form">Please enter a valid GitHub project url</label>
