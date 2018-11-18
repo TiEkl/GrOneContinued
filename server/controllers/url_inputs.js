@@ -4,14 +4,14 @@ var router = express.Router();
 
 var Url_Input = require('../models/url_input.js');
 
-module.exports.getUrls = router.get('/', function(req, res, next) {
+router.get('/', function(req, res, next) {
    Url_Input.find(function(err, urls){
       if (err) { return next(err); }
       res.json({urls});
    });
 });
 
-module.exports.getUrlById = router.get('/:_id', function(req, res, next) {
+router.get('/:_id', function(req, res, next) {
    var id = req.params._id;
    Url_Input.findById(id, function(err, url) {
       if (err) { return next(err);
@@ -27,8 +27,7 @@ module.exports.getUrlById = router.get('/:_id', function(req, res, next) {
 
 
 
-
-module.exports.postUrl = router.post('/', function(req, res, next) {
+router.post('/', function(req, res, next) {
     let url_input = new Url_Input(req.body);
     url_input.save(function(err) {
         if (err) { return next(err); }
@@ -37,7 +36,7 @@ module.exports.postUrl = router.post('/', function(req, res, next) {
 });
 
 
-module.exports.deleteUrls = router.delete('/', function(req, res, next){
+router.delete('/', function(req, res, next){
    Url_Input.remove({}, function(err, urls) {
       if(err) {
          return next(err);

@@ -3,6 +3,7 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var morgan = require('morgan');
 var path = require('path');
+var cors = require('cors');
 
 // Variables
 var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
@@ -20,6 +21,8 @@ mongoose.connect(mongoURI, { useNewUrlParser: true }, function(err) {
 
 // Create Express app
 var app = express();
+//use cors to allow github
+app.use(cors());
 // Parse requests of content-type 'application/json'
 app.use(bodyParser.json());
 // HTTP request logger
