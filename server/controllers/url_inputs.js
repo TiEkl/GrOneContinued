@@ -4,6 +4,7 @@ var router = express.Router();
 
 var Url_Input = require('../models/url_input.js');
 
+//gets a list of all url objects in db
 router.get('/', function(req, res, next) {
    Url_Input.find(function(err, urls){
       if (err) { return next(err); }
@@ -11,6 +12,7 @@ router.get('/', function(req, res, next) {
    });
 });
 
+//gets a specific url object
 router.get('/:_id', function(req, res, next) {
    var id = req.params._id;
    Url_Input.findById(id, function(err, url) {
@@ -26,7 +28,7 @@ router.get('/:_id', function(req, res, next) {
 });
 
 
-
+//creates and adds to db a url object
 router.post('/', function(req, res, next) {
     let url_input = new Url_Input(req.body);
     url_input.save(function(err) {
