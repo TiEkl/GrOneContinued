@@ -8,6 +8,19 @@
 </div>
 </template>
 <style>
+path { 
+    stroke: steelblue;
+    stroke-width: 2;
+    fill: none;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 1;
+    shape-rendering: crispEdges;
+}
          svg rect {
             fill: gray;
          }
@@ -45,11 +58,11 @@ import * as d3 from 'd3';
         const scale = d3.scaleOrdinal(d3.schemeCategory10);
         
         const svg = d3.select(".frame").append("svg")
-            .attr("viewBox", [-this.width / 2, -this.height / 2, this.width, this.height]);
+            .attr("viewBox", [-this.width / 2, -this.height /4, this.width, this.height]);
 
         const link = svg.append("g")
             .attr("stroke", "#999")
-            .attr("stroke-opacity", 0.6)
+            .attr("stroke-opacity", 0)
           .selectAll("line")
           .data(links)
           .enter().append("line")
@@ -63,7 +76,10 @@ import * as d3 from 'd3';
           .enter().append("circle")
             .attr("r", d => d.count * 5)
             .attr("fill",  d => scale(d.group))
-            .call(drag(simulation));
+            .call(drag(simulation))
+            .on("mouseover", mouseOver(.2))
+        .on("mouseout", mouseOut);
+            
 
         node.append("title")
             .text(d => d.id);
@@ -81,12 +97,35 @@ import * as d3 from 'd3';
               .attr("cx", d => d.x)
               .attr("cy", d => d.y);
         }
+        // fade nodes on hover
+    function mouseOver(opacity) {
+        return function(d) {
+            // check all other nodes to see if they're connected
+            // to this one. if so, keep the opacity at 1, otherwise
+            // fade
+            // also style link accordingly
+            link.style("stroke-opacity", function(o) {
+                return o.source === d || o.target === d ? 1 : opacity;
+            }).transition().duration(1000);
+            link.style("stroke", function(o){
+                return o.source === d || o.target === d ? o.source.colour : "#fff";
+            }).transition().duration(1000);
+        };
+    }
+
+    function mouseOut() {
+      
+        link.style("stroke-opacity", 0).transition().duration(1000);
+        link.style("stroke", "#ddd").transition().duration(1000);
+    }
+
         return svg.node();
       },
       forceSimulation : function(nodes, links) {
         return d3.forceSimulation(nodes)
-            .force("link", d3.forceLink(links).id(d => d.id))
+            .force("link", d3.forceLink(links).id(d => d.id).distance(75).strength(1))
             .force("charge", d3.forceManyBody())
+            .force("collide", d3.forceCollide().radius(25))
             .force("center", d3.forceCenter());
       },
       setData : function() {
