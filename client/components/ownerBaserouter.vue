@@ -97,6 +97,13 @@ import * as d3 from 'd3';
               .attr("cx", d => d.x)
               .attr("cy", d => d.y);
         }
+         var linkedByIndex = {};
+    links.forEach(function(d) {
+        linkedByIndex[d.source.index + "," + d.target.index] = 1;
+    });
+        function isConnected(a, b) {
+        return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
+    }
         // fade nodes on hover
     function mouseOver(opacity) {
         return function(d) {
@@ -104,6 +111,14 @@ import * as d3 from 'd3';
             // to this one. if so, keep the opacity at 1, otherwise
             // fade
             // also style link accordingly
+            node.style("stroke-opacity", function(o) {
+                var thisOpacity = isConnected(d, o) ? 1 : opacity;
+                return thisOpacity;})
+                .transition().duration(1000);;
+            node.style("fill-opacity", function(o) {
+               var thisOpacity = isConnected(d, o) ? 1 : opacity;
+                return thisOpacity;})
+                .transition().duration(1000);
             link.style("stroke-opacity", function(o) {
                 return o.source === d || o.target === d ? 1 : opacity;
             }).transition().duration(1000);
@@ -114,7 +129,8 @@ import * as d3 from 'd3';
     }
 
     function mouseOut() {
-      
+        node.style("stroke-opacity", 1).transition().duration(1000);
+        node.style("fill-opacity", 1).transition().duration(1000);
         link.style("stroke-opacity", 0).transition().duration(1000);
         link.style("stroke", "#ddd").transition().duration(1000);
     }
@@ -123,7 +139,7 @@ import * as d3 from 'd3';
       },
       forceSimulation : function(nodes, links) {
         return d3.forceSimulation(nodes)
-            .force("link", d3.forceLink(links).id(d => d.id).distance(75).strength(1))
+            .force("link", d3.forceLink(links).id(d => d.id).distance(30).strength(1))
             .force("charge", d3.forceManyBody())
             .force("collide", d3.forceCollide().radius(25))
             .force("center", d3.forceCenter());
