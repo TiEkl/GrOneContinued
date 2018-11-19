@@ -32,7 +32,7 @@ import * as d3 from 'd3';
      width : 600,
     test : graphData,
     //test : {},
-     data : {nodes: [{id:"", group:"" }], links: [{source:"", target:"", value:""}]}
+     datatest : {nodes: [{id:"", group:"" }], links: [{source:"", target:"", value:""}]}
       }
     },
     
@@ -144,18 +144,14 @@ import * as d3 from 'd3';
         ]
       }
     
-  d3.json("/data/graphData.json", function(data) {
-      /*for(let i = 0; data.nodes.length; i++) {
-        this.test.nodes.push(data.nodes[i]);
-      }
-      for(let i = 0; data.links.length; i++) {
-        this.test.links.push(data.links[i]);
-      }*/
+  d3.json("/data/graphData.json")
+    .then( data =>  {
       console.log(JSON.stringify(data));
+      this.drawChart(data, drag, color);
     });
     //this.test = d3.json("./../data/graphData.json");
-    console.log(JSON.stringify(this.test));
-    this.drawChart(this.test, drag, color);
+    //console.log(JSON.stringify(this.test));
+    //this.drawChart(this.datatest, drag, color);
 
   },
 };
