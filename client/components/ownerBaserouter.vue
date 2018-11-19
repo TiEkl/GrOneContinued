@@ -3,12 +3,11 @@
 <div>
   <div class="frame">
   
-    <canvas width="960" height="500" />
 
   </div>
 </div>
 </template>
- <style>
+<style>
          svg rect {
             fill: gray;
          }
@@ -18,87 +17,132 @@
             font: 12px sans-serif;
             text-anchor: end;
          }
-      </style>
+</style>
 <script>
 import * as d3 from 'd3';
-var canvas = document.querySelector("canvas"),
-    context = canvas.getContext("2d"),
-    width = canvas.width,
-    height = canvas.height;
-
-
   module.exports = {
     name:"BaseRouter",
     
 
   data() {
       return {
-        data : {
-          nodes: [
-            {"id": "1", "group": 1},
-            {"id": "2", "group": 2},
-            {"id": "3", "group": 2},
-            {"id": "4", "group": 1}
-          ],
-          links: [
-            {"source": "1", "target": "2", "value": 10},
-            {"source": "2", "target": "3", "value": 10},
-            {"source": "1", "target": "4", "value": 5},
-            {"source": "4", "target": "3", "value": 15}
-          ]
-        }
+     height : 600,
+     width : 600,
+     data : {nodes: [{id:"", group:"" }], links: [{source:"", target:"", value:""}]}
       }
     },
-    methods: {
-    ticked: function() {
+    
+  methods: {
+      drawChart : function(data, drag) {
+        console.log(data);
+        const links = data.links.map(d => Object.create(d));
+        const nodes = data.nodes.map(d => Object.create(d));
+        const simulation = this.forceSimulation(nodes, links).on("tick", ticked);
+        const scale = d3.scaleOrdinal(d3.schemeCategory10);
+        
+        const svg = d3.select(".frame").append("svg")
+            .attr("viewBox", [-this.width / 2, -this.height / 2, this.width, this.height]);
 
-      var margin = 20;
-      this.data.nodes.forEach (function(d) {
-        d.x = Math.max(margin, Math.min(width - margin, d.x))
-        d.y = Math.max(margin, Math.min(height - margin, d.y))
-      })
+        const link = svg.append("g")
+            .attr("stroke", "#999")
+            .attr("stroke-opacity", 0.6)
+          .selectAll("line")
+          .data(links)
+          .enter().append("line")
+            .attr("stroke-width", d => Math.sqrt(d.value));
 
-      context.clearRect(0, 0, width, height);
+        const node = svg.append("g")
+            .attr("stroke", "#fff")
+            .attr("stroke-width", 3)
+          .selectAll("circle")
+          .data(nodes)
+          .enter().append("circle")
+            .attr("r", d => d.count * 5)
+            .attr("fill",  d => scale(d.group))
+            .call(drag(simulation));
 
-      context.beginPath();
-      this.data.links.forEach(drawLink);
-      context.strokeStyle = "#aaa";
-      context.stroke();
+        node.append("title")
+            .text(d => d.id);
 
-      context.beginPath();
-      this.data.nodes.forEach(drawNode);
-      context.fill();
-      context.strokeStyle = "#fff";
-      context.stroke();
-    },
-    drawLink: function(d) {
-      context.moveTo(d.source.x, d.source.y);
-      context.lineTo(d.target.x, d.target.y);
-    },
-    drawNode:  function(d) {
-      context.moveTo(d.x + 3, d.y);
-      context.arc(d.x, d.y, 3, 0, 2 * Math.PI);
-    }
+        
+
+        function ticked() {
+          link
+              .attr("x1", d => d.source.x)
+              .attr("y1", d => d.source.y)
+              .attr("x2", d => d.target.x)
+              .attr("y2", d => d.target.y);
+          
+          node
+              .attr("cx", d => d.x)
+              .attr("cy", d => d.y);
+        }
+        return svg.node();
+      },
+      forceSimulation : function(nodes, links) {
+        return d3.forceSimulation(nodes)
+            .force("link", d3.forceLink(links).id(d => d.id))
+            .force("charge", d3.forceManyBody())
+            .force("center", d3.forceCenter());
+      },
+      setData : function() {
+        this.data = d3.json("/data/graphData.json");        
+      },
+
 
     },
   mounted() {
-    var simulation = d3.forceSimulation()
-      .force("link", d3.forceLink().id(function(d) { return d.id; }))
-      .force("charge", d3.forceManyBody())
-      .force("center", d3.forceCenter(width / 2, height / 2));
 
- 
-        simulation
-        .nodes(this.data.nodes)
-        .on("tick", ticked)
-        .force("link")
-        .links(this.data.links);  
+    var test = this.setData();
 
+     var drag = simulation => {
+      
+      function dragstarted(d) {
+        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+        d.fx = d.x;
+        d.fy = d.y;
+      }
+      
+      function dragged(d) {
+        d.fx = d3.event.x;
+        d.fy = d3.event.y;
+      }
+      
+      function dragended(d) {
+        if (!d3.event.active) simulation.alphaTarget(0);
+        d.fx = null;
+        d.fy = null;
+      }
+      return d3.drag()
+          .on("start", dragstarted)
+          .on("drag", dragged)
+          .on("end", dragended);
+    } 
+    var color = d => {
+        const scale = d3.scaleOrdinal(d3.schemeCategory10);
+        return d => scale(d.group);
+    }
+    var test3={
+      "nodes": [
+          {"id": "1", "group": 1, "count": 3},
+          {"id": "2", "group": 2,"count": 2},
+          {"id": "3", "group": 2, "count": 2},
+          {"id": "4", "group": 20, "count": 2},
+          {"id": "5", "group": 7, "count": 1},
+          {"id": "6", "group": 1, "count": 2}
+        ],
+        "links": [
+          {"source": "1", "target": "2", "value": 10},
+          {"source": "2", "target": "3", "value": 10},
+          {"source": "1", "target": "4", "value": 5},
+          {"source": "4", "target": "3", "value": 15},
+          {"source": "6", "target": "5", "value": 15},
+          {"source": "6", "target": "1", "value": 15}
+        ]
+      }
 
-    d3.select(canvas)
-        .call(d3.drag()
-            .container(canvas)
-            .subject(dragsubject));
+    this.drawChart(test3, drag, color);
+
   },
 };
 
