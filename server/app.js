@@ -17,6 +17,18 @@ child.on('message', message => {
     child.send("parent says hello.");
 });
 
+// fork can only create new NodeJs processes. You give it a js file
+// to execute
+const { fork } = require('child_process');
+const child = fork('otherApp.js');
+
+// process.on receives a message while process.send sends a message to 
+// another process
+child.on('message', message => {
+    console.log('message from child: ', message);
+    child.send("parent says hello.");
+});
+
 // Variables
 var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
 var port = process.env.PORT || 3000;

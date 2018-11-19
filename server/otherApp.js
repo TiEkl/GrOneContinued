@@ -23,6 +23,7 @@ mongoose.connect(mongoURI, { useNewUrlParser: true }, function(err) {
 var app = express();
 //use cors to allow github
 app.use(cors());
+
 // Parse requests of content-type 'application/json'
 app.use(bodyParser.json());
 // HTTP request logger
