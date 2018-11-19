@@ -18,11 +18,13 @@
     "url": "git+https://github.com/hanien/GroneVisualizationSoftware.git"
   },
   "dependencies": {
+    "@octokit/rest": "^15.17.0",
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "browserify": "^16.2.2",
     "cors": "^2.8.4",
     "express": "^4.16.3",
+    "github-api": "^3.0.0",
     "mongoose": "^5.2.12",
     "morgan": "^1.9.1",
     "vue": "^2.5.17",

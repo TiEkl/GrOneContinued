@@ -4,6 +4,15 @@ var mongoose = require("mongoose");
 // var https = require("https");
 var axios = require("axios");
 var router = express.Router();
+//library to work with the api
+const octokit = require('@octokit/rest')();
+var oauthToken = token.txt;
+var github = require('@github-api');
+//Authentication to be able to work with the api
+octokit.authenticate({
+  type: 'oauth',
+  token: oauthToken
+})
 
 //do i need this?
 var Url_Input = require("../../models/url_input.js");
@@ -93,27 +102,23 @@ router.get("/:_id/files", function(req, res, next) {
      path = path_string.split("/"); //splits string according to '/', creates array
      owner = path[1];
      repo = path[2];
-     target_url = "https://api.github.com/repos/" + owner + "/" + repo + "/git/trees/master?recursive=1";
-
-     //gets actual repository with github's api. returns a bunch of stuff.
-     //who the shit knew you could use axios here
-     axios.get(target_url)
-       .then(response => {
-         //This is only an example of how you can access the status code
-         if (response.status !== 200) {
-           console.log("Wrong status code: " + response.status);
-         }
-
-         //returns repository.
-         res.json(response.data);
-       })
-       .catch(error => {
-         console.log(error);
-       })
-       .then(function() {
-         //This code is always executed, independent of the request being successful or not.
-       });
-   });
+     target_url = "https://api.github.com/repos/" + owner + "/" + repo + "/contents";
+    
+    octokit.repos.getContents({
+      owner: owner,
+      repo: repo 
+      Headers: accept : application/vnd.github.VERSION.raw;        
+    
+    })
+    
+  
 });
+});
+
+
+
+
+
+
 
 module.exports = router;
