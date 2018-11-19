@@ -1,6 +1,6 @@
 <!-- baserouter.vue -->
 <template>
-<div>
+<div id="page" height="500px">
   <div class="frame">
   
 
@@ -19,6 +19,7 @@
          }
 </style>
 <script>
+import graphData from "./../data/graphData.json"
 import * as d3 from 'd3';
   module.exports = {
     name:"BaseRouter",
@@ -26,15 +27,18 @@ import * as d3 from 'd3';
 
   data() {
       return {
+        
      height : 600,
      width : 600,
+    test : graphData,
+    //test : {},
      data : {nodes: [{id:"", group:"" }], links: [{source:"", target:"", value:""}]}
       }
     },
     
   methods: {
       drawChart : function(data, drag) {
-        console.log(data);
+        
         const links = data.links.map(d => Object.create(d));
         const nodes = data.nodes.map(d => Object.create(d));
         const simulation = this.forceSimulation(nodes, links).on("tick", ticked);
@@ -92,7 +96,6 @@ import * as d3 from 'd3';
 
     },
   mounted() {
-
     var test = this.setData();
 
      var drag = simulation => {
@@ -140,8 +143,19 @@ import * as d3 from 'd3';
           {"source": "6", "target": "1", "value": 15}
         ]
       }
-
-    this.drawChart(test3, drag, color);
+    
+  d3.json("/data/graphData.json", function(data) {
+      /*for(let i = 0; data.nodes.length; i++) {
+        this.test.nodes.push(data.nodes[i]);
+      }
+      for(let i = 0; data.links.length; i++) {
+        this.test.links.push(data.links[i]);
+      }*/
+      console.log(JSON.stringify(data));
+    });
+    //this.test = d3.json("./../data/graphData.json");
+    console.log(JSON.stringify(this.test));
+    this.drawChart(this.test, drag, color);
 
   },
 };
@@ -152,7 +166,7 @@ import * as d3 from 'd3';
 <style>
 .frame{
   width:100%;
-  height:100%;
+  height:500px;
   
 }
 
