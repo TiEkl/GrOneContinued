@@ -3,6 +3,19 @@ var bodyParser = require('body-parser');
 var mongoose = require('mongoose');
 var morgan = require('morgan');
 var path = require('path');
+var cors = require('cors');
+
+// fork can only create new NodeJs processes. You give it a js file
+// to execute
+const { fork } = require('child_process');
+const child = fork('server/otherApp.js');
+
+// process.on receives a message while process.send sends a message to
+// another process
+child.on('message', message => {
+    console.log('message from child: ', message);
+    child.send("parent says hello.");
+});
 
 // fork can only create new NodeJs processes. You give it a js file
 // to execute
@@ -32,6 +45,8 @@ mongoose.connect(mongoURI, { useNewUrlParser: true }, function(err) {
 
 // Create Express app
 var app = express();
+//use cors to allow github
+app.use(cors());
 // Parse requests of content-type 'application/json'
 app.use(bodyParser.json());
 // HTTP request logger

@@ -4,6 +4,9 @@ var router = express.Router()
 
 router.use('/api/urls', require('./url_inputs.js'));
 
+//gets to actual repository using the url
+router.use('/api/repos', require('./repofetcher/repos.js'))
+
 router.route('/').get(function (req, res) { //??
     res.sendfile(req.app.get('appPath') + '/index.html');
 });
