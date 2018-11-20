@@ -1,7 +1,7 @@
 <template>
     <div>
     <!-- This is the main screen the user sees when they go on the website -->
-             
+
        <!-- Header and explanation of the product -->
        <div class="row">
            <div class="col-sm-12">
@@ -9,13 +9,13 @@
                 <p>See how good your code is by checking its dependencies, all with one single click of a button!</p>
            </div>
        </div>
-       
+
        <div class="row">
             <div class="col-sm-3"></div>
             <div class="col-sm-6 middle_div">
 
                 <!-- input field and button (is hidden after user presses submit button for a valid url) -->
-                <div v-if="url_accepted===false" text-center mx-auto>   
+                <div v-if="url_accepted===false" text-center mx-auto>
                     <form>
                         <label for="url_input_form">Please enter a valid GitHub project url</label>
                         <input id="url_input_form" class="form-control" type ="url" v-model="Url_Input.url" required pattern="https?://.+">
@@ -23,7 +23,7 @@
                         <div v-if="wrong_url===true">
                             <p>This is not a valid url</p>
                         </div>
-                    </form>    
+                    </form>
                 </div>
 
                 <!-- hidden loading screen that only shows up
@@ -32,15 +32,15 @@
                     <div id="showProgress">
                         <div id="progressBar">Not yet implemented!</div>
                     </div>
-                </div>  
+                </div>
 
                 <!-- when loading is complete: replace the view with another component where we show the result -->
 
             </div>
             <div class="col-sm-3"></div>
        </div>
-       
-       
+
+
 
     </div>
 </template>
@@ -61,10 +61,11 @@
         },
         methods:{
             // method to send owner and repo strings that we need in the backend
-            postProject: function(Url_Input){
+            postProject: function(){
                 // this is from nigels method want to get owner and repo strings from the url
-               var urlString = url_input;
-               var path_string = url_input.pathname;
+               console.log(this.Url_Input.url);
+               var url_string = new URL(this.Url_Input.url);
+               var path_string = url_string.pathname;
                var path = path_string.split("/"); //splits string according to '/', creates array
                ownerName = path[1];
                repoName = path[2];
@@ -82,15 +83,15 @@
               .catch(error => {
                   console.log(error.response);
               })
-              .then(function () { 
-                  
+              .then(function () {
+
               });
         },
 
-            
 
-            
-            
+
+
+
 
 
 
@@ -118,7 +119,7 @@
 
                     })
                     .catch((error)=>{
-                        console.log(error.response);  
+                        console.log(error.response);
                     });
                 }
                 else{
@@ -136,7 +137,7 @@
 <style>
 
     body{
-        padding-top: 100px; 
+        padding-top: 100px;
     }
 
     #url_input_form{
@@ -148,4 +149,3 @@
     }
 
 </style>
-
