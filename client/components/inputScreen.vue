@@ -60,14 +60,15 @@
             }
         },
         methods:{
-
+            // method to send owner and repo strings that we need in the backend
             postProject: function(Url_Input){
+                // this is from nigels method want to get owner and repo strings from the url
                var urlString = url_input;
                var path_string = url_input.pathname;
                var path = path_string.split("/"); //splits string according to '/', creates array
                ownerName = path[1];
                repoName = path[2];
-
+                // sending owner,repo to backend
                 axios.post('/api/gitProjects',
                 {owner: ownerName,
                  repo:  repoName })

@@ -10,11 +10,14 @@ octokit.authenticate({
   token: oauthToken
 })
 
-// Create a new gitProject
+// Create a new gitProject this will store the repo and its files in the db
 router.post('/', function(req, res, next) {
+    // the strings that we get from the front end
     var owner = req.body.owner;
     var repo = req.body.repo;
+    // the actual files to be downloaded
     var fileArray;
+    // method do download with github api
     octokit.repos.getContents({
         "owner": owner,
         "repo": repo,
@@ -22,8 +25,9 @@ router.post('/', function(req, res, next) {
         accept : 'application/vnd.github.VERSION.raw'       
       }})
       .then(result => {
+          // store the result in an array
           fileArray = result;
-
+     // Save the whole thing in a mongoose model
     var gitProject = new gitProject(req.body,fileArray);
 
     gitProject.save(function(err) {
