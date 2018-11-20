@@ -5,21 +5,16 @@ var router = express.Router()
 router.use('/api/urls', require('./url_inputs.js'));
 
 //gets to actual repository using the url
-router.use('/api/repos', require('./repofetcher/repos.js'))
+//router.use('/api/repos', require('./repofetcher/repos.js'))
 
-/***********PROXY SERVER**************************/
-var httpProxy = require('http-proxy');
-var apiProxy = httpProxy.createProxyServer();
-// IP address of target server. should be designated in proxy server.
-var serverOne = 'http://192.168.1.101:8001';
-var filterDataServer = 'http://localhost:8002';
-
-router.all("/app1/*", function ( req, res ) {
-    console.log("fetch repo server");
-    apiProxy.web(req, res, { target : serverOne} );
+/**********************TARGET SERVER*************/
+// target server would have the different ways to handle the request. 
+// eventually this should be in the different api/ files
+router.get('/app1/',function(req,res) {
+    console.log("server 1 sends its regards")
+    res.send("Hello world From Server 1");
 });
 /*************************************************/
-
 router.route('/').get(function (req, res) { //??
     res.sendfile(req.app.get('appPath') + '/index.html');
 });
