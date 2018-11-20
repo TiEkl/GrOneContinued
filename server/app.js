@@ -5,9 +5,10 @@ var morgan = require('morgan');
 var path = require('path');
 var cors = require('cors');
 
+/** CLUSTERING  **/
 // fork can only create new NodeJs processes. You give it a js file
 // to execute
-const { fork } = require('child_process');
+/*const { fork } = require('child_process');
 const child = fork('server/otherApp.js');
 
 // process.on receives a message while process.send sends a message to
@@ -15,23 +16,12 @@ const child = fork('server/otherApp.js');
 child.on('message', message => {
     console.log('message from child: ', message);
     child.send("parent says hello.");
-});
-
-// fork can only create new NodeJs processes. You give it a js file
-// to execute
-const { fork } = require('child_process');
-const child = fork('otherApp.js');
-
-// process.on receives a message while process.send sends a message to 
-// another process
-child.on('message', message => {
-    console.log('message from child: ', message);
-    child.send("parent says hello.");
-});
+});*/
+/********************************/
 
 // Variables
 var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
-var port = process.env.PORT || 3000;
+var port = process.env.PORT || 8000;
 
 // Connect to MongoDB
 mongoose.connect(mongoURI, { useNewUrlParser: true }, function(err) {
@@ -59,6 +49,12 @@ app.set('appPath', 'client');
 // Import routes
 app.use(require('./controllers/index'));
 
+/**********TARGET SERVER **************/
+// target server listens on different port than proxy server
+// proxy server sends request to this port
+app.listen(8001, '0.0.0.0');
+/**************************************/
+
 // Error handler (must be registered last)
 var env = app.get('env');
 app.use(function(err, req, res, next) {
@@ -74,11 +70,11 @@ app.use(function(err, req, res, next) {
     res.json(err_res);
 });
 
-app.listen(port, function(err) {
+/*app.listen(port, function(err) {
     if (err) throw err;
     console.log(`Express server listening on port ${port}, in ${env} mode`);
     console.log(`Backend: http://localhost:${port}/api/`);
     console.log(`Frontend: http://localhost:${port}/`);
-});
+});*/
 
 module.exports = app;
