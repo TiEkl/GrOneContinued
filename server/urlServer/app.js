@@ -33,12 +33,15 @@ app.use(express.static(path.join(root, 'client')));
 app.set('appPath', 'client');
 
 // Import routes
-app.use(require('./controllers/index'));
+app.use(require('./index'));
 
 /**********TARGET SERVER **************/
 // target server listens on different port than proxy server
 // proxy server sends request to this port
-app.listen(8001, '0.0.0.0');
+app.listen(8001, '0.0.0.0', function(err) {
+    if ( err ) throw err;
+    console.log("target server listening on port 8001");
+});
 /**************************************/
 
 // Error handler (must be registered last)

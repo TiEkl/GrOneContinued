@@ -5,12 +5,13 @@ var router = express.Router()
 router.use('/api/urls', require('./url_inputs.js'));
 
 //gets to actual repository using the url
-router.use('/api/repos', require('./repofetcher/repos.js'))
+//router.use('/api/repos', require('./repofetcher/repos.js'))
 
 /**********************TARGET SERVER*************/
 // target server would have the different ways to handle the request. 
 // eventually this should be in the different api/ files
-router.get('/app1',function(req,res) {
+router.get('/app1/',function(req,res) {
+    console.log("server 1 sends its regards")
     res.send("Hello world From Server 1");
 });
 /*************************************************/
