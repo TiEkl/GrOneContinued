@@ -2,7 +2,8 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var gitProjectSchema = new Schema ({
-    name: {type: String},
+    owner: {type: String},
+    repo: {type: String},
     files: {type: [Object]}
 
 });

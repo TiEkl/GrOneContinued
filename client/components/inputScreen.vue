@@ -19,7 +19,7 @@
                     <form>
                         <label for="url_input_form">Please enter a valid GitHub project url</label>
                         <input id="url_input_form" class="form-control" type ="url" v-model="Url_Input.url" required pattern="https?://.+">
-                        <button class="btn btn-info" type="button" @click="save_url()">Create visualization</button>
+                        <button class="btn btn-info" type="button" @click="postProject()">Create visualization</button>
                         <div v-if="wrong_url===true">
                             <p>This is not a valid url</p>
                         </div>
@@ -60,6 +60,41 @@
             }
         },
         methods:{
+
+            postProject: function(Url_Input){
+               var urlString = url_input;
+               var path_string = url_input.pathname;
+               var path = path_string.split("/"); //splits string according to '/', creates array
+               ownerName = path[1];
+               repoName = path[2];
+
+                axios.post('/api/gitProjects',
+                {owner: ownerName,
+                 repo:  repoName })
+                .then(
+                  response => {
+                      console.log("Success: " + response.status);
+                    this.Url_Input.url = "";
+                    this.url_accepted = true;
+                    this.wrong_url = false;
+              })
+              .catch(error => {
+                  console.log(error.response);
+              })
+              .then(function () { 
+                  
+              });
+        },
+
+            
+
+            
+            
+
+
+
+
+
             save_url(){
                 //Method for saving the url in a DB, so that other methods can find it and use it
                 //If saved successfully we assume that it will be taken to be filtered and prepared
