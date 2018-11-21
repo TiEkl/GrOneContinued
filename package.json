@@ -5,16 +5,17 @@
     "node": "10.7.0"
   },
   "private": true,
-  "description": "ExpressJS with Mongoose Template",
+  "description": "GrOne Vis",
   "main": "server/app.js",
   "scripts": {
-    "postinstall": "browserify -t vueify -e client/ownerMain.js -o client/build/ownerBuild.js",
+    "postinstall": "browserify -t vueify -e client/main.js -o client/build/mainBuild.js",
     "start": "node ./server/app.js",
-    "test": "newman run ./tests/api-tests.postman.json"
+    "test": "newman run ./tests/api-tests.postman.json",
+    "dev": "nodemon ./server/app.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+http://github.com/hanien/GroneVisualizationSoftware.git"
+    "url": "git+https://github.com/hanien/GroneVisualizationSoftware.git"
   },
   "dependencies": {
     "axios": "^0.18.0",
@@ -23,10 +24,11 @@
     "body-parser": "^1.18.3",
     "browserify": "^16.2.2",
     "d3": "^5.7.0",
+    "svg": "^0.1.0",
+    "cors": "^2.8.4",
     "express": "^4.16.3",
     "mongoose": "^5.2.12",
     "morgan": "^1.9.1",
-    "svg": "^0.1.0",
     "vue": "^2.5.17",
     "vue-router": "^3.0.1"
   },

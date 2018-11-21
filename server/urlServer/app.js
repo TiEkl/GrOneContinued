@@ -7,7 +7,7 @@ var cors = require('cors');
 
 // Variables
 var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
-var port = process.env.PORT || 3001;
+var port = process.env.PORT || 8000;
 
 // Connect to MongoDB
 mongoose.connect(mongoURI, { useNewUrlParser: true }, function(err) {
@@ -23,7 +23,6 @@ mongoose.connect(mongoURI, { useNewUrlParser: true }, function(err) {
 var app = express();
 //use cors to allow github
 app.use(cors());
-
 // Parse requests of content-type 'application/json'
 app.use(bodyParser.json());
 // HTTP request logger
@@ -34,7 +33,16 @@ app.use(express.static(path.join(root, 'client')));
 app.set('appPath', 'client');
 
 // Import routes
-app.use(require('./controllers/index'));
+app.use(require('./index'));
+
+/**********TARGET SERVER **************/
+// target server listens on different port than proxy server
+// proxy server sends request to this port
+app.listen(8001, '0.0.0.0', function(err) {
+    if ( err ) throw err;
+    console.log("target server listening on port 8001");
+});
+/**************************************/
 
 // Error handler (must be registered last)
 var env = app.get('env');
@@ -51,22 +59,11 @@ app.use(function(err, req, res, next) {
     res.json(err_res);
 });
 
-app.listen(port, function(err) {
+/*app.listen(port, function(err) {
     if (err) throw err;
-    console.log(`Express other app server listening on port ${port}, in ${env} mode`);
+    console.log(`Express server listening on port ${port}, in ${env} mode`);
     console.log(`Backend: http://localhost:${port}/api/`);
     console.log(`Frontend: http://localhost:${port}/`);
-});
-
-// CLUSTERING
-// child sends message to parent
-if(process.send){
-    process.send("child's message is Hello");
-}
-
-process.on('message', message => {
-    console.log('message from parent: ', message);
-})
-
+});*/
 
 module.exports = app;
