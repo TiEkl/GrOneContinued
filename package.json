@@ -26,7 +26,6 @@
     "express": "^4.16.3",
     "mongoose": "^5.2.12",
     "morgan": "^1.9.1",
-    "octokit": "^1.0.0",
     "vue": "^2.5.17",
     "vue-router": "^3.0.1"
   },

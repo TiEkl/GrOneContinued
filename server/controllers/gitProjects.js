@@ -30,12 +30,13 @@ router.post("/", function(req, res, next) {
   // the actual files to be downloaded
   var fileArray;
   // method do download with github api
+  
   octokit.repos.getContents({
       owner: owner,
       repo: repo,
-      // path: '',
+      path: '',
       headers: {
-        accept: "application/vnd.github.VERSION.raw"
+        accept: "application/vnd.github.v3.raw"
       }
     })
     .then(result => {
@@ -49,8 +50,10 @@ router.post("/", function(req, res, next) {
         }
         res.status(201).json(new_git_project);
       });
-    });
 
+    })
+    .catch(console.log);
+     
 });
 
 module.exports = router;
