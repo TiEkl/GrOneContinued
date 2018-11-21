@@ -10,12 +10,12 @@
 </template>
 <script>
 module.exports = {
-    name:"dependGraph"};
+    name:"ownerBaseRouter"};
 
 </script>
 
 <style>
-body{
+.frame{
   height:600px;
 }
 </style>
