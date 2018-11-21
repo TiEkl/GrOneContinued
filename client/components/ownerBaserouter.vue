@@ -16,7 +16,6 @@ module.exports = {
 
 <style>
 .frame{
-  height:600px;
 }
 </style>
 
