@@ -9,8 +9,8 @@ Vue.use(VueRouter);
 // Specifically, we have one component showing a static home page (ownerHome) and one component showing a list of camels (ownerListCamels)
 var router = new VueRouter({
   routes: [
-    { path: '/', component: require("./components/ownerHome.vue") },
-    { path: '/listCamels', component: require("./components/ownerListCamels.vue") }
+    { path: '/', component: require("./components/dependGraph.vue") }
+    
   ]
 });
 
