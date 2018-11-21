@@ -10,7 +10,7 @@
 </template>
 <script>
 module.exports = {
-    name:"ownerBaseRouter"};
+    name:"baseRouter"};
 
 </script>
 
