@@ -52,7 +52,7 @@ app.use(require('./controllers/index'));
 /**********TARGET SERVER **************/
 // target server listens on different port than proxy server
 // proxy server sends request to this port
-app.listen(8001, '0.0.0.0');
+//app.listen(8001, '0.0.0.0');
 /**************************************/
 
 // Error handler (must be registered last)
@@ -69,12 +69,12 @@ app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.json(err_res);
 });
-/*var port = 3000;
+//var port = 3000;
 app.listen(port, function(err) {
     if (err) throw err;
     console.log(`Express server listening on port ${port}, in ${env} mode`);
     console.log(`Backend: http://localhost:${port}/api/`);
     console.log(`Frontend: http://localhost:${port}/`);
-});*/
+});
 
 module.exports = app;

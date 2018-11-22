@@ -11,7 +11,8 @@ router.use('/api/repos', require('./repofetcher/repos.js'))
 var httpProxy = require('http-proxy');
 var apiProxy = httpProxy.createProxyServer();
 // IP address of target server. should be designated in proxy server.
-var serverOne = 'http://192.168.1.101:8001';
+//var serverOne = 'http://192.168.1.101:8001';
+var serverOne = 'http://192.168.43.181:8001';
 var filterDataServer = 'http://localhost:8002';
 
 router.all("/app1/*", function ( req, res ) {
@@ -20,9 +21,9 @@ router.all("/app1/*", function ( req, res ) {
 });
 /*************************************************/
 
-router.route('/').get(function (req, res) { //??
+/*router.route('/').get(function (req, res) { //??
     res.sendfile(req.app.get('appPath') + '/index.html');
-});
+});*/
 
 // Insert routes below
 //router.use('/api/camels', require('./camels'));
