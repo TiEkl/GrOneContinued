@@ -1,4 +1,4 @@
-# Backend (ExpressJS) Template
+<!-- # Backend (ExpressJS) Template
 
 This is the readme explaining the template for the backend code.
 
@@ -42,4 +42,4 @@ npm test
 
 Set a breakpoint and click *Debug > Start Debugging*
 
-> Learn more in the [VSCode Debugging Docs](https://code.visualstudio.com/docs/editor/debugging).
+> Learn more in the [VSCode Debugging Docs](https://code.visualstudio.com/docs/editor/debugging). -->
