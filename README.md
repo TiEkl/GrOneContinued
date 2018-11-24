@@ -9,4 +9,5 @@ Only public Github repositories are accepted as input, and the url inputted must
 ```npm install``` should be run first.
 ```npm start``` is used to initialize the server.
 
-#Deployment
+# Deployment
+As the program is locally deployed, each physical component should start their respective components.
