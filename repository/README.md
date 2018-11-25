@@ -1,30 +1,94 @@
-# LibrarySystem2
+Node.js - github-download
+================
 
-## This is a system for: Libraries
-## The system is to be used by: Librarians
+[![build status](https://secure.travis-ci.org/jprichardson/node-github-download.svg)](http://travis-ci.org/jprichardson/node-github-download)
 
-### Unauthorized users should not be allowed access to the system
-
-The purpose of this library system is to allow librarians to be able to easily and effectively conduct the running of a library, by allowing them to lend and return books through the system on behalf their customers, as well as do things such as:
-Adding and removing customers and books
-Viewing all books and their information, both books in the library and currently lent out books
-Viewing information about customers
-etc
-
-**HOW TO RUN**
-How to start the program:
-1. Download and install an IDE for Java (Skip if you already have a recent copy of an IDE installed)
-2. Run your IDE
-3. Import the program folder by going to File → Open projects from file system... (May vary depending on your IDE)
-4. In the window that pops up, press ”Directory”
-5. Navigate to the program folder and select it
-6. In the bottom right corner, press ”Finish”
-7. In the Project Manager of Eclipse (usually located on the left), expand the folder
-8. In the folder enter ”src” folder
-9. In ”src” enter the ”library” folder
-10. Double-click ”Run.java”
-11. Click the ”Run button” in Eclipse to run the program (a round green button with a white play symbol on it, located in the top bar of the program) 
+Easily download Github repos without any external dependencies such as Git, Tar, Unzip, etc.
 
 
-**_Needed_ pre-requisites**:
-A computer capable of running an IDE for Java
+Why?
+----
+
+I really like the concept of managing user defined projects, repos, file structures (package management) on Github like the way that [Component](https://github.com/component) does package management. I have a package management system [Rock](https://github.com/rocktemplates) that I use to create skeleton/templates of projects. I wanted Rock to use Github as a package management system. I also didn't want any dependencies amongst any 3rd party programs like Git, Tar, or Unzip. Pure Node.js JavaScript is what I wanted.
+
+
+Installation
+------------
+
+    npm install github-download
+
+
+
+Usage
+-----
+
+### ghdownload(params, dir)
+
+Downloads the latest copy of some Github reference (branch, tag, or commit), or the `master` branch by default (specifically the `master` branch, it does _not_ honor Github's default branch configuration). This will still work even if the Github API limit has been reached.
+
+- **params**: Can either be:
+     - a Github URL string such as:
+         - `https://github.com/jprichardson/node-vcsurl.git`
+         - `git@github.com:jprichardson/node-vcsurl.git`
+         - `git://github.com/jprichardson/node-vcsurl.git`
+         - and even including a reference, e.g. `https://github.com/jprichardson/node-vcsurl.git#master`
+     - or an object like so: `{user: 'jprichardson', repo: 'vcsurl', ref: 'master'}`
+- **dir**: The output directory. Uses the current working directory if nothing is specified.
+
+Returns a GithubDownloader object that emits events on `dir`, `file`, and `end`.
+
+Example:
+
+```javascript
+var ghdownload = require('github-download')
+  , exec = require('exec')
+
+ghdownload({user: 'jprichardson', repo: 'node-batchflow', ref: 'master'}, process.cwd())
+.on('dir', function(dir) {
+  console.log(dir)
+})
+.on('file', function(file) {
+  console.log(file)
+})
+.on('zip', function(zipUrl) { //only emitted if Github API limit is reached and the zip file is downloaded
+  console.log(zipUrl)
+})
+.on('error', function(err) {
+  console.error(err)
+})
+.on('end', function() {
+  exec('tree', function(err, stdout, sderr) {
+    console.log(stdout)
+  })
+})
+```
+
+Outputs:
+
+    .
+    ├── CHANGELOG.md
+    ├── LICENSE
+    ├── README.md
+    ├── lib
+    │   └── batchflow.js
+    ├── package.json
+    └── test
+        ├── batchflow-par-array.test.js
+        ├── batchflow-par-limit.test.js
+        ├── batchflow-par-object.test.js
+        ├── batchflow-seq-array.test.js
+        ├── batchflow-seq-object.test.js
+        ├── batchflow.test.js
+        ├── mocha.opts
+        └── resources
+
+    3 directories, 12 files
+
+
+
+License
+-------
+
+(MIT License)
+
+Copyright 2013-2016, JP Richardson  <jprichardson@gmail.com>
