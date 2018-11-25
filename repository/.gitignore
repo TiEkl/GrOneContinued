@@ -1,0 +1,7 @@
+/bin/
+bin/.DS_Store
+src/.DS_Store
+*.xml
+bin/workspace.xml
+*.xml
+res/bookDirectory.txt
