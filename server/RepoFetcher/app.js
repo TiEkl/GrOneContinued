@@ -5,20 +5,6 @@ var morgan = require('morgan');
 var path = require('path');
 var cors = require('cors');
 
-/** CLUSTERING  **/
-// fork can only create new NodeJs processes. You give it a js file
-// to execute
-/*const { fork } = require('child_process');
-const child = fork('server/otherApp.js');
-
-// process.on receives a message while process.send sends a message to
-// another process
-child.on('message', message => {
-    console.log('message from child: ', message);
-    child.send("parent says hello.");
-});*/
-/********************************/
-
 // Variables
 var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
 var port = process.env.PORT || 8000;
@@ -47,12 +33,15 @@ app.use(express.static(path.join(root, 'client')));
 app.set('appPath', 'client');
 
 // Import routes
-app.use(require('./controllers/index'));
+app.use(require('./index'));
 
 /**********TARGET SERVER **************/
 // target server listens on different port than proxy server
 // proxy server sends request to this port
-//app.listen(8001, '0.0.0.0');
+app.listen(8001, '0.0.0.0', function(err) {
+    if ( err ) throw err;
+    console.log("target server listening on port 8001");
+});
 /**************************************/
 
 // Error handler (must be registered last)
@@ -69,12 +58,12 @@ app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.json(err_res);
 });
-//var port = 3000;
-app.listen(port, function(err) {
+
+/*app.listen(port, function(err) {
     if (err) throw err;
     console.log(`Express server listening on port ${port}, in ${env} mode`);
     console.log(`Backend: http://localhost:${port}/api/`);
     console.log(`Frontend: http://localhost:${port}/`);
-});
+});*/
 
 module.exports = app;

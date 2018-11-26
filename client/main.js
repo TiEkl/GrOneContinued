@@ -9,7 +9,8 @@ var router = new VueRouter({
         path: '/',
         name: 'url_input',
         component: require("./components/inputScreen.vue")
-      }
+      },
+      { path: '/graph', component: require("./components/dependGraph.vue") }
     ]
   });
   
@@ -21,4 +22,3 @@ var router = new VueRouter({
       return createElement(baseRouter);
     }
   }).$mount("#mountpoint");
-

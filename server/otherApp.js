@@ -23,6 +23,7 @@ mongoose.connect(mongoURI, { useNewUrlParser: true }, function(err) {
 var app = express();
 //use cors to allow github
 app.use(cors());
+
 // Parse requests of content-type 'application/json'
 app.use(bodyParser.json());
 // HTTP request logger
@@ -57,6 +58,7 @@ app.listen(port, function(err) {
     console.log(`Frontend: http://localhost:${port}/`);
 });
 
+// CLUSTERING
 // child sends message to parent
 if(process.send){
     process.send("child's message is Hello");
