@@ -83,6 +83,9 @@ build/Release
 node_modules/
 jspm_packages/
 
+# Testing repo folder
+repos/
+
 # TypeScript v1 declaration files
 typings/
 

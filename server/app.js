@@ -6,6 +6,7 @@ var path = require('path');
 var cors = require('cors');
 var cmd = require('node-cmd');
 const { exec } = require('child_process');
+const fs = require('fs');
 //var folderName = 'timmarcus';
 /** CLUSTERING  **/
 // fork can only create new NodeJs processes. You give it a js file
@@ -77,12 +78,16 @@ app.listen(port, function(err) {
     console.log(`Express server listening on port ${port}, in ${env} mode`);
     console.log(`Backend: http://localhost:${port}/api/`);
     console.log(`Frontend: http://localhost:${port}/`);
-    exec('srcml repos/timmarcus', (err, stdout, stderr) => {
-        console.log(stdout);
-        console.log(err);
-        console.log(stderr);
-        }
-    );
+    var current = process.cwd();
+    fs.mkdir(current + '/repos/xml' ,{recursive: true}, (err) => {
+        exec('srcml repos/timmarcus -o repos/xml/timmarcus.xml', (error, stdout, stderr) => {
+            console.log(stdout);
+            console.log(err);
+            console.log(error);
+            console.log(stderr);
+            }
+        );
+    })
 });
 
 module.exports = app;
