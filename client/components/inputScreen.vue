@@ -88,7 +88,7 @@
               });
         },
 
-            save_url(){
+        save_url(){
                 //Method for saving the url in a DB, so that other methods can find it and use it
                 //If saved successfully we assume that it will be taken to be filtered and prepared
                 //thus we will proceed to display the progress bar
@@ -101,7 +101,7 @@
                     url: this.Url_Input.url
                     }
 
-                    axios.post('http://localhost:3000/api/repo_fetcher', new_url)
+                    axios.post('/api/repo_fetcher', new_url)
                     .then((response)=>{
 
                     this.Url_Input.url = "";
