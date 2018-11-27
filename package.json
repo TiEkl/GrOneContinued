@@ -35,7 +35,8 @@
     "morgan": "^1.9.1",
     "svg": "^0.1.0",
     "vue": "^2.5.17",
-    "vue-router": "^3.0.1"
+    "vue-router": "^3.0.1",
+    "request": "^2.88.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
