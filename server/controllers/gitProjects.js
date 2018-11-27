@@ -34,9 +34,10 @@ router.post("/", function(req, res, next) {
       if (err) {
         return next(err);
       }
-            //const filterScript = exec('sh filterScript.sh ../RepoFetcher');
-   //const filterScript = exec('sh ..\RepoFetcher\filterScript.sh');
-   const filterScript = exec('dir /s /b ..\..\repository | findstr /e .js');
+      //*** For UNIX Systems ***/
+      const filterScript = exec('find ./repository -type f ! -name "*.java" -delete');
+      //*** For Windows Systems ***/
+      //const filterScript = exec('dir /s /b ..\..\repository | findstr /e .js');
    filterScript.stdout.on('data', function(data){
     console.log(data); 
 });
