@@ -38,9 +38,13 @@ app.use(require('./index'));
 /**********TARGET SERVER **************/
 // target server listens on different port than proxy server
 // proxy server sends request to this port
-app.listen(8001, '0.0.0.0', function(err) {
+let repo_fetcher = '192.168.1.219';      //want to replace this later with a constand from the constants file
+
+let repo_fetcher_port = 8001;
+
+app.listen(repo_fetcher_port, repo_fetcher, function(err) {
     if ( err ) throw err;
-    console.log("target server listening on port 8001");
+    console.log("repo_fetcher listening on port " + repo_fetcher_port);
 });
 /**************************************/
 
@@ -58,12 +62,5 @@ app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.json(err_res);
 });
-
-/*app.listen(port, function(err) {
-    if (err) throw err;
-    console.log(`Express server listening on port ${port}, in ${env} mode`);
-    console.log(`Backend: http://localhost:${port}/api/`);
-    console.log(`Frontend: http://localhost:${port}/`);
-});*/
 
 module.exports = app;

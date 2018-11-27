@@ -19,7 +19,7 @@
                     <form>
                         <label for="url_input_form">Please enter a valid GitHub project url</label>
                         <input id="url_input_form" class="form-control" type ="url" v-model="Url_Input.url" required pattern="https?://.+">
-                        <button class="btn btn-info" type="button" @click="postProject()">Create visualization</button>
+                        <button class="btn btn-info" type="button" @click="save_url()">Create visualization</button>
                         <div v-if="wrong_url===true">
                             <p>This is not a valid url</p>
                         </div>
@@ -88,15 +88,6 @@
               });
         },
 
-
-
-
-
-
-
-
-
-
             save_url(){
                 //Method for saving the url in a DB, so that other methods can find it and use it
                 //If saved successfully we assume that it will be taken to be filtered and prepared
@@ -110,7 +101,7 @@
                     url: this.Url_Input.url
                     }
 
-                    axios.post('http://localhost:3000/api/urls', new_url)
+                    axios.post('http://localhost:3000/api/repo_fetcher', new_url)
                     .then((response)=>{
 
                     this.Url_Input.url = "";
