@@ -5,7 +5,7 @@ var morgan = require('morgan');
 var path = require('path');
 var cors = require('cors');
 
-//request module is used to route the reqests
+//request module is used to route the reqests (?) now im not sure anymore lol
 var request = require('request');
 
 /** CLUSTERING  **/
