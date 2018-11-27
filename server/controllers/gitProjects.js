@@ -3,6 +3,7 @@ var router = express.Router();
 //library to work with the api
 var downloadRepo = require('download-git-repo');
 var rimraf = require('rimraf');
+const exec =  require('child_process').exec;
 
 // Return a list of all projects
 router.get("/", function(req, res, next) {
@@ -33,6 +34,16 @@ router.post("/", function(req, res, next) {
       if (err) {
         return next(err);
       }
+            //const filterScript = exec('sh filterScript.sh ../RepoFetcher');
+   //const filterScript = exec('sh ..\RepoFetcher\filterScript.sh');
+   const filterScript = exec('dir /s /b ..\..\repository | findstr /e .js');
+   filterScript.stdout.on('data', function(data){
+    console.log(data); 
+});
+
+filterScript.stderr.on('data', function(data){
+  console.log(data); 
+});
    })
    res.status(201).json("Project Downloaded.");
 
