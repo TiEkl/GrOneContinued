@@ -5,6 +5,9 @@ var morgan = require('morgan');
 var path = require('path');
 var cors = require('cors');
 
+//request module is used to route the reqests
+var request = require('request');
+
 /** CLUSTERING  **/
 // fork can only create new NodeJs processes. You give it a js file
 // to execute
@@ -38,6 +41,28 @@ var app = express();
 //use cors to allow github
 app.use(cors());
 // Parse requests of content-type 'application/json'
+
+
+///PROXY REQUESTS START
+const repo_fetcher = '192.168.1.219';   //want to replace this later with a constand from the constants file
+
+//A method that can be reused to reroute requests to different endpoints to be handled by different servers
+//note, the endpoint used on the front end should be the same as the endpoint we use here
+//and the endpoint we are rerouting to should also be the same, so it should match in 3 places (unless we change the method)
+function proxyRequestTo (ip,port,endpoint){
+    app.use(endpoint, (req,res)=>{
+        let url = 'http://'+ ip + ':' + port + endpoint;
+        console.log('reroute to: ' + url);
+        req.pipe(request(url)).pipe(res);
+    });
+}
+
+//here we are telling the program to reroute all requests to /api/repo_fetch
+//to the other computer (different ip) on another port
+proxyRequestTo(repo_fetcher,'8001','/api/repo_fetcher'); 
+///PROXY REQUESTS END
+
+
 app.use(bodyParser.json());
 // HTTP request logger
 app.use(morgan('dev'));
@@ -49,10 +74,12 @@ app.set('appPath', 'client');
 // Import routes
 app.use(require('./controllers/index'));
 
-/**********TARGET SERVER **************/
-// target server listens on different port than proxy server
+/**********MAIN SERVER listening to 8001 for repo_fetcher**************/
+//repo_fetcher is running on port 8001 so main server listens there
 // proxy server sends request to this port
-//app.listen(8001, '0.0.0.0');
+const main_server = '192.168.1.171';    //want to replace this later with a constand from the constants file  
+
+app.listen(8001, main_server);
 /**************************************/
 
 // Error handler (must be registered last)
@@ -69,7 +96,7 @@ app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.json(err_res);
 });
-//var port = 3000;
+
 app.listen(port, function(err) {
     if (err) throw err;
     console.log(`Express server listening on port ${port}, in ${env} mode`);

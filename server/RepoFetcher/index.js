@@ -2,7 +2,9 @@ var path = require('path');
 var express = require('express');
 var router = express.Router()
 
-router.use('/api/urls', require('./url_inputs.js'));
+//router.use('/api/urls', require('./url_inputs.js'));
+
+router.use('/api/repo_fetcher', require('./repo_fetcher.js'));
 
 //gets to actual repository using the url
 //router.use('/api/repos', require('./repofetcher/repos.js'))
