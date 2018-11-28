@@ -28,7 +28,7 @@ router.all("/app1/*", function ( req, res ) {
 });*/
 
 // Insert routes below
-router.use('/api/gitProjects', require('./gitProjects'));
+router.use('/api/gitProjects', require('../RepoFetcher/gitProjects'));
 
 // All other routes redirect to the index.html
 router.route('/*').get(function (req, res) {

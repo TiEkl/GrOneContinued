@@ -38,10 +38,10 @@ router.post("/", function(req, res, next) {
         return next(err);
       }
       //*** For UNIX Systems ***/
-      //const filterCommand = exec('find ./repository -type f ! -name "*.java" -delete');
+      const filterCommand = exec('find ./repository -type f ! -name "*.java" -delete');
       //*** For Windows Systems ***/
       //const filterCommand = exec('dir /s /b .\\repository | findstr /e .js');
-      const filterCommand = exec('DEL /S /F /Q .\\repository /e "*.js"') //this line doesn't work
+      //const filterCommand = exec('DEL /S /F /Q .\\repository /e "*.js"') //this line doesn't work
       filterCommand.stdout.on('data', function(data){
         console.log(data); 
       });

@@ -5,6 +5,7 @@ var router = express.Router()
 //router.use('/api/urls', require('./url_inputs.js'));
 
 router.use('/api/repo_fetcher', require('./repo_fetcher.js'));
+router.use('/api/gitProjects', require('./gitProjects.js'));
 
 //gets to actual repository using the url
 //router.use('/api/repos', require('./repofetcher/repos.js'))
