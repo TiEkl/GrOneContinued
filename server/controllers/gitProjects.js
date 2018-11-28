@@ -23,9 +23,9 @@ router.post("/", function(req, res, next) {
   var repoUrl = owner + "/" + repo;
   //The place to download the repo
   //***For UNIX systems, Windows needs backslash ***/
-  //var destination = process.cwd() + '/repository' + "/" + repo;
+  var destination = process.cwd() + '/repository' + "/" + repo;
   //*** For Windows systems, with backslash for path ***/
-  var destination = process.cwd() + '\\repository' + "\\" + repo;
+  //var destination = process.cwd() + '\\repository' + "\\" + repo;
   console.log("destination:           " + destination)
     //function to clear destination 
     rimraf(destination, function() {

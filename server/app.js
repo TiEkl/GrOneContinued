@@ -44,7 +44,7 @@ app.use(cors());
 
 
 ///PROXY REQUESTS START
-const repo_fetcher = '192.168.1.219';   //want to replace this later with a constand from the constants file
+//const repo_fetcher = '127.0.0.1';   //want to replace this later with a constand from the constants file
 
 //A method that can be reused to reroute requests to different endpoints to be handled by different servers
 //note, the endpoint used on the front end should be the same as the endpoint we use here
@@ -59,7 +59,8 @@ function proxyRequestTo (ip,port,endpoint){
 
 //here we are telling the program to reroute all requests to /api/repo_fetch
 //to the other computer (different ip) on another port
-proxyRequestTo(repo_fetcher,'8001','/api/repo_fetcher'); 
+//proxyRequestTo(repo_fetcher,'8001','/api/repo_fetcher'); 
+proxyRequestTo(repo_fetcher,'8001','/api/gitProjects'); 
 ///PROXY REQUESTS END
 
 
