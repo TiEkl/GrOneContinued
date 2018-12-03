@@ -11,7 +11,8 @@
     "postinstall": "browserify -t vueify -e client/main.js -o client/build/mainBuild.js",
     "start": "node ./server/app.js",
     "test": "newman run ./tests/api-tests.postman.json",
-    "dev": "nodemon ./server/app.js"
+    "dev": "nodemon ./server/app.js",
+    "devrepofetcher": "nodemon ./server/RepoFetcher/app.js"
   },
   "repository": {
     "type": "git",
@@ -23,20 +24,20 @@
     "babel": "^6.23.0",
     "babelify": "^10.0.0",
     "body-parser": "^1.18.3",
-    "browserify": "^16.2.2",
-    "download-git-repo": "^1.1.0",
-    "exec": "^0.2.1",
-    "github-download": "^0.5.0",
+    "browserify": "^16.2.3",
     "cors": "^2.8.5",
     "d3": "^5.7.0",
+    "download-git-repo": "^1.1.0",
+    "exec": "^0.2.1",
     "express": "^4.16.3",
+    "github-download": "^0.5.0",
     "http-proxy": "^1.17.0",
     "mongoose": "^5.2.12",
     "morgan": "^1.9.1",
+    "request": "^2.88.0",
     "svg": "^0.1.0",
     "vue": "^2.5.17",
-    "vue-router": "^3.0.1",
-    "request": "^2.88.0"
+    "vue-router": "^3.0.1"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
