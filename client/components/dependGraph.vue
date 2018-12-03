@@ -24,7 +24,7 @@ body{
            fill: black;
             font: 12px sans-serif;
            
-         }/*
+         } /*
          .circle:hover .text{
              fill:black;
              font: 25px sans-serif;
