@@ -60,7 +60,7 @@ function proxyRequestTo (ip,port,endpoint){
 //here we are telling the program to reroute all requests to /api/repo_fetch
 //to the other computer (different ip) on another port
 //proxyRequestTo(repo_fetcher,'8001','/api/repo_fetcher'); 
-proxyRequestTo(repo_fetcher,'8001','/api/gitProjects'); 
+//proxyRequestTo(repo_fetcher,'8001','/api/gitProjects'); 
 ///PROXY REQUESTS END
 
 
@@ -80,7 +80,7 @@ app.use(require('./controllers/index'));
 // proxy server sends request to this port
 const main_server = '192.168.1.171';    //want to replace this later with a constand from the constants file  
 
-app.listen(8001, main_server);
+//app.listen(8001, main_server);
 /**************************************/
 
 // Error handler (must be registered last)
