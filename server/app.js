@@ -29,6 +29,8 @@ var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
 
 // Please only modify the port here ffs
 var port = process.env.PORT || 8000;
+// This variable is here for the proxy request.
+var repo_fetcher_port = process.env.PORT || 8001;
 
 // Connect to MongoDB
 mongoose.connect(mongoURI, { useNewUrlParser: true }, function(err) {
@@ -48,7 +50,12 @@ app.use(cors());
 
 
 ///PROXY REQUESTS START
-const repo_fetcher = '127.0.0.1';   //want to replace this later with a constand from the constants file
+
+// LOCAL TESTING - POINTS TO SELF RIGHT NOW
+const repo_fetcher = '127.0.0.1';   //want to replace this later with a constant from the constants file
+
+// change this ip to other comp when distributed.
+// const repo_fetcher = '123.43.63.1';
 
 //A method that can be reused to reroute requests to different endpoints to be handled by different servers
 //note, the endpoint used on the front end should be the same as the endpoint we use here
@@ -61,12 +68,11 @@ function proxyRequestTo (ip,port,endpoint){
     });
 }
 
-//here we are telling the program to reroute all requests to /api/repo_fetch
-//to the other computer (different ip) on another port
+// here we are telling the program to reroute all requests to /api/repo_fetch
+// to the other computer (different ip) on another port
 //proxyRequestTo(repo_fetcher,'8001','/api/repo_fetcher');
 
-//////// The 8001 below should be changed into a var ///////
-proxyRequestTo(repo_fetcher,'8001','/api/gitProjects');
+proxyRequestTo(repo_fetcher, repo_fetcher_port,'/api/gitProjects');
 ///PROXY REQUESTS END
 
 

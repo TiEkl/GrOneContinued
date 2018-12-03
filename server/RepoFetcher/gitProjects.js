@@ -23,24 +23,23 @@ router.post("/", function(req, res, next) {
   // the strings that we get from the front end
   var owner = req.body.owner;
   var repo = req.body.repo;
-// this must have the absolute "/" due to a bug in the library.
-  var repoUrl = owner + "/" + repo;
 
+  // this must have the absolute "/" due to a bug in the library.
+  var repoUrl = owner + "/" + repo;
   console.log("RepoUrl:      " + repoUrl);
+
   //The place to download the repo
-  //***For UNIX systems, Windows needs backslash ***/
   var destination = path.normalize(
      path.join(process.cwd(), 'repository', repo));
+     console.log("destination:           " + destination)
 
-  //*** For Windows systems, with backslash for path ***/
-  //var destination = process.cwd() + '\\repository' + "\\" + repo;
-  console.log("destination:           " + destination)
     //function to clear destination
     rimraf(destination, function() {
       console.log("destination directory cleared.")
    })
+
    //Actual method that downloads the files taking as input: owner/repo,directory.
-    downloadRepo(repoUrl, destination, function (err) {
+   downloadRepo(repoUrl, destination, function (err) {
       console.log(err ? 'Error': 'Successfully downloaded repository.')
       if (err) {
         return next(err);
@@ -72,7 +71,7 @@ function filterDir(startPath,filter){
 
     var results = [];
 
-    console.log('Starting from dir '+startPath+'/');
+    console.log('Starting from dir '+ startPath +'/');
 
     if (!fs.existsSync(startPath)){
         console.log("no dir ",startPath);
@@ -94,9 +93,12 @@ function filterDir(startPath,filter){
         }
         else if (filename.indexOf(filter) <= 0) {
            console.log('-- not Java: ',filename);
+
+           // Because fs.unlink does not work on a directory, it is safer.
+           // what is not safe is that filename can be a folder.
            fs.unlink(filename, (err) => {
              if (err) throw err;
-             console.log('       ' + filename + ' was deleted');
+             // console.log('---->' + filename + ' was deleted');
             });
         };
     };

@@ -43,9 +43,10 @@ app.use(require('./index'));
 // target server listens on different port than proxy server
 // proxy server sends request to this port
 
+// DISTRIBUTED
 // let repo_fetcher = '192.168.43.168';      //want to replace this later with a constand from the constants file
 
-// LOCAL TESTING
+// LOCAL TESTING - POINTS TO SELF
 let repo_fetcher = '127.0.0.1';
 
 

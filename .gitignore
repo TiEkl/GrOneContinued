@@ -152,3 +152,6 @@ client/build/*
 
 #ignore package-lock file - should run npm install when you switch to another branch
 package-lock.json
+
+# ignore inputted repositories
+repository/
