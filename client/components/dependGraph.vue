@@ -5,7 +5,9 @@
 </div>
 </template>
 <style>
-
+body{
+  
+}
 
 .axis path,
 .axis line {
@@ -14,15 +16,28 @@
     stroke-width: 1;
     shape-rendering: crispEdges;
 }
-         svg rect {
-            fill: gray;
-         }
+
+      
+        
+    
          
-         svg text {
-            fill: yellow;
+        
+         .text {
+           fill: black;
             font: 12px sans-serif;
-            text-anchor: end;
+           
+         }/*
+         .circle:hover .text{
+             fill:black;
+             font: 25px sans-serif;
          }
+         .text:hover{
+             fill:black;
+         }*/
+        
+ 
+
+
 </style>
 <script>
 import graphData from "./../data/graphData.json"
@@ -35,7 +50,7 @@ import * as d3 from 'd3';
       return {
         
      height : 600,
-     width : 600,
+     width : 800,
     test : graphData,
     //test : {},
      datatest : {nodes: [{id:"", group:"" }], links: [{source:"", target:"", value:""}]}
@@ -69,15 +84,24 @@ import * as d3 from 'd3';
           .selectAll("circle")
           .data(nodes)
           .enter().append("circle")
+          .attr("class", "circle")
             .attr("r", d => d.count * 5)
             .attr("fill",  d => scale(d.group))
             .call(drag(simulation))
             .on("mouseover", mouseOver(.2))
         .on("mouseout", mouseOut);
           
-        node.append("title")
+     /*   node.append("title")
             .text(d => d.id);
-
+*/
+     var text = svg.append("g").selectAll("text")
+    .data(nodes)
+  .enter().append("text")
+  .attr("class", "text")
+  .attr("opacity", 0)
+    .attr("x", 20)
+    .attr("y", ".31em")
+    .text(function(d) { return d.id; })
      
  
 
@@ -92,7 +116,14 @@ import * as d3 from 'd3';
           node
               .attr("cx", d => d.x)
               .attr("cy", d => d.y);
+
+            text.attr("transform", transform);
         }
+
+        function transform(d) {
+  return "translate(" + d.x + "," + d.y + ")";
+}
+
          var linkedByIndex = {};
     links.forEach(function(d) {
         linkedByIndex[d.source.index + "," + d.target.index] = 1;
@@ -121,6 +152,14 @@ import * as d3 from 'd3';
             link.style("stroke", function(o){
                 return o.source === d || o.target === d ? o.source.colour : "#fff";
             }).transition().duration(1000);
+            
+            text.style("opacity", function(o) {
+                var thisOpacity = isConnected(d, o) ? 1 : opacity;
+                return thisOpacity;})
+                .transition().duration(1000);;
+            text.style("fill-opacity", function(o) {
+               var thisOpacity = isConnected(d, o) ? 1 : opacity;
+                return thisOpacity;})
         };
     }
 
@@ -129,6 +168,9 @@ import * as d3 from 'd3';
         node.style("fill-opacity", 1).transition().duration(1000);
         link.style("stroke-opacity", 0).transition().duration(1000);
         link.style("stroke", "#ddd").transition().duration(1000);
+        text.style("opacity", 0).transition().duration(1000);
+        
+        
     }
 
         return svg.node();

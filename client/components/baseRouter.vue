@@ -37,12 +37,9 @@
 // should this be "baseRouter"?
   module.exports = {
     name:"BaseRouter",
-    data(){
-      return{
-        
-      }
-    }
-  };
+  }
+   
+   
 </script>
 
 
