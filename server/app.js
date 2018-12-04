@@ -68,11 +68,13 @@ function proxyRequestTo (ip,port,endpoint){
     });
 }
 
+
 // here we are telling the program to reroute all requests to /api/repo_fetch
 // to the other computer (different ip) on another port
 //proxyRequestTo(repo_fetcher,'8001','/api/repo_fetcher');
 
 proxyRequestTo(repo_fetcher, repo_fetcher_port,'/api/gitProjects');
+
 ///PROXY REQUESTS END
 
 
@@ -95,7 +97,9 @@ app.use(require('./controllers/index'));
 // FOR LOCAL TESTING
  const main_server = '127.0.0.1';
 
+
 app.listen(port, main_server);
+
 /**************************************/
 
 // Error handler (must be registered last)
