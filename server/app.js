@@ -125,15 +125,22 @@ app.listen(port, function (err) {
                 //console.log(object, arrayOfClass);
 
             }
+
             //console.log("Length " + arrayOfClass.length);
-            findDependency(object, arrayOfClass);
+            var dependencies = findDependency(object, arrayOfClass);
+
+            dependencies.forEach( data => {
+                console.log(data);
+            })
+
+            //console.log(JSON.stringify(dependencies));
 
             function findClass(object) {
                 // var arrayOfClass = [];
                 for (var key in object) {
+
                     if (object.hasOwnProperty(key)) {
                         var property = object[key];
-
                     }
                     for (key in property) {
                         if (property.hasOwnProperty(key)) {
@@ -147,35 +154,88 @@ app.listen(port, function (err) {
                             else {
                                 findClass(object[key]);
                             }
-
                         }
                     }
-
                 }
-
             }
 
 
             function findDependency(object, arrayOfClass) {
+                var classDepends = [];
                 for (var i = 0; i < arrayOfClass.length; i++) {
                     var currentClass = object[i];
-                    //console.log(currentClass);
-                    scan(currentClass);
+                    classDepends[i] = arrayOfClass[i];
+                    console.log("Current: " + currentClass);
+                    let result = scan2(currentClass);
+                    classDepends[i].push(result);
                 }
+                return classDepends;
             }
 
             function scan(object) {
+                let results = [];
                 for (var key in object) {
                     //console.log("KEYYY" + object[key]);
                     if (object.hasOwnProperty(key)) {
                         if (key == "class" || key == 0 || key == "block" || key == "decl_stmt" || key == "decl" || key == "type") {
                             var test = object[key];
-                            if (key == "type") { console.log(test); }
-                            scan(test);
+
+                            var scanResult = scan(test);
+                            if (Array.isArray(scanResult)) {
+                                results.push.apply(results, scanResult);
+                            }
+                            else {
+                                results.push(scanResult);
+                            }
+                        }
+                        else if(key == "name") {
+                            var test2 = object[key];
+                            return test2;
+                           // console.log("Test2: " + test2); 
                         }
                     }
                 } 
+                return results;
+            }
 
+            function scan2(object) {
+                let results = [];
+                for (var key in object) {
+                    //console.log("KEYYY" + object[key]);
+                    if (object.hasOwnProperty(key)) {
+                        let property = object[key];
+                        if ( key == '0') {
+                            return;
+                        }
+                        if (key !== 'decl_stmt' || key !== 'decl') {
+                           
+                           var scanResult = scan2(property);
+                            if (Array.isArray(scanResult)) {
+                                results.push.apply(results, scanResult);
+                            }
+                        }
+                        else if(key == 'decl_stmt' || key == 'decl') {
+                           let singleName = getDeclName(property);
+                           results.push(singleName);
+                           // console.log("Test2: " + test2); 
+                        }
+                    }   
+                } 
+                return results;
+            }
+
+            function getDeclName(object) {
+                for ( var key in object) {
+                    if(object.hasOwnProperty(key)) {
+                        let property = object[key];
+                        if(key == 'decl' || key == 'type') {
+                            return getDeclName(property);
+                        }
+                        else if (key == 'name') {
+                            return property;
+                        }
+                    }
+                }
             }
 
 

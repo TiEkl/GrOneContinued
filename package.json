@@ -23,7 +23,7 @@
     "babel": "^6.23.0",
     "babelify": "^10.0.0",
     "body-parser": "^1.18.3",
-    "browserify": "^16.2.2",
+    "browserify": "^16.2.3",
     "cors": "^2.8.5",
     "d3": "^5.7.0",
     "download-git-repo": "^1.1.0",
