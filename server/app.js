@@ -13,6 +13,7 @@ var xpath = require('xpath')
 var dom = require('xmldom').DOMParser
 var xml2js = require('xml2js');
 _ = require("underscore");
+var jp = require('jsonpath');
 //var folderName = 'timmarcus';
 /** CLUSTERING  **/
 // fork can only create new NodeJs processes. You give it a js file
@@ -79,6 +80,8 @@ app.use(function (err, req, res, next) {
     res.json(err_res);
 });
 //var port = 3000;
+var arrayOfClass = [];
+
 app.listen(port, function (err) {
     if (err) throw err;
     console.log(`Express server listening on port ${port}, in ${env} mode`);
@@ -91,13 +94,13 @@ app.listen(port, function (err) {
         }
     );*/
 
-    
+
 
 
     var parser = new xml2js.Parser();
     fs.readFile('timmarcus.xml', function (err, data) {
         parser.parseString(data, function (err, result) {
-             
+
             /* console.dir(JSON.stringify(result));
              console.log('Done');
              console.log(JSON.stringify(result.unit.unit.name));
@@ -108,100 +111,214 @@ app.listen(port, function (err) {
              console.log(Object.keys(result.unit.unit));
              console.log(Object.keys(result.unit.$.revision));
              */
+
+            var object = result.unit.unit;
+            //console.log(object);
+
+            fs.writeFileSync('timmarcus3.json', JSON.stringify(object, null, 2));
+
+            var count = 0;
             
-            var object = result
-            fs.writeFileSync('timmarcus2.json', JSON.stringify(object)); 
-            for (var key in object) {
-                if (object.hasOwnProperty(key)) {
-                    var property = object[key];
-                }
-                
-              var propSize = _.size(property.unit);
-                console.log("UnitSize"+ propSize); 
-                var className = [];
-                for (var i = 0; i < propSize; i++) {
-                    className.push(property.unit[i].class[0].name);
-                }
-                console.log(className);
+            findClass(object);
 
-               var allClasses= [];
-               for (var i=0; i<propSize; i++){
-                 allClasses.push(property.unit[i]);
-                 console.log("TEST123" + JSON.stringify(property.unit[i]));
-               }
-               
-              var testDecl = ["Database", "Book"];
-               
-                var declName = [];
-                console.log("size: " + declSize);
-                // console.log(allClasses[0].class[0].block[0].decl_stmt[0].decl[0].name);
-                console.log("propSize:" + propSize);
+            for (let i = 0; i < arrayOfClass.length; i++) {
+                //console.log(object, arrayOfClass);
 
-                for (var i = 0; i < propSize; i++) {
-                    var declSize = _.size(allClasses[i].class[0].block[0].decl_stmt);
-                    for (var j = 0; j < declSize; j++) {
-                        var typeName = allClasses[i].class[0].block[0].decl_stmt[j].decl[0].type[0].name;
-                        declName.push(typeName);
-                        console.log(typeName);
-                        for (var k = 0; k < propSize; k++) {
-                            if (JSON.stringify(className[k]) == JSON.stringify(typeName)) {
-                                console.log(className[j] + " DEPENDENCY WITH: " + typeName);
+            }
+            //console.log("Length " + arrayOfClass.length);
+            findDependency(object, arrayOfClass);
+
+            function findClass(object) {
+                // var arrayOfClass = [];
+                for (var key in object) {
+                    if (object.hasOwnProperty(key)) {
+                        var property = object[key];
+
+                    }
+                    for (key in property) {
+                        if (property.hasOwnProperty(key)) {
+                            if (key == "class") {
+                                findClass(property[key]);
+                            }
+                            if (key == "name") {
+                                // console.log("Hallå2 " + property[key]);
+                                arrayOfClass.push(property[key]);
+                            }
+                            else {
+                                findClass(object[key]);
                             }
 
                         }
-
                     }
+
                 }
-                /*console.log( JSON.stringify(declName[7]) == JSON.stringify(className[15]));
-               console.log( declName[7]);
-               console.log(className[15]);
-               declName[7] == className[15];*/
-                 console.log( declName);
-               for(var i=0; i<className.length; i++){
-                   for(var j=0; j<declName.length; j++){
-                    if(JSON.stringify(className[i]) == JSON.stringify(declName[j])){
-                    console.log(className[i]);
-                }
-                }
-               }
-               
-        }
-/*
-            var classes =[]
-            for(var i=0; i<propSize; i++){
-            classes.push(property.unit[i].class);
+
             }
-            console.log(classes);
-           
-           */
+
+
+            function findDependency(object, arrayOfClass) {
+                for (var i = 0; i < arrayOfClass.length; i++) {
+                    var currentClass = object[i];
+                    //console.log(currentClass);
+                    scan(currentClass);
+                }
+            }
+
+            function scan(object) {
+                for (var key in object) {
+                    //console.log("KEYYY" + object[key]);
+                    if (object.hasOwnProperty(key)) {
+                        if (key == "class" || key == 0 || key == "block" || key == "decl_stmt" || key == "decl" || key == "type") {
+                            var test = object[key];
+                            if (key == "type") { console.log(test); }
+                            scan(test);
+                        }
+                    }
+                } 
+
+            }
+
+
+            /*
+                       
+                        function findDependency(arrayOfClass) {
+                            console.log("ARRAY1 : " + arrayOfClass)
+                            for (var key in arrayOfClass) {
+                                if (arrayOfClass.hasOwnProperty(key)) {
+                                    console.log(typeof arrayOfClass == "object");
+                                    currentNode = arrayOfClass[key];
+                                    console.log("ARRAY" + typeof (arrayOfClass));
+                                    var scan = object[key].class[0];
+                                    if (currentNode == scan.name) {
+                                        for (var key in scan.block) {
+                                            //console.log(typeof scan.block[0].decl_stmt)
+                                            console.log(scan.block);
+                                            if (scan.block.hasOwnProperty(key)) {
+                                                console.log("TESTAR23" + key);
+                                                if (key != "decl_stmt") {
+                                                    console.log(currentNode);
+                                                    findDependency(scan)
+            
+                                                }
+                                            }
+                                        }
+                                    }
+            
+                                }
+            
+                            }
+                        } */
+
+
+
         });
     });
+
 
 
 })
 
 
+
+
+
+
 /*
-    fs.readFile('timmarcus.xml', 'utf-8', function (err, data) {
-        //  const dataXml = xmlReader.parseSync(data);
+  var propSize = _.size(property.unit);
+  console.log("UnitSize"+ propSize); 
+  var className = [];
+  for (var i = 0; i < propSize; i++) {
+      className.push(property.unit[i].class[0].name);
+  }
+  //console.log(className);
+
+ var allClasses= [];
+ for (var i=0; i<propSize; i++){
+   allClasses.push(property.unit[i]);
+  // console.log("TEST123" + JSON.stringify(property.unit[i]));
+ }
+ 
+
+ console.log("alla klasser" +allClasses);
+var testDecl = ["Database", "Book"];
+ 
+  var declName = [];
+  console.log("size: " + declSize);
+  // console.log(allClasses[0].class[0].block[0].decl_stmt[0].decl[0].name);
+  console.log("propSize:" + propSize);
+  
+  
+  
+  
+  
+  
+  
+  
+ 
+  for (var i = 0; i < 17; i++) {
+      var declSize = _.size(allClasses[i].class[0].block[0].decl_stmt);
+      for (var j = 0; j < declSize; j++) {
+          var typeName = allClasses[i].class[0].block[0].decl_stmt[j].decl[0].type[0].name;
+         declName.push(typeName);
+          for (var k = 0; k < propSize; k++) {
+             
+              if (JSON.stringify(className[k]) == JSON.stringify(typeName)) {
+                  console.log(className[j] + " DEPENDENCY WITH: " + typeName);
+              }
+
+          }
+
+      }
+  }
+
+  
+  var names = jp.query(result, 'unit.class[*].name');
+  console.log("names" + names);
+  console.log( JSON.stringify(declName[7]) == JSON.stringify(className[15]));
+ console.log( declName[7]);
+ console.log(className[15]);
+ declName[7] == className[15];*/
+/*  console.log( declName);
+for(var i=0; i<className.length; i++){
+    for(var j=0; j<declName.length; j++){
+     if(JSON.stringify(className[i]) == JSON.stringify(declName[j])){
+     console.log(className[i]);
+ }
+ }
+}
+ 
+}
+
+var classes =[]
+for(var i=0; i<propSize; i++){
+classes.push(property.unit[i].class);
+}
+console.log(classes);
+ 
+ 
 
 
-        var doc = new dom().parseFromString(data)
-        var nodes = xpath.select("/unit/class[contains(text(),'class')]/name", doc)
-
-        var depend = xpath.select("//init/decl/type/name", doc)
-        // console.log(nodes)
-        // console.log(depend)
-        for (var i = 0; i < nodes.length; i++) {
-
-            console.log(nodes[i].localName + ": " + nodes[i].firstChild.data)
-            console.log("dependencies: " + depend[i].firstChild.data)
-        }
-        // console.log("Node: " + nodes[i].toString())  
+/*
+fs.readFile('timmarcus.xml', 'utf-8', function (err, data) {
+//  const dataXml = xmlReader.parseSync(data);
 
 
-        // showResult(dataXml);
-    });
+var doc = new dom().parseFromString(data)
+var nodes = xpath.select("/unit/class[contains(text(),'class')]/name", doc)
+
+var depend = xpath.select("//init/decl/type/name", doc)
+// console.log(nodes)
+// console.log(depend)
+for (var i = 0; i < nodes.length; i++) {
+
+console.log(nodes[i].localName + ": " + nodes[i].firstChild.data)
+console.log("dependencies: " + depend[i].firstChild.data)
+}
+// console.log("Node: " + nodes[i].toString())  
+
+
+// showResult(dataXml);
+});
 
 
 });
@@ -209,25 +326,25 @@ app.listen(port, function (err) {
 /*
 
 function showResult(xml) {
-    console.log("testar");
-    var txt = "";
-    path = "/bookstore/book/title"
-    if (xml.evaluate) {
-        var nodes = xml.evaluate(path, xml, null, XPathResult.ANY_TYPE, null);
-        var result = nodes.iterateNext();
-        while (result) {
-            txt += result.childNodes[0].nodeValue + "<br>";
-            result = nodes.iterateNext();
-        }
+console.log("testar");
+var txt = "";
+path = "/bookstore/book/title"
+if (xml.evaluate) {
+var nodes = xml.evaluate(path, xml, null, XPathResult.ANY_TYPE, null);
+var result = nodes.iterateNext();
+while (result) {
+txt += result.childNodes[0].nodeValue + "<br>";
+result = nodes.iterateNext();
+}
 
-    } /*else if (|| xhttp.responseType  == "msxml-document") {
-         xml.setProperty("SelectionLanguage", "XPath");
-         nodes = xml.selectNodes(path);
-         for (i = 0; i < nodes.length; i++) {
-             txt += nodes[i].childNodes[0].nodeValue + "<br>";
-         }
-     }
-    console.log(txt);
+} /*else if (|| xhttp.responseType  == "msxml-document") {
+xml.setProperty("SelectionLanguage", "XPath");
+nodes = xml.selectNodes(path);
+for (i = 0; i < nodes.length; i++) {
+txt += nodes[i].childNodes[0].nodeValue + "<br>";
+}
+}
+console.log(txt);
 };*/
 
 module.exports = app;
