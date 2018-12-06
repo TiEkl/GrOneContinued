@@ -119,14 +119,43 @@ app.listen(port, function (err) {
 
             var count = 0;
             
-            findClass(object);
-
+           // findClass(object);
+            testRegex(object);
             for (let i = 0; i < arrayOfClass.length; i++) {
                 //console.log(object, arrayOfClass);
 
             }
 
             //console.log("Length " + arrayOfClass.length);
+           
+            function testRegex(object) {
+                var allClasses = [];
+                for (var i = 0; i < object.length; i++) {
+                    var currentName = object[i].class[0].name;
+                    allClasses.push(currentName);
+                }
+                for(var i=0; i<allClasses.length; i++){
+                for (var j = 0; j < allClasses.length; j++) {
+                    
+                    var currentClass = JSON.stringify(object[i]);
+                    var pattern = new RegExp('"decl":.{"type":.{"name":."' + allClasses[j] + '".}]', 'g')
+                    var match;
+                    var result = [];
+                    while ((match = pattern.exec(currentClass)) != null) {
+                        result.push(match);
+                        console.log("current class: " + allClasses[i]);
+                        console.log("RELATIONSHIP WITH: " +match);
+                    }
+                }
+
+            }
+
+        }
+           
+        
+           
+           
+           
             var dependencies = findDependency(object, arrayOfClass);
 
             dependencies.forEach( data => {
@@ -165,7 +194,7 @@ app.listen(port, function (err) {
                 for (var i = 0; i < arrayOfClass.length; i++) {
                     var currentClass = object[i];
                     classDepends[i] = arrayOfClass[i];
-                    console.log("Current: " + currentClass);
+                    console.log("Current: \n " + JSON.stringify(currentClass));
                     let result = scan2(currentClass);
                     classDepends[i].push(result);
                 }
