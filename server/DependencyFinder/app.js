@@ -5,6 +5,7 @@ var morgan = require('morgan');
 var path = require('path');
 var cors = require('cors');
 
+
 // Variables
 var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
 var port = process.env.PORT || 8000;
@@ -41,13 +42,14 @@ app.use(require('./index'));
 app.listen(8001, '0.0.0.0', function(err) {
     if ( err ) throw err;
     console.log("target server listening on port 8001");
+    console.log("CWD: " + process.cwd());
 });
 /**************************************/
 
 // Error handler (must be registered last)
 var env = app.get('env');
 app.use(function(err, req, res, next) {
-    console.error(err.stack);
+    console.error(err.stack); 
     var err_res = {
         "message": err.message,
         "error": {}

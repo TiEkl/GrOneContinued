@@ -1,7 +1,9 @@
 var path = require('path');
 var express = require('express');
-var router = express.Router()
-
+var router = express.Router();
+var xml2js = require('xml2js');
+const fs = require('fs');
+const perf = require('execution-time')();
 // lol gigigle
 
 router.use('/api/urls', require('./url_inputs.js'));
@@ -18,7 +20,9 @@ router.get('/app1/',function(req,res) {
 });
 /*************************************************/
 router.route('/').get(function (req, res) { //??
-    res.sendfile(req.app.get('appPath') + '/index.html');
+    console.log("test");
+    res.sendFile(req.app.get('appPath') + '/index.html');
+    
 });
 
 // Insert routes below
@@ -37,37 +41,86 @@ router.route('/*').get(function (req, res) {
     var relativeAppPath = req.app.get('appPath');
     var absoluteAppPath = path.resolve(relativeAppPath);
     res.sendFile(absoluteAppPath + '/index.html');
+    console.log("tjatja");
 });
 
 router.get('/api', function(req, res) {
     res.json({"message": "Welcome to your backend"});
 });
 
-getXML("/timmarcus.xml")
+router.get('/api/dependencies', function(req,res) {
+    fs.readFile('omni.xml', function(err, data) {
+        var result = findDependencies(data);
+        if(result != null) {
+            res.status(200).json(result);
+        }
+    })
 
-function getXML(xml){
-let xhttp = new XMLHttpRequest();
-xhhtp.onreadystatechange = function(){
-    if (this.readyState == 4 && this.status ==200){
-        showResult(xhttp.responseXML);
-    }
-    xhttp.open("GET", xml, true);
-    xhttp.send();
-}
-function showResult(xml){
-    var txt="";
-    path ="/"
-    if (xml.evaluate){
-        var nodes = xml.evaluate(path, xml, null, XPathResult.ANY_TYPE, null);
-        var result = nodes.iterateNext();
-            while(result){
-                txt+= result.childNodes[0].nodeValue + "<br>"
-                result = nodes.iterateNext()
+
+})
+
+function findDependencies(xml) {
+    var parser = xml2js.parser();
+
+    parser.parseString(xml, function (err, result) {
+
+        var object = result.unit.unit;
+
+        var graphData2 = { 
+            "nodes":[], "links":[] };
+        testRegex(object);
+        
+        function testRegex(object) {
+            var allClasses = [];
+            var stringsJson = [];
+            for (var i = 0; i < object.length; i++) {
+                var currentNode = {"id": "", "group": 1, "count": 0};
+                if (object[i].class != null) {  
+                    var currentName = object[i].class[0].name;
+                    currentNode.id = currentName.toString();
+                    stringsJson[i] = JSON.stringify(object[i].class);
+                    //graphData2.nodes.push(nodes);
+                }
+
+                else if (object[i].interface != null) {
+                    var currentName = object[i].interface[0].name;
+                    currentNode.id = currentName.toString();
+                    stringsJson[i] = JSON.stringify(object[i].interface);
+                   // graphData2.nodes.push(nodes);
+                }
+                allClasses.push(currentName);
             }
-    }
-    console.log(txt);
+
+            for (var i = 0; i < allClasses.length; i++) {
+                var countDep = 0;
+                for (var j = 0; j < allClasses.length; j++) {
+
+                    if (i == j) {
+                        continue;
+                    }
+                    var pattern = new RegExp('"name":."' + allClasses[j])
+                    var match;
+                    var result = [];
+                    if ((match = pattern.exec(stringsJson[i])) != null) {
+                        result.push(match);
+                        countDep++;
+                        console.log("\n");
+                        console.log(allClasses[i] + "  RELATIONSHIP WITH:  " + allClasses[j]);
+                        var links = { "source": allClasses[i].toString(), "target": allClasses[j].toString(), "value": 1 };
+                        graphData2.links.push(links);
+                    }
+                    currentNode.count = countDep;
+                    graphData2.nodes.push(currentNode);
+                }
+            }
+            return graphData2;
+            //fs.writeFileSync('graphData2.json', JSON.stringify(graphData2, null, 2));
+            const results = perf.stop();
+            console.log(results.time);
+        }
+
+    });
 }
 
-}
 
 module.exports = router
