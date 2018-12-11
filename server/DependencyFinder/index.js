@@ -37,22 +37,26 @@ router.route('/').get(function (req, res) { //??
 //     res.sendfile(req.app.get('appPath') + '/buyer.html');
 // });
 
-router.route('/*').get(function (req, res) {
+/*router.route('/*').get(function (req, res) {
     var relativeAppPath = req.app.get('appPath');
     var absoluteAppPath = path.resolve(relativeAppPath);
-    res.sendFile(absoluteAppPath + '/index.html');
-    console.log("tjatja");
-});
+    res.sendFile('index.html', { root: path.join(__dirname, '../../client') })
+    //res.sendFile('../../client/index.html');
+    console.log("path:" + absoluteAppPath);
+});*/
 
 router.get('/api', function(req, res) {
     res.json({"message": "Welcome to your backend"});
 });
 
-router.get('/api/dependencies', function(req,res) {
+router.route('/api/dependencies').get(function(req,res) {
     fs.readFile('omni.xml', function(err, data) {
         var result = findDependencies(data);
+        console.log(result.nodes);
         if(result != null) {
             res.status(200).json(result);
+        } else {
+            console.log("banana");
         }
     })
 
@@ -60,8 +64,7 @@ router.get('/api/dependencies', function(req,res) {
 })
 
 function findDependencies(xml) {
-    var parser = xml2js.parser();
-
+    var parser = new xml2js.Parser();
     parser.parseString(xml, function (err, result) {
 
         var object = result.unit.unit;
@@ -104,8 +107,8 @@ function findDependencies(xml) {
                     if ((match = pattern.exec(stringsJson[i])) != null) {
                         result.push(match);
                         countDep++;
-                        console.log("\n");
-                        console.log(allClasses[i] + "  RELATIONSHIP WITH:  " + allClasses[j]);
+                        //console.log("\n");
+                        //console.log(allClasses[i] + "  RELATIONSHIP WITH:  " + allClasses[j]);
                         var links = { "source": allClasses[i].toString(), "target": allClasses[j].toString(), "value": 1 };
                         graphData2.links.push(links);
                     }
