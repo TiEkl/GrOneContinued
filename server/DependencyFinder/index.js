@@ -19,11 +19,11 @@ router.get('/app1/',function(req,res) {
     res.send("Hello world From Server 1");
 });
 /*************************************************/
-router.route('/').get(function (req, res) { //??
+/*router.route('/').get(function (req, res) { //??
     console.log("test");
     res.sendFile(req.app.get('appPath') + '/index.html');
     
-});
+});*/
 
 // Insert routes below
 //router.use('/api/camels', require('./camels'));
@@ -37,13 +37,13 @@ router.route('/').get(function (req, res) { //??
 //     res.sendfile(req.app.get('appPath') + '/buyer.html');
 // });
 
-/*router.route('/*').get(function (req, res) {
+router.route('/*').get(function (req, res) {
     var relativeAppPath = req.app.get('appPath');
     var absoluteAppPath = path.resolve(relativeAppPath);
-    res.sendFile('index.html', { root: path.join(__dirname, '../../client') })
+    res.sendFile(absoluteAppPath +'/index.html')
     //res.sendFile('../../client/index.html');
     console.log("path:" + absoluteAppPath);
-});*/
+});
 
 router.get('/api', function(req, res) {
     res.json({"message": "Welcome to your backend"});
