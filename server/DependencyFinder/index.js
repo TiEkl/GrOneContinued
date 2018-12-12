@@ -52,7 +52,6 @@ router.get('/api', function(req, res) {
 router.route('/api/dependencies').get(function(req,res) {
     fs.readFile('./server/DependencyFinder/omni.xml', function(err, data) {
         findDependencies(data, function(result) {
-            console.log("Test Callback");
             res.status(200).json(result);
         });
 
@@ -60,67 +59,72 @@ router.route('/api/dependencies').get(function(req,res) {
 
 
 })
-
+//Function for finding dependencies with an xml file as input and a callback function
+//that should handle the result from the function
 function findDependencies(xml, callback) {
     var parser = new xml2js.Parser();
-    perf.start();
+
+    perf.start();       //calculate time of excecution until perf.stop()
     parser.parseString(xml, function (err, result) {
 
-        var object = result.unit.unit;
+        var object = result.unit.unit;  //each .java file in json
 
-        var graphData2 = { 
+        var graphData = { 
             "nodes":[], "links":[] };
-        testRegex(object);
+        regexSearch(object);
         
-        function testRegex(object) {
-            var allClasses = [];
-            var stringsJson = [];
+        function regexSearch(object) {
+            var allClasses = []; //Will contain all classnames
+            var stringsJson = []; //Will contain all json representations of classes, stringified
+
+            //For loop that creates each Node for the graphData, checks for classes and interfaces.
+            //Also stringifies each class/interface to prepare for the regex matching.
             for (var i = 0; i < object.length; i++) {
                 var currentNode = {"id": "", "group": 1, "count": 0};
-                if (object[i].class != null) {  
+                if (object[i].class != null) {      //check if the java file includes any class
                     var currentName = object[i].class[0].name;
                     currentNode.id = currentName.toString();
-                    stringsJson[i] = JSON.stringify(object[i].class);
-                    //graphData2.nodes.push(nodes);
-                }
+                    stringsJson[i] = JSON.stringify(object[i].class); //object[i].class is the current class in java file at [i] .
 
-                else if (object[i].interface != null) {
+                }
+                else if (object[i].interface != null) {         //check if the java file includes any interface
                     var currentName = object[i].interface[0].name;
                     currentNode.id = currentName.toString();
                     stringsJson[i] = JSON.stringify(object[i].interface);
-                   // graphData2.nodes.push(nodes);
                 }
-                graphData2.nodes.push(currentNode);
+                graphData.nodes.push(currentNode);
                 allClasses.push(currentName);
             }
-
+            //Outer loop is the current class we're searching through
             for (var i = 0; i < allClasses.length; i++) {
-                var countDep = 0;
+                var countDep = 0;       //total amount of dependencies for current class for class [i].
+                //Loop that searches for each class name [j] inside the stringsJson[i]
                 for (var j = 0; j < allClasses.length; j++) {
 
-                    if (i == j) {
+                    if (i == j) {   
                         continue;
                     }
-                    var pattern = new RegExp('"name":."' + allClasses[j])
+                    var pattern = new RegExp('"name":."' + allClasses[j]); 
                     var match;
                     var result = [];
-                    if ((match = pattern.exec(stringsJson[i])) != null) {
+                    if ((match = pattern.exec(stringsJson[i])) != null) {   //compares pattern (reg Expression) with stringsJson
                         result.push(match);
                         countDep++;
-                        //console.log("\n");
-                        //console.log(allClasses[i] + "  RELATIONSHIP WITH:  " + allClasses[j]);
                         var links = { "source": allClasses[i].toString(), "target": allClasses[j].toString(), "value": 1 };
-                        graphData2.links.push(links);
+                        graphData.links.push(links);
                     }
-                    currentNode.count = countDep;
+
                     
                 }
-                graphData2.nodes[i].count = countDep;
+                graphData.nodes[i].count = countDep;
             }
+            //Stops execution timing and logs the time to the console
             const results = perf.stop();
             console.log(results.time);
-            callback(graphData2);
-            //fs.writeFileSync('graphData2.json', JSON.stringify(graphData2, null, 2));
+
+            //Call callback function with the resulting graphData
+            callback(graphData);
+
 
 
         }
