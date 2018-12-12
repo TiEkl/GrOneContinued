@@ -184,7 +184,7 @@ import * as d3 from 'd3';
             .force("center", d3.forceCenter());
       },
       setData : function() {
-        this.data = d3.json("/data/graphData2.json");        
+        this.data = d3.json("/api/dependencies");        
       },
 
 
@@ -238,7 +238,7 @@ import * as d3 from 'd3';
         ]
       }
     */
-  d3.json("/data/graphData.json")
+  d3.json("/api/dependencies")
     .then( data =>  {
       console.log(JSON.stringify(data));
       this.drawChart(data, drag, color);
