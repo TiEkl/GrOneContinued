@@ -114,7 +114,7 @@ function findDependencies(xml, callback) {
                     currentNode.count = countDep;
 
                 }
-                graphData2.nodes.push(currentNode);
+                graphData2.nodes[i].count = countDep;
             }
             const results = perf.stop();
             console.log(results.time);
