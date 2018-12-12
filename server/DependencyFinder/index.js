@@ -50,21 +50,20 @@ router.get('/api', function(req, res) {
 });
 
 router.route('/api/dependencies').get(function(req,res) {
-    fs.readFile('omni.xml', function(err, data) {
-        var result = findDependencies(data);
-        console.log(result.nodes);
-        if(result != null) {
+    fs.readFile('./server/DependencyFinder/omni.xml', function(err, data) {
+        findDependencies(data, function(result) {
+            console.log("Test Callback");
             res.status(200).json(result);
-        } else {
-            console.log("banana");
-        }
+        });
+
     })
 
 
 })
 
-function findDependencies(xml) {
+function findDependencies(xml, callback) {
     var parser = new xml2js.Parser();
+    perf.start();
     parser.parseString(xml, function (err, result) {
 
         var object = result.unit.unit;
@@ -113,13 +112,16 @@ function findDependencies(xml) {
                         graphData2.links.push(links);
                     }
                     currentNode.count = countDep;
-                    graphData2.nodes.push(currentNode);
+
                 }
+                graphData2.nodes.push(currentNode);
             }
-            return graphData2;
-            //fs.writeFileSync('graphData2.json', JSON.stringify(graphData2, null, 2));
             const results = perf.stop();
             console.log(results.time);
+            callback(graphData2);
+            //fs.writeFileSync('graphData2.json', JSON.stringify(graphData2, null, 2));
+
+
         }
 
     });
