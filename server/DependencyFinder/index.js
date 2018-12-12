@@ -90,6 +90,7 @@ function findDependencies(xml, callback) {
                     stringsJson[i] = JSON.stringify(object[i].interface);
                    // graphData2.nodes.push(nodes);
                 }
+                graphData2.nodes.push(currentNode);
                 allClasses.push(currentName);
             }
 
@@ -112,7 +113,7 @@ function findDependencies(xml, callback) {
                         graphData2.links.push(links);
                     }
                     currentNode.count = countDep;
-
+                    
                 }
                 graphData2.nodes[i].count = countDep;
             }
