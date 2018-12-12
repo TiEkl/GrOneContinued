@@ -22,14 +22,14 @@ mongoose.connect(mongoURI, { useNewUrlParser: true }, function(err) {
 
 // Create Express app
 var app = express();
-//use cors to allow github
-app.use(cors());
 // Parse requests of content-type 'application/json'
 app.use(bodyParser.json());
+//use cors to allow github
+app.use(cors());
 // HTTP request logger
 app.use(morgan('dev'));
 // Serve static assets (for frontend client)
-var root = path.normalize(__dirname + '/..');
+var root = path.normalize(__dirname + '/../..');
 app.use(express.static(path.join(root, 'client')));
 app.set('appPath', 'client');
 
@@ -60,7 +60,6 @@ app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.json(err_res);
 });
-var port = 8000;
 app.listen(port, function(err) {
     if (err) throw err;
     console.log(`Express server listening on port ${port}, in ${env} mode`);

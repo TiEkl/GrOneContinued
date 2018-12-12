@@ -37,7 +37,7 @@ router.get('/app1/',function(req,res) {
 //     res.sendfile(req.app.get('appPath') + '/buyer.html');
 // });
 
-router.route('/*').get(function (req, res) {
+router.route('/').get(function (req, res) {
     var relativeAppPath = req.app.get('appPath');
     var absoluteAppPath = path.resolve(relativeAppPath);
     res.sendFile(absoluteAppPath +'/index.html')
