@@ -40,7 +40,7 @@ body{
 
 </style>
 <script>
-import graphData from "./../data/graphData.json"
+
 import * as d3 from 'd3';
   module.exports = {
     name:"dependGraph",
@@ -51,7 +51,7 @@ import * as d3 from 'd3';
         
      height : 600,
      width : 800,
-    test : graphData,
+    
     //test : {},
      datatest : {nodes: [{id:"", group:"" }], links: [{source:"", target:"", value:""}]}
       }
@@ -70,6 +70,16 @@ import * as d3 from 'd3';
         const svg = d3.select(".frame").append("svg")
             .attr("viewBox", [-this.width / 2, -this.height /2, this.width, this.height]);
 
+
+   var text = svg.append("g").selectAll("text")
+        .data(nodes)
+        .enter().append("text")
+        .attr("class", "text")
+        .attr("opacity", 0)
+        .attr("x", 20)
+        .attr("y", ".31em")
+        .text(function(d) { return d.id; })
+        
         const link = svg.append("g")
             .attr("stroke", "#999")
             .attr("stroke-opacity", 0)
@@ -95,14 +105,7 @@ import * as d3 from 'd3';
      /*   node.append("title")
             .text(d => d.id);
 */
-     var text = svg.append("g").selectAll("text")
-        .data(nodes)
-        .enter().append("text")
-        .attr("class", "text")
-        .attr("opacity", 0)
-        .attr("x", 20)
-        .attr("y", ".31em")
-        .text(function(d) { return d.id; })
+  
      
  
 
@@ -190,7 +193,7 @@ import * as d3 from 'd3';
 
     },
   mounted() {
-    //var test = this.setData();
+    var test = this.setData();
 
      var drag = simulation => {
       
@@ -254,11 +257,11 @@ import * as d3 from 'd3';
 </script>
 
 <style>
-.frame{
+/*.frame{
   width:100%;
   height:500px;
   
-}
+}*/
 
 
 </style>
