@@ -8,16 +8,6 @@ var fs = require('fs');
 
 const exec =  require('child_process').exec;
 
-// Return a list of all projects
-router.get("/", function(req, res, next) {
-  gitProject.find(function(err, gitProjects) {
-    if (err) {
-      return next(err);
-    }
-    res.json({ gitProjects });
-  });
-});
-
 // Method to download the repo to the filesystem
 router.post("/", function(req, res, next) {
   // the strings that we get from the front end
@@ -45,21 +35,7 @@ router.post("/", function(req, res, next) {
         return next(err);
       }
 
-      var javaFiles = filterDir(destination, '.java');
-      //*** For UNIX Systems ***/
-      // const filterCommand = exec('find ./repository -type f ! -name "*.java" -delete');
-      //*** For Windows Systems ***/
-      //const filterCommand = exec('dir /s /b .\\repository | findstr /e .js');
-      //const filterCommand = exec('DEL /S /F /Q .\\repository /e "*.js"') //this line doesn't work
-      // filterCommand.stdout.on('data', function(data){
-      //   console.log(data);
-      // });
-      //
-      // filterCommand.stderr.on('data', function(data){
-      //   console.log(data);
-      // });
-
-
+      filterDir(destination, '.java');
 
    })
    res.status(201).json("Project Downloaded.");
@@ -68,8 +44,6 @@ router.post("/", function(req, res, next) {
 
 // structured like this '../LiteScript','.html'
 function filterDir(startPath,filter){
-
-    var results = [];
 
     console.log('Starting from dir '+ startPath +'/');
 
@@ -89,7 +63,7 @@ function filterDir(startPath,filter){
         }
         else if (filename.indexOf(filter)>=0) {
             console.log('-- found: ',filename);
-            results.push(filename);
+            
         }
         else if (filename.indexOf(filter) <= 0) {
            console.log('-- not Java: ',filename);
@@ -102,8 +76,23 @@ function filterDir(startPath,filter){
             });
         };
     };
-    return results;
+    
 };
 
+
+function convertRepo(projectName) {
+  var current = process.cwd();
+  fs.mkdir(current + '/repository/xml' ,{recursive: true}, (err) => {
+      
+    // Converts project to an XML file.
+      exec('srcml repository/'+projectName+ '-o repository/xml/'+projectName+'.xml', (error, stdout, stderr) => {
+          console.log(stdout);
+          console.log(err);
+          console.log(error);
+          console.log(stderr);
+          }
+      );
+  })
+};
 
 module.exports = router;

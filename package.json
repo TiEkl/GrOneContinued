@@ -10,10 +10,10 @@
   "scripts": {
     "postinstall": "browserify -t vueify -e client/main.js -o client/build/mainBuild.js",
     "start": "node ./server/app.js",
-    "depends": "node ./server/DependencyFinder/app.js",
+    "dependencyfinder": "node ./server/DependencyFinder/app.js",
     "test": "newman run ./tests/api-tests.postman.json",
     "dev": "nodemon ./server/app.js",
-    "devrepofetcher": "nodemon ./server/RepoFetcher/app.js"
+    "repofetcher": "nodemon ./server/RepoFetcher/app.js"
   },
   "repository": {
     "type": "git",

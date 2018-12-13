@@ -8,7 +8,7 @@ var cors = require('cors');
 
 // Variables
 var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
-var port = process.env.PORT || 8000;
+var port = process.env.PORT || 9000;
 
 // Connect to MongoDB
 mongoose.connect(mongoURI, { useNewUrlParser: true }, function(err) {
@@ -39,9 +39,9 @@ app.use(require('./index'));
 /**********TARGET SERVER **************/
 // target server listens on different port than proxy server
 // proxy server sends request to this port
-app.listen(8001, '0.0.0.0', function(err) {
+app.listen(port, '0.0.0.0', function(err) {
     if ( err ) throw err;
-    console.log("target server listening on port 8001");
+    console.log("target server listening on port 9000");
     console.log("CWD: " + process.cwd());
 });
 /**************************************/

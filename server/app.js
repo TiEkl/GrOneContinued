@@ -13,20 +13,6 @@ const fs = require('fs');
 //request module is used to route the reqests
 var request = require('request');
 
-/** CLUSTERING  **/
-// fork can only create new NodeJs processes. You give it a js file
-// to execute
-/*const { fork } = require('child_process');
-const child = fork('server/otherApp.js');
-
-// process.on receives a message while process.send sends a message to
-// another process
-child.on('message', message => {
-    console.log('message from child: ', message);
-    child.send("parent says hello.");
-});*/
-/********************************/
-
 // Variables
 var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
 
@@ -49,8 +35,6 @@ mongoose.connect(mongoURI, { useNewUrlParser: true }, function (err) {
 var app = express();
 //use cors to allow github
 app.use(cors());
-// Parse requests of content-type 'application/json'
-
 
 ///PROXY REQUESTS START
 
@@ -58,7 +42,6 @@ app.use(cors());
 const repo_fetcher = '127.0.0.1';   //want to replace this later with a constant from the constants file
 
 // change this ip to other comp when distributed.
-// const repo_fetcher = '123.43.63.1';
 
 //A method that can be reused to reroute requests to different endpoints to be handled by different servers
 //note, the endpoint used on the front end should be the same as the endpoint we use here
@@ -130,18 +113,6 @@ app.listen(port, function (err) {
     convertRepo(projectName);
 });
 
-function convertRepo(projectName) {
-    var current = process.cwd();
-    fs.mkdir(current + '/repos/xml' ,{recursive: true}, (err) => {
-        
-        exec('srcml repos/'+projectName+ '-o repos/xml/'+projectName+'.xml', (error, stdout, stderr) => {
-            console.log(stdout);
-            console.log(err);
-            console.log(error);
-            console.log(stderr);
-            }
-        );
-    })
-}
+
 
 module.exports = app;

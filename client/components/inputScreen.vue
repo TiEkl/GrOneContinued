@@ -62,6 +62,8 @@
         methods:{
             // method to send owner and repo strings that we need in the backend
             postProject: function(){
+                var pattern = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+                if(pattern.test(this.Url_Input.url)){
                 // this is from nigels method want to get owner and repo strings from the url
                console.log(this.Url_Input.url);
                var url_string = new URL(this.Url_Input.url);
@@ -73,12 +75,14 @@
                 axios.post('/api/gitProjects',
                 {owner: ownerName,
                  repo:  repoName })
+                
                 .then(
                   response => {
                       console.log("Success: " + response.status);
                     this.Url_Input.url = "";
                     this.url_accepted = true;
                     this.wrong_url = false;
+                  
               })
               .catch(error => {
                   console.log(error.response);
@@ -86,41 +90,14 @@
               .then(function () {
 
               });
-        },
-
-        save_url(){
-                //Method for saving the url in a DB, so that other methods can find it and use it
-                //If saved successfully we assume that it will be taken to be filtered and prepared
-                //thus we will proceed to display the progress bar
-                //(I don't know if we are going to use this or not)
-
-                var pattern = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
-
-                if(pattern.test(this.Url_Input.url)){
-                    let new_url = {
-                    url: this.Url_Input.url
-                    }
-
-                    axios.post('/api/repo_fetcher', new_url)
-                    .then((response)=>{
-
-                    this.Url_Input.url = "";
-                    this.url_accepted = true;
-                    this.wrong_url = false;
-
-                    })
-                    .catch((error)=>{
-                        console.log(error.response);
-                    });
                 }
                 else{
                     this.wrong_url = true;
-                }
-            }
-        },
-        mounted(){
-
+                    }
         }
+},
+        
+        mounted(){}
     };
 </script>
 

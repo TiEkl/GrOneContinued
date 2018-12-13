@@ -7,9 +7,6 @@ router.get('/api', function(req, res) {
 });
 router.use('/api/urls', require('./url_inputs.js'));
 
-//gets to actual repository using the url
-//router.use('/api/repos', require('./repofetcher/repos.js'))
-
 /***********PROXY SERVER**************************/
 //var httpProxy = require('http-proxy');
 //var apiProxy = httpProxy.createProxyServer();
@@ -31,7 +28,7 @@ router.all("/app1/*", function ( req, res ) {
 });*/
 
 // Insert routes below
-router.use('/api/gitProjects', require('../RepoFetcher/gitProjects'));
+router.use('/api/gitProjects', require('../RepoFetcher/repoController'));
 
 // All other routes redirect to the index.html
 router.route('/*').get(function (req, res) {

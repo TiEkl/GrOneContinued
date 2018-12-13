@@ -32,16 +32,13 @@
     </div>
 </template>
 
-
 <script>
-// should this be "baseRouter"?
+
   module.exports = {
     name:"BaseRouter",
   }
    
-   
 </script>
-
 
 <style>
 .frame{

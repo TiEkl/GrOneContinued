@@ -23,6 +23,7 @@ body{
          .text {
            fill: black;
             font: 12px sans-serif;
+            }
            
          .circle:hover .text{
              fill:black;
@@ -30,7 +31,7 @@ body{
          }
          .text:hover{
              fill:black;
-         }*/
+         }
         
 </style>
 <script>
@@ -43,9 +44,8 @@ import * as d3 from 'd3';
       return {
         
      height : 600,
-     width : 800,
-    //test : {},
-     datatest : {nodes: [{id:"", group:"" }], links: [{source:"", target:"", value:""}]}
+     width : 800
+     
       }
     },
     
@@ -90,11 +90,6 @@ import * as d3 from 'd3';
             .on("mouseover", mouseOver(.2))
         .on("mouseout", mouseOut)
         
-          
-     /*   node.append("title")
-            .text(d => d.id);
-*/
-     
  
         function ticked() {
           link
@@ -202,41 +197,14 @@ import * as d3 from 'd3';
         const scale = d3.scaleOrdinal(d3.schemeCategory10);
         return d => scale(d.group);
     }
-   /* var test3={
-      "nodes": [
-          {"id": "1", "group": 1, "count": 3},
-          {"id": "2", "group": 2,"count": 2},
-          {"id": "3", "group": 2, "count": 2},
-          {"id": "4", "group": 20, "count": 2},
-          {"id": "5", "group": 7, "count": 1},
-          {"id": "6", "group": 1, "count": 2}
-        ],
-        "links": [
-          {"source": "1", "target": "2", "value": 10},
-          {"source": "2", "target": "3", "value": 10},
-          {"source": "1", "target": "4", "value": 5},
-          {"source": "4", "target": "3", "value": 15},
-          {"source": "6", "target": "5", "value": 15},
-          {"source": "6", "target": "1", "value": 15}
-        ]
-      }
-    */
+   
   d3.json("/api/dependencies")
     .then( data =>  {
       console.log(JSON.stringify(data));
       this.drawChart(data, drag, color);
     });
-    //this.test = d3.json("./../data/graphData.json");
-    //console.log(JSON.stringify(this.test));
-    //this.drawChart(this.datatest, drag, color);
+    
   },
 };
 </script>
 
-<style>
-/*.frame{
-  width:100%;
-  height:500px;
-  
-}
-</style>
