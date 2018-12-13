@@ -4,6 +4,10 @@ var mongoose = require('mongoose');
 var morgan = require('morgan');
 var path = require('path');
 var cors = require('cors');
+var cmd = require('node-cmd');
+const { exec } = require('child_process');
+const fs = require('fs');
+//var folderName = 'timmarcus';
 
 // =========== "npm run dev" ============//
 
@@ -33,7 +37,7 @@ var port = process.env.PORT || 8000;
 var repo_fetcher_port = process.env.PORT || 8001;
 
 // Connect to MongoDB
-mongoose.connect(mongoURI, { useNewUrlParser: true }, function(err) {
+mongoose.connect(mongoURI, { useNewUrlParser: true }, function (err) {
     if (err) {
         console.error(`Failed to connect to MongoDB with URI: ${mongoURI}`);
         console.error(err.stack);
@@ -104,7 +108,7 @@ app.listen(port, main_server);
 
 // Error handler (must be registered last)
 var env = app.get('env');
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
     console.error(err.stack);
     var err_res = {
         "message": err.message,
@@ -116,12 +120,23 @@ app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.json(err_res);
 });
+//var port = 3000;
+var arrayOfClass = [];
 
-app.listen(port, function(err) {
+app.listen(port, function (err) {
     if (err) throw err;
     console.log(`Express server listening on port ${port}, in ${env} mode`);
     console.log(`Backend: http://localhost:${port}/api/`);
     console.log(`Frontend: http://localhost:${port}/`);
-});
+  
+
+    
+
+
+    fs.readFile('omni.xml', function (err, data) {
+
+    });
+})
+
 
 module.exports = app;

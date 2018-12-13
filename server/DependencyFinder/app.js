@@ -5,6 +5,7 @@ var morgan = require('morgan');
 var path = require('path');
 var cors = require('cors');
 
+
 // Variables
 var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
 var port = process.env.PORT || 8000;
@@ -21,14 +22,14 @@ mongoose.connect(mongoURI, { useNewUrlParser: true }, function(err) {
 
 // Create Express app
 var app = express();
-//use cors to allow github
-app.use(cors());
 // Parse requests of content-type 'application/json'
 app.use(bodyParser.json());
+//use cors to allow github
+app.use(cors());
 // HTTP request logger
 app.use(morgan('dev'));
 // Serve static assets (for frontend client)
-var root = path.normalize(__dirname + '/..');
+var root = path.normalize(__dirname + '/../..');
 app.use(express.static(path.join(root, 'client')));
 app.set('appPath', 'client');
 
@@ -41,13 +42,14 @@ app.use(require('./index'));
 app.listen(8001, '0.0.0.0', function(err) {
     if ( err ) throw err;
     console.log("target server listening on port 8001");
+    console.log("CWD: " + process.cwd());
 });
 /**************************************/
 
 // Error handler (must be registered last)
 var env = app.get('env');
 app.use(function(err, req, res, next) {
-    console.error(err.stack);
+    console.error(err.stack); 
     var err_res = {
         "message": err.message,
         "error": {}
@@ -58,12 +60,11 @@ app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.json(err_res);
 });
-
-/*app.listen(port, function(err) {
+app.listen(port, function(err) {
     if (err) throw err;
     console.log(`Express server listening on port ${port}, in ${env} mode`);
     console.log(`Backend: http://localhost:${port}/api/`);
     console.log(`Frontend: http://localhost:${port}/`);
-});*/
+});
 
 module.exports = app;

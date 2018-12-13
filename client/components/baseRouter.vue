@@ -5,7 +5,7 @@
 
         <!-- header below -->
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top">
-          <a href="http://localhost:3000/" class="navbar-brand"> 
+          <a href="http://localhost:8000/" class="navbar-brand"> 
             GrOne
           </a>
         </nav>
@@ -37,12 +37,9 @@
 // should this be "baseRouter"?
   module.exports = {
     name:"BaseRouter",
-    data(){
-      return{
-        
-      }
-    }
-  };
+  }
+   
+   
 </script>
 
 
