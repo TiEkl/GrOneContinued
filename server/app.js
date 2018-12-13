@@ -7,7 +7,6 @@ var cors = require('cors');
 var cmd = require('node-cmd');
 const { exec } = require('child_process');
 const fs = require('fs');
-//var folderName = 'timmarcus';
 
 // =========== "npm run dev" ============//
 
@@ -128,15 +127,21 @@ app.listen(port, function (err) {
     console.log(`Express server listening on port ${port}, in ${env} mode`);
     console.log(`Backend: http://localhost:${port}/api/`);
     console.log(`Frontend: http://localhost:${port}/`);
-  
+    convertRepo(projectName);
+});
 
-    
-
-
-    fs.readFile('omni.xml', function (err, data) {
-
-    });
-})
-
+function convertRepo(projectName) {
+    var current = process.cwd();
+    fs.mkdir(current + '/repos/xml' ,{recursive: true}, (err) => {
+        
+        exec('srcml repos/'+projectName+ '-o repos/xml/'+projectName+'.xml', (error, stdout, stderr) => {
+            console.log(stdout);
+            console.log(err);
+            console.log(error);
+            console.log(stderr);
+            }
+        );
+    })
+}
 
 module.exports = app;
