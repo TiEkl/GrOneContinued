@@ -1,12 +1,46 @@
 <!-- baserouter.vue -->
 <template>
   <div>
+      <div class="placeholder">
+          <div>
+   <div class="sidebar"><div><input type="test" id="searchBar" placeholder="search for class..."></div>
+   <div><button type="button" class="searchBtn">search</button></div>
+   
+   
+   </div> 
+   
+          </div>  
   <div class="frame"></div>
+  </div>
 </div>
 </template>
 <style>
 body{
+  width:100%
+}
+.sidebar{
+     
+  padding: 15px;
+  background-color: #fff;
+   width: 25%;
+  height: 25vh;
+  float:left;
   
+}
+#searchBar{
+    width:200px;
+    border-radius: 4px;
+}
+
+.searchBtn{
+    margin-left: 135px; 
+    margin-top:10px;
+}
+
+.frame{
+width: 60%;
+  height: 150vh;
+  float:left;
 }
 .axis path,
 .axis line {
@@ -23,15 +57,14 @@ body{
          .text {
            fill: black;
             font: 12px sans-serif;
-            }
-           
+         }
          .circle:hover .text{
              fill:black;
              font: 25px sans-serif;
          }
          .text:hover{
              fill:black;
-         }
+         } 
         
 </style>
 <script>
@@ -44,8 +77,9 @@ import * as d3 from 'd3';
       return {
         
      height : 600,
-     width : 800
-     
+     width : 800,
+    //test : {},
+     datatest : {nodes: [{id:"", group:"" }], links: [{source:"", target:"", value:""}]}
       }
     },
     
@@ -71,14 +105,15 @@ import * as d3 from 'd3';
         
         const link = svg.append("g")
             .attr("stroke", "#999")
-            .attr("stroke-opacity", 0)
+            .attr("stroke-opacity", 0.2)
           .selectAll("line")
           .data(links)
           .enter().append("line")
             .attr("stroke-width", d => Math.sqrt(d.value));
+
         const node = svg.append("g")
             .attr("stroke", "#fff")
-            .attr("stroke-width", 3)
+            .attr("stroke-width", 1)
           .selectAll("circle")
           .data(nodes)
           .enter().append("circle")
@@ -90,6 +125,11 @@ import * as d3 from 'd3';
             .on("mouseover", mouseOver(.2))
         .on("mouseout", mouseOut)
         
+          
+     /*   node.append("title")
+            .text(d => d.id);
+*/
+     
  
         function ticked() {
           link
@@ -149,8 +189,8 @@ import * as d3 from 'd3';
     function mouseOut() {
         node.style("stroke-opacity", 1).transition().duration(1000);
         node.style("fill-opacity", 1).transition().duration(1000);
-        link.style("stroke-opacity", 0).transition().duration(1000);
-        link.style("stroke", "#ddd").transition().duration(1000);
+        link.style("stroke-opacity", 0.2).transition().duration(1000);
+        link.style("stroke", "#999").transition().duration(1000);
         text.style("opacity", 0).transition().duration(1000);
         
         
@@ -159,9 +199,9 @@ import * as d3 from 'd3';
       },
       forceSimulation : function(nodes, links) {
         return d3.forceSimulation(nodes)
-            .force("link", d3.forceLink(links).id(d => d.id).distance(40).strength(1))
-            .force("charge", d3.forceManyBody())
-            .force("collide", d3.forceCollide().radius(25))
+            .force("link", d3.forceLink(links).id(d => d.id)) //.distance(100))
+            .force("charge", d3.forceManyBody()) //.distanceMax(80))
+            .force("collide", d3.forceCollide())
             .force("center", d3.forceCenter());
       },
       setData : function() {
@@ -197,13 +237,33 @@ import * as d3 from 'd3';
         const scale = d3.scaleOrdinal(d3.schemeCategory10);
         return d => scale(d.group);
     }
-   
+   /* var test3={
+      "nodes": [
+          {"id": "1", "group": 1, "count": 3},
+          {"id": "2", "group": 2,"count": 2},
+          {"id": "3", "group": 2, "count": 2},
+          {"id": "4", "group": 20, "count": 2},
+          {"id": "5", "group": 7, "count": 1},
+          {"id": "6", "group": 1, "count": 2}
+        ],
+        "links": [
+          {"source": "1", "target": "2", "value": 10},
+          {"source": "2", "target": "3", "value": 10},
+          {"source": "1", "target": "4", "value": 5},
+          {"source": "4", "target": "3", "value": 15},
+          {"source": "6", "target": "5", "value": 15},
+          {"source": "6", "target": "1", "value": 15}
+        ]
+      }
+    */
   d3.json("/api/dependencies")
     .then( data =>  {
       console.log(JSON.stringify(data));
       this.drawChart(data, drag, color);
     });
-    
+    //this.test = d3.json("./../data/graphData.json");
+    //console.log(JSON.stringify(this.test));
+    //this.drawChart(this.datatest, drag, color);
   },
 };
 </script>

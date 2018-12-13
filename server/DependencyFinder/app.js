@@ -39,11 +39,11 @@ app.use(require('./index'));
 /**********TARGET SERVER **************/
 // target server listens on different port than proxy server
 // proxy server sends request to this port
-app.listen(port, '0.0.0.0', function(err) {
+/*app.listen(port, '0.0.0.0', function(err) {
     if ( err ) throw err;
     console.log("target server listening on port 9000");
     console.log("CWD: " + process.cwd());
-});
+});  */
 /**************************************/
 
 // Error handler (must be registered last)
