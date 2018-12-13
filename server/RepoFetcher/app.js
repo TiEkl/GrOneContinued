@@ -5,9 +5,13 @@ var morgan = require('morgan');
 var path = require('path');
 var cors = require('cors');
 
+// =========== "npm run devrepofetcher" ============//
+
 // Variables
 var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
-var port = process.env.PORT || 8000;
+
+// Please only modify port here.
+var repo_fetcher_port = process.env.PORT || 8001;
 
 // Connect to MongoDB
 mongoose.connect(mongoURI, { useNewUrlParser: true }, function(err) {
@@ -38,9 +42,17 @@ app.use(require('./index'));
 /**********TARGET SERVER **************/
 // target server listens on different port than proxy server
 // proxy server sends request to this port
-app.listen(8001, '0.0.0.0', function(err) {
+
+// DISTRIBUTED
+// let repo_fetcher = '192.168.43.168';      //want to replace this later with a constand from the constants file
+
+// LOCAL TESTING - POINTS TO SELF
+let repo_fetcher = '127.0.0.1';
+
+
+app.listen(repo_fetcher_port, repo_fetcher, function(err) {
     if ( err ) throw err;
-    console.log("target server listening on port 8001");
+    console.log("repo_fetcher listening on port " + repo_fetcher_port);
 });
 /**************************************/
 
@@ -58,12 +70,5 @@ app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.json(err_res);
 });
-
-/*app.listen(port, function(err) {
-    if (err) throw err;
-    console.log(`Express server listening on port ${port}, in ${env} mode`);
-    console.log(`Backend: http://localhost:${port}/api/`);
-    console.log(`Frontend: http://localhost:${port}/`);
-});*/
 
 module.exports = app;

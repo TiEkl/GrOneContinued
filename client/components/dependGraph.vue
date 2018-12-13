@@ -5,8 +5,9 @@
 </div>
 </template>
 <style>
-
-
+body{
+  
+}
 .axis path,
 .axis line {
     fill: none;
@@ -14,37 +15,41 @@
     stroke-width: 1;
     shape-rendering: crispEdges;
 }
-         svg rect {
-            fill: gray;
-         }
+      
+        
+    
          
-         svg text {
-            fill: yellow;
+        
+         .text {
+           fill: black;
             font: 12px sans-serif;
-            text-anchor: end;
+           
+         .circle:hover .text{
+             fill:black;
+             font: 25px sans-serif;
          }
+         .text:hover{
+             fill:black;
+         }*/
+        
 </style>
 <script>
-import graphData from "./../data/graphData.json"
+
 import * as d3 from 'd3';
   module.exports = {
     name:"dependGraph",
     
-
   data() {
       return {
         
      height : 600,
-     width : 600,
-    test : graphData,
+     width : 800,
     //test : {},
      datatest : {nodes: [{id:"", group:"" }], links: [{source:"", target:"", value:""}]}
       }
     },
     
   methods: {
-
-
       drawChart : function(data, drag) {
         
         const links = data.links.map(d => Object.create(d));
@@ -55,6 +60,15 @@ import * as d3 from 'd3';
         const svg = d3.select(".frame").append("svg")
             .attr("viewBox", [-this.width / 2, -this.height /2, this.width, this.height]);
 
+   var text = svg.append("g").selectAll("text")
+        .data(nodes)
+        .enter().append("text")
+        .attr("class", "text")
+        .attr("opacity", 0)
+        .attr("x", 20)
+        .attr("y", ".31em")
+        .text(function(d) { return d.id; })
+        
         const link = svg.append("g")
             .attr("stroke", "#999")
             .attr("stroke-opacity", 0)
@@ -62,26 +76,26 @@ import * as d3 from 'd3';
           .data(links)
           .enter().append("line")
             .attr("stroke-width", d => Math.sqrt(d.value));
-
         const node = svg.append("g")
             .attr("stroke", "#fff")
             .attr("stroke-width", 3)
           .selectAll("circle")
           .data(nodes)
           .enter().append("circle")
-            .attr("r", d => d.count * 5)
+          .attr("class", "circle")
+            .attr("r", 5)
+
             .attr("fill",  d => scale(d.group))
             .call(drag(simulation))
             .on("mouseover", mouseOver(.2))
-        .on("mouseout", mouseOut);
+        .on("mouseout", mouseOut)
+        
           
-        node.append("title")
+     /*   node.append("title")
             .text(d => d.id);
-
+*/
      
  
-
-
         function ticked() {
           link
               .attr("x1", d => d.source.x)
@@ -92,15 +106,21 @@ import * as d3 from 'd3';
           node
               .attr("cx", d => d.x)
               .attr("cy", d => d.y);
+            text.attr("transform", transform);
         }
-         var linkedByIndex = {};
+
+        function transform(d) {
+  return "translate(" + d.x + "," + d.y + ")";
+}
+
+    var linkedByIndex = {};
     links.forEach(function(d) {
         linkedByIndex[d.source.index + "," + d.target.index] = 1;
     });
         function isConnected(a, b) {
         return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
     }
-        // fade nodes on hover
+    // fade nodes on hover
     function mouseOver(opacity) {
         return function(d) {
             // check all other nodes to see if they're connected
@@ -121,34 +141,40 @@ import * as d3 from 'd3';
             link.style("stroke", function(o){
                 return o.source === d || o.target === d ? o.source.colour : "#fff";
             }).transition().duration(1000);
+            
+            text.style("opacity", function(o) {
+                var thisOpacity = isConnected(d, o) ? 1 : opacity;
+                return thisOpacity;})
+                .transition().duration(1000);;
+            text.style("fill-opacity", function(o) {
+               var thisOpacity = isConnected(d, o) ? 1 : opacity;
+                return thisOpacity;})
         };
     }
-
     function mouseOut() {
         node.style("stroke-opacity", 1).transition().duration(1000);
         node.style("fill-opacity", 1).transition().duration(1000);
         link.style("stroke-opacity", 0).transition().duration(1000);
         link.style("stroke", "#ddd").transition().duration(1000);
+        text.style("opacity", 0).transition().duration(1000);
+        
+        
     }
-
         return svg.node();
       },
       forceSimulation : function(nodes, links) {
         return d3.forceSimulation(nodes)
-            .force("link", d3.forceLink(links).id(d => d.id).distance(30).strength(1))
+            .force("link", d3.forceLink(links).id(d => d.id).distance(40).strength(1))
             .force("charge", d3.forceManyBody())
             .force("collide", d3.forceCollide().radius(25))
             .force("center", d3.forceCenter());
       },
       setData : function() {
-        this.data = d3.json("/data/graphData.json");        
+        this.data = d3.json("/api/dependencies");        
       },
-
-
     },
   mounted() {
     var test = this.setData();
-
      var drag = simulation => {
       
       function dragstarted(d) {
@@ -158,8 +184,8 @@ import * as d3 from 'd3';
       }
       
       function dragged(d) {
-        d.fx = d3.event.x;
-        d.fy = d3.event.y;
+       // d.fx = d3.event.x;
+       // d.fy = d3.event.y;
       }
       
       function dragended(d) {
@@ -195,7 +221,7 @@ import * as d3 from 'd3';
         ]
       }
     */
-  d3.json("/data/graphData.json")
+  d3.json("/api/dependencies")
     .then( data =>  {
       console.log(JSON.stringify(data));
       this.drawChart(data, drag, color);
@@ -203,19 +229,14 @@ import * as d3 from 'd3';
     //this.test = d3.json("./../data/graphData.json");
     //console.log(JSON.stringify(this.test));
     //this.drawChart(this.datatest, drag, color);
-
   },
 };
-
-
 </script>
 
 <style>
-.frame{
+/*.frame{
   width:100%;
   height:500px;
   
 }
-
-
 </style>
