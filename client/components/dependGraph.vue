@@ -8,7 +8,6 @@
 body{
   
 }
-
 .axis path,
 .axis line {
     fill: none;
@@ -16,7 +15,6 @@ body{
     stroke-width: 1;
     shape-rendering: crispEdges;
 }
-
       
         
     
@@ -26,7 +24,6 @@ body{
            fill: black;
             font: 12px sans-serif;
            
-         }/*
          .circle:hover .text{
              fill:black;
              font: 25px sans-serif;
@@ -35,9 +32,6 @@ body{
              fill:black;
          }*/
         
- 
-
-
 </style>
 <script>
 
@@ -45,21 +39,17 @@ import * as d3 from 'd3';
   module.exports = {
     name:"dependGraph",
     
-
   data() {
       return {
         
      height : 600,
      width : 800,
-    
     //test : {},
      datatest : {nodes: [{id:"", group:"" }], links: [{source:"", target:"", value:""}]}
       }
     },
     
   methods: {
-
-
       drawChart : function(data, drag) {
         
         const links = data.links.map(d => Object.create(d));
@@ -69,7 +59,6 @@ import * as d3 from 'd3';
         
         const svg = d3.select(".frame").append("svg")
             .attr("viewBox", [-this.width / 2, -this.height /2, this.width, this.height]);
-
 
    var text = svg.append("g").selectAll("text")
         .data(nodes)
@@ -87,7 +76,6 @@ import * as d3 from 'd3';
           .data(links)
           .enter().append("line")
             .attr("stroke-width", d => Math.sqrt(d.value));
-
         const node = svg.append("g")
             .attr("stroke", "#fff")
             .attr("stroke-width", 3)
@@ -96,6 +84,7 @@ import * as d3 from 'd3';
           .enter().append("circle")
           .attr("class", "circle")
             .attr("r", 5)
+
             .attr("fill",  d => scale(d.group))
             .call(drag(simulation))
             .on("mouseover", mouseOver(.2))
@@ -105,11 +94,8 @@ import * as d3 from 'd3';
      /*   node.append("title")
             .text(d => d.id);
 */
-  
      
  
-
-
         function ticked() {
           link
               .attr("x1", d => d.source.x)
@@ -120,7 +106,6 @@ import * as d3 from 'd3';
           node
               .attr("cx", d => d.x)
               .attr("cy", d => d.y);
-
             text.attr("transform", transform);
         }
 
@@ -166,7 +151,6 @@ import * as d3 from 'd3';
                 return thisOpacity;})
         };
     }
-
     function mouseOut() {
         node.style("stroke-opacity", 1).transition().duration(1000);
         node.style("fill-opacity", 1).transition().duration(1000);
@@ -176,7 +160,6 @@ import * as d3 from 'd3';
         
         
     }
-
         return svg.node();
       },
       forceSimulation : function(nodes, links) {
@@ -189,12 +172,9 @@ import * as d3 from 'd3';
       setData : function() {
         this.data = d3.json("/api/dependencies");        
       },
-
-
     },
   mounted() {
     var test = this.setData();
-
      var drag = simulation => {
       
       function dragstarted(d) {
@@ -249,11 +229,8 @@ import * as d3 from 'd3';
     //this.test = d3.json("./../data/graphData.json");
     //console.log(JSON.stringify(this.test));
     //this.drawChart(this.datatest, drag, color);
-
   },
 };
-
-
 </script>
 
 <style>
@@ -261,7 +238,5 @@ import * as d3 from 'd3';
   width:100%;
   height:500px;
   
-}*/
-
-
+}
 </style>
