@@ -5,7 +5,7 @@ var router = express.Router()
 router.get('/api', function(req, res) {
     res.json({"message": "Welcome to your DIT341 backend project!"});
 });
-router.use('/api/urls', require('./url_inputs.js'));
+
 
 /***********PROXY SERVER**************************/
 //var httpProxy = require('http-proxy');

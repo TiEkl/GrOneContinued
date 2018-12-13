@@ -5,8 +5,6 @@ var xml2js = require('xml2js');
 const fs = require('fs');
 const perf = require('execution-time')();
 
-router.use('/api/urls', require('./url_inputs.js'));
-
 router.route('/').get(function (req, res) {
     var relativeAppPath = req.app.get('appPath');
     var absoluteAppPath = path.resolve(relativeAppPath);
