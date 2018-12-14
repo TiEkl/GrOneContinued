@@ -13,7 +13,7 @@
     "dependencyfinder": "node ./server/DependencyFinder/app.js",
     "test": "newman run ./tests/api-tests.postman.json",
     "dev": "nodemon ./server/app.js",
-    "repofetcher": "nodemon ./server/RepoFetcher/app.js"
+    "repohandler": "nodemon ./server/RepoHandler/app.js"
   },
   "repository": {
     "type": "git",

@@ -93,12 +93,12 @@ function convertRepo(projectName) {
    );
   // The folder to parse/convert to xml
    var shortDest = path.normalize(
-      path.join('server','RepoFetcher','repository', projectName)
+      path.join('server','RepoHandler','repository', projectName)
    );
 
    // The output file
    var xmlFileDest = path.normalize(
-      path.join('server','RepoFetcher','repository','xml','/')) + projectName +'.xml';
+      path.join('server','RepoHandler','repository','xml','/')) + projectName +'.xml';
 
    console.log("   Folder to Parse:   " + shortDest);
    console.log("   Output file:   " + xmlFileDest);
