@@ -50,31 +50,14 @@ import * as d3 from 'd3';
     },
     
   methods: {
-      drawChart : function(data, drag) {
+      drawChart : function(data, drag, stringToColour) {
         
         const links = data.links.map(d => Object.create(d));
         const nodes = data.nodes.map(d => Object.create(d));
         const simulation = this.forceSimulation(nodes, links).on("tick", ticked);
-        const scale = d3.scaleOrdinal(d3.schemeCategory10);
-        const scale1_10 = d3.scaleOrdinal(d3.schemeSet1);
-        const scale10_17 = d3.scaleOrdinal(d3.schemeSet2);
-        const scale18_29 = d3.scaleOrdinal(d3.schemeSet3);
         
         const svg = d3.select(".frame").append("svg")
             .attr("viewBox", [-this.width / 2, -this.height /2, this.width, this.height]);
-
-        var stringToColour = str => {
-            var hash = 0;
-            for (var i = 0; i < str.length; i++) {
-                hash = str.charCodeAt(i) + ((hash << 5) - hash);
-            }
-            var colour = '#';
-            for (var i = 0; i < 3; i++) {
-                var value = (hash >> (i * 8)) & 0xFF;
-                colour += ('00' + value.toString(16)).substr(-2);
-            }
-            return colour;
-        }
 
         var text = svg.append("g").selectAll("text")
                 .data(nodes)
@@ -132,6 +115,7 @@ import * as d3 from 'd3';
         function isConnected(a, b) {
             return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
         }
+
     // fade nodes on hover
         function mouseOver(opacity) {
             return function(d) {
@@ -206,15 +190,23 @@ import * as d3 from 'd3';
           .on("drag", dragged)
           .on("end", dragended);
     } 
-    var color = d => {
-        const scale = d3.scaleOrdinal(d3.schemeCategory10);
-        return d => scale(d.group);
-    }
+    var stringToColour = str => {
+        var hash = 0;
+        for (var i = 0; i < str.length; i++) {
+            hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        var colour = '#';
+        for (var i = 0; i < 3; i++) {
+            var value = (hash >> (i * 8)) & 0xFF;
+            colour += ('00' + value.toString(16)).substr(-2);
+        }
+        return colour;
+    }    
    
   d3.json("/api/dependencies")
     .then( data =>  {
       console.log(JSON.stringify(data));
-      this.drawChart(data, drag, color);
+      this.drawChart(data, drag, stringToColour);
     });
     
   },
