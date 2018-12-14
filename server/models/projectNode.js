@@ -9,6 +9,6 @@ var classSchema = new Schema ({
 var projectSchema = new Schema ({
     //user: { type: String },
     projectName: { type: String },
-    classes: [classSchema],
+    classes: classSchema,
 });
 module.exports = mongoose.model('projectNode', projectSchema);
