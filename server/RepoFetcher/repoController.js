@@ -20,8 +20,9 @@ router.post("/", function(req, res, next) {
 
   //The place to download the repo
   var destination = path.normalize(
-     path.join(process.cwd(), 'repository', repo));
-     console.log("destination:           " + destination)
+     path.join(__dirname, 'repository', repo));
+
+     console.log("   destination: " + destination);
 
     //function to clear destination
     rimraf(destination, function() {
@@ -83,22 +84,24 @@ function filterDir(startPath,filter){
 
 function convertRepo(projectName) {
   var current = __dirname;
-  var destination = path.normalize(
-     path.join(current, 'repository', projectName));
-  var xmlDestination = path.normalize(
-     path.join(current, 'repository', 'xml'));
+  // __dirname and process.cwd() doesnt seem to work because
+  // the whole destination has spaces, which doesnt work as a command
+  // therefore the path between the root and the destination should not have spaces
 
+   var xmlDestination = path.normalize(
+      path.join(current,'repository','xml')
+   );
+  // The folder to parse/convert to xml
    var shortDest = path.normalize(
       path.join('server','RepoFetcher','repository', projectName)
    );
+
+   // The output file
    var xmlFileDest = path.normalize(
-      path.join('server','RepoFetcher','repository','xml')) + projectName +'.xml';
+      path.join('server','RepoFetcher','repository','xml','/')) + projectName +'.xml';
 
-   console.log("destination:   " + destination);
-   console.log("xmlDestination:   " + xmlDestination);
-   console.log("shortDest:   " + shortDest);
-   console.log("xmlFileDest:   " + xmlFileDest);
-
+   console.log("   Folder to Parse:   " + shortDest);
+   console.log("   Output file:   " + xmlFileDest);
 
   fs.mkdir(xmlDestination ,{recursive: true}, (err) => {
 
@@ -108,6 +111,8 @@ function convertRepo(projectName) {
           console.log("err: --> " + err);
           console.log("error: --> " + error);
           console.log(stderr);
+
+          console.log("         Repo Converted to XML.");
           }
       );
   })
