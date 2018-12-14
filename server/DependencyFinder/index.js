@@ -63,10 +63,11 @@ function findDependencies(xml, callback) {
     var parser = new xml2js.Parser();
 
     perf.start();       //calculate time of excecution until perf.stop()
+
     parser.parseString(xml, function (err, result) {
+ 
 
         var object = result.unit.unit;  //each .java file in json
-
         var graphData = { 
             "nodes":[], 
             "links":[] };
@@ -82,17 +83,17 @@ function findDependencies(xml, callback) {
                 var currentNode = {"id": "", "package": "","group": 1, "count": 0};
                 if (object[i].class != null) {      //check if the java file includes any class
                     var currentName = object[i].class[0].name;
-                    var currentPackage = object[i].package[0].name;
+                    var currentPackage = object[i].package[0].name[0].name;
                     currentNode.id = currentName.toString();
-                    currentNode.package = currentPackage.toString();
+                    currentNode.package = currentPackage[currentPackage.length-1].toString();
                     stringsJson[i] = JSON.stringify(object[i].class); //object[i].class is the current class in java file at [i] .
 
                 }
                 else if (object[i].interface != null) {         //check if the java file includes any interface
                     var currentName = object[i].interface[0].name;
-                    var currentPackage = object[i].package[0].name;
+                    var currentPackage = object[i].package[0].name[0].name;
                     currentNode.id = currentName.toString();
-                    currentNode.package = currentPackage.toString();
+                    currentNode.package = currentPackage[currentPackage.length-1].toString();
                     stringsJson[i] = JSON.stringify(object[i].interface);
                 }
                 graphData.nodes.push(currentNode);
