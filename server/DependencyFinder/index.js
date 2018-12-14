@@ -5,6 +5,8 @@ var xml2js = require('xml2js');
 const fs = require('fs');
 const perf = require('execution-time')();
 
+var projectSchema = require('../models/projectNode.js');
+
 router.route('/').get(function (req, res) {
     var relativeAppPath = req.app.get('appPath');
     var absoluteAppPath = path.resolve(relativeAppPath);
@@ -32,7 +34,11 @@ function findDependencies(xml, callback) {
     parser.parseString(xml, function (err, result) {
 
         var object = result.unit.unit;  //each .java file in json
-
+        var project;
+        //Project name will probably be have to be fetched from the xmlhttprequest once that's implemented
+        if(object[0].$.filename != null) {
+            project = object[0].$.filename.toString().split("\\")[1];
+        }
         var graphData = { 
             "nodes":[], "links":[] };
         regexSearch(object);
@@ -82,6 +88,16 @@ function findDependencies(xml, callback) {
                 }
                 graphData.nodes[i].count = countDep;
             }
+            var projectNode = new projectSchema({
+                projectName: project,
+                classes: graphData,
+            });
+            projectNode.save( function(error) {
+                console.log("project node and its dependencies saved");
+                if (error){
+                    console.error(error);
+                }
+            });
             //Stops execution timing and logs the time to the console
             const results = perf.stop();
             console.log(results.time);
