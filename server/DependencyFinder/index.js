@@ -80,7 +80,7 @@ function findDependencies(xml, callback) {
             //For loop that creates each Node for the graphData, checks for classes and interfaces.
             //Also stringifies each class/interface to prepare for the regex matching.
             for (var i = 0; i < object.length; i++) {
-                var currentNode = {"id": "", "package": "","group": 1, "count": 0};
+                var currentNode = {"id": "", "package": "", "count": 0};
                 if (object[i].class != null) {      //check if the java file includes any class
                     var currentName = object[i].class[0].name;
                     var currentPackage = object[i].package[0].name[0].name;
@@ -89,7 +89,7 @@ function findDependencies(xml, callback) {
                     stringsJson[i] = JSON.stringify(object[i].class); //object[i].class is the current class in java file at [i] .
 
                 }
-                else if (object[i].interface != null) {         //check if the java file includes any interface
+                else if (object[i].interface != null) {         //check if the java file inclu  des any interface
                     var currentName = object[i].interface[0].name;
                     var currentPackage = object[i].package[0].name[0].name;
                     currentNode.id = currentName.toString();
