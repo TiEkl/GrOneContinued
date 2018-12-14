@@ -36,6 +36,7 @@ router.post("/", function(req, res, next) {
       }
 
       filterDir(destination, '.java');
+      convertRepo(repo);
 
    })
    res.status(201).json("Project Downloaded.");
@@ -45,7 +46,7 @@ router.post("/", function(req, res, next) {
 // structured like this '../LiteScript','.html'
 function filterDir(startPath,filter){
 
-    console.log('Starting from dir '+ startPath +'/');
+    // console.log('Starting from dir '+ startPath +'/');
 
     if (!fs.existsSync(startPath)){
         console.log("no dir ",startPath);
@@ -62,11 +63,11 @@ function filterDir(startPath,filter){
             filterDir(filename,filter); //recurse
         }
         else if (filename.indexOf(filter)>=0) {
-            console.log('-- found: ',filename);
-            
+            // console.log('-- found: ',filename);
+
         }
         else if (filename.indexOf(filter) <= 0) {
-           console.log('-- not Java: ',filename);
+           // console.log('-- not Java: ',filename);
 
            // Because fs.unlink does not work on a directory, it is safer.
            // what is not safe is that filename can be a folder.
@@ -76,19 +77,36 @@ function filterDir(startPath,filter){
             });
         };
     };
-    
+
 };
 
 
 function convertRepo(projectName) {
-  var current = process.cwd();
-  fs.mkdir(current + '/repository/xml' ,{recursive: true}, (err) => {
-      
+  var current = __dirname;
+  var destination = path.normalize(
+     path.join(current, 'repository', projectName));
+  var xmlDestination = path.normalize(
+     path.join(current, 'repository', 'xml'));
+
+   var shortDest = path.normalize(
+      path.join('server','RepoFetcher','repository', projectName)
+   );
+   var xmlFileDest = path.normalize(
+      path.join('server','RepoFetcher','repository','xml')) + projectName +'.xml';
+
+   console.log("destination:   " + destination);
+   console.log("xmlDestination:   " + xmlDestination);
+   console.log("shortDest:   " + shortDest);
+   console.log("xmlFileDest:   " + xmlFileDest);
+
+
+  fs.mkdir(xmlDestination ,{recursive: true}, (err) => {
+
     // Converts project to an XML file.
-      exec('srcml repository/'+projectName+ '-o repository/xml/'+projectName+'.xml', (error, stdout, stderr) => {
+      exec('srcml '+ shortDest + ' -o ' + xmlFileDest, (error, stdout, stderr) => {
           console.log(stdout);
-          console.log(err);
-          console.log(error);
+          console.log("err: --> " + err);
+          console.log("error: --> " + error);
           console.log(stderr);
           }
       );
