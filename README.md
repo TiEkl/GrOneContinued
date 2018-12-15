@@ -8,7 +8,7 @@ Only public Github repositories are accepted as input, and the url inputted must
 
 ```npm install``` should be run first.
 ```npm run dependencyfinder ``` to start dependencyfinder.
-```npm run repofetcher ``` to start repofetcher.
+```npm run repohandler ``` to start repohandler.
 ```npm start``` is used to initialize the server.
 
 # Deployment
