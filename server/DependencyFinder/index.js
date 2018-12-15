@@ -24,6 +24,7 @@ router.route('/api/dependencies').get(function(req,res) {
         });
 
     })
+
 })
 //Function for finding dependencies with an xml file as input and a callback function
 //that should handle the result from the function
@@ -31,7 +32,9 @@ function findDependencies(xml, callback) {
     var parser = new xml2js.Parser();
 
     perf.start();       //calculate time of excecution until perf.stop()
+
     parser.parseString(xml, function (err, result) {
+ 
 
         var object = result.unit.unit;  //each .java file in json
         var project;
@@ -40,7 +43,8 @@ function findDependencies(xml, callback) {
             project = object[0].$.filename.toString().split("\\")[1];
         }
         var graphData = { 
-            "nodes":[], "links":[] };
+            "nodes":[], 
+            "links":[] };
         regexSearch(object);
         
         function regexSearch(object) {
@@ -50,16 +54,20 @@ function findDependencies(xml, callback) {
             //For loop that creates each Node for the graphData, checks for classes and interfaces.
             //Also stringifies each class/interface to prepare for the regex matching.
             for (var i = 0; i < object.length; i++) {
-                var currentNode = {"id": "", "group": 1, "count": 0};
+                var currentNode = {"id": "", "package": "", "count": 0};
                 if (object[i].class != null) {      //check if the java file includes any class
                     var currentName = object[i].class[0].name;
+                    var currentPackage = object[i].package[0].name[0].name;
                     currentNode.id = currentName.toString();
+                    currentNode.package = currentPackage[currentPackage.length-1].toString();
                     stringsJson[i] = JSON.stringify(object[i].class); //object[i].class is the current class in java file at [i] .
 
                 }
-                else if (object[i].interface != null) {         //check if the java file includes any interface
+                else if (object[i].interface != null) {         //check if the java file inclu  des any interface
                     var currentName = object[i].interface[0].name;
+                    var currentPackage = object[i].package[0].name[0].name;
                     currentNode.id = currentName.toString();
+                    currentNode.package = currentPackage[currentPackage.length-1].toString();
                     stringsJson[i] = JSON.stringify(object[i].interface);
                 }
                 graphData.nodes.push(currentNode);
