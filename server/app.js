@@ -19,6 +19,7 @@ var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
 var port = process.env.PORT || 8000;
 // This variable is here for the proxy request.
 var repo_fetcher_port = process.env.PORT || 8001;
+var dependency_finder_port = process.env.PORT || 9000;
 
 // Connect to MongoDB
 mongoose.connect(mongoURI, { useNewUrlParser: true }, function (err) {
@@ -39,7 +40,7 @@ app.use(cors());
 
 // LOCAL TESTING - POINTS TO SELF RIGHT NOW
 const repo_fetcher = '127.0.0.1';   //want to replace this later with a constant from the constants file
-
+const dependency_finder = '127.0.0.1'; 
 // change this ip to other comp when distributed.
 
 //A method that can be reused to reroute requests to different endpoints to be handled by different servers
@@ -59,7 +60,7 @@ function proxyRequestTo (ip,port,endpoint){
 //proxyRequestTo(repo_fetcher,'8001','/api/repo_fetcher');
 
 proxyRequestTo(repo_fetcher, repo_fetcher_port,'/api/gitProjects');
-
+proxyRequestTo(dependency_finder, dependency_finder_port,'/api/dependencies');
 ///PROXY REQUESTS END
 
 

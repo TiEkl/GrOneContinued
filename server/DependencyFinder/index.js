@@ -2,6 +2,7 @@ var path = require('path');
 var express = require('express');
 var router = express.Router();
 var xml2js = require('xml2js');
+var parseString = require('xml2js').parseString;
 const fs = require('fs');
 const perf = require('execution-time')();
 
@@ -15,26 +16,39 @@ router.get('/api', function(req, res) {
     res.json({"message": "Welcome to your backend"});
 });
 
-router.route('/api/dependencies').get(function(req,res) {
-    fs.readFile('./server/DependencyFinder/omni.xml', function(err, data) {
-        findDependencies(data, function(result) {
+router.route('/api/dependencies').post(function(req,res) {
+    var xml = req.body.xml;  //this looks like xml but is not interpreted as being xml
+    //var xml = "<root>Hello xml2js!</root>"
+    //console.log('***this should be xml***'+xml+'***endxml***');
+    //fs.readFile('./omni.xml', function(err, xml) {
+        findDependencies(xml, function(result) {
+            res.set('Content-Type', 'application/json');
+            //console.log('**jsonRES** '+result + ' end jsonRES***');
             res.status(200).json(result);
         });
 
-    })
+    //})
 
 })
 //Function for finding dependencies with an xml file as input and a callback function
 //that should handle the result from the function
 function findDependencies(xml, callback) {
-    var parser = new xml2js.Parser();
+   // var parser = new xml2js.Parser();
 
     perf.start();       //calculate time of excecution until perf.stop()
 
-    parser.parseString(xml, function (err, result) {
+    //console.log('===this should be xml '+xml+' ===endxml===');
+    //parser.parseString  //replaced this
+    parseString(xml, function (err, result) {
  
+        //console.dir('===json based on xml: '+JSON.stringify(result)+'===end JSON based on xml===');
 
+        //var jsonObject = JSON.stringify(result);
+
+        //console.log('****OBJECT****' + result.unit.unit);
         var object = result.unit.unit;  //each .java file in json
+        //console.log('****OBJECT LENGTH****' + object.length);
+
         var graphData = { 
             "nodes":[], 
             "links":[] };
@@ -50,9 +64,9 @@ function findDependencies(xml, callback) {
                 var currentNode = {"id": "", "package": "", "count": 0};
                 if (object[i].class != null) {      //check if the java file includes any class
                     var currentName = object[i].class[0].name;
-                    var currentPackage = object[i].package[0].name[0].name;
+                    //var currentPackage = object[i].package[0].name[0].name;
                     currentNode.id = currentName.toString();
-                    currentNode.package = currentPackage[currentPackage.length-1].toString();
+                    //currentNode.package = currentPackage[currentPackage.length-1].toString();
                     stringsJson[i] = JSON.stringify(object[i].class); //object[i].class is the current class in java file at [i] .
 
                 }

@@ -74,16 +74,22 @@
                 // sending owner,repo to backend
                 axios.post('/api/gitProjects',
                 {owner: ownerName,
-                 repo:  repoName })
-                
-                .then(
-                  response => {
-                      console.log("Success: " + response.status);
-                    this.Url_Input.url = "";
+                 repo:  repoName 
+                })
+                .then((response)=>{
+                     console.log("get xml Success: " + response.status);
+                    console.log('***xml from backend*** '+ response.data + ' ***');
+                     this.Url_Input.url = "";
                     this.url_accepted = true;
                     this.wrong_url = false;
-                  
-              })
+                    return axios.post('/api/dependencies',{xml: response.data});
+                })
+                .then(
+                  (response) => {
+                    console.log("get json Success: " + response.status);
+                   
+                    console.log('***json from backend*** '+ JSON.stringify(response.data) + ' ***');
+                })
               .catch(error => {
                   console.log(error.response);
               })

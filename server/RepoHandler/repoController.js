@@ -8,6 +8,10 @@ var fs = require('fs');
 
 const exec =  require('child_process').exec;
 
+//var Promise = require('promise');
+//var Q = require('q');
+//var async = require('async');
+
 // Method to download the repo to the filesystem
 router.post("/", function(req, res, next) {
   // the strings that we get from the front end
@@ -29,7 +33,12 @@ router.post("/", function(req, res, next) {
       console.log("destination directory cleared.")
    })
 
+
+   dlconrepo(repo,repoUrl,destination);
+   getXMLdata(res,repo);
+
    //Actual method that downloads the files taking as input: owner/repo,directory.
+   /*
    downloadRepo(repoUrl, destination, function (err) {
       console.log(err ? 'Error': 'Successfully downloaded repository.')
       if (err) {
@@ -41,8 +50,40 @@ router.post("/", function(req, res, next) {
 
    })
    res.status(201).json("Project Downloaded.");
-
+   */
 });
+
+function dlconrepo(repo,repoUrl,destination){
+
+    downloadRepo(repoUrl, destination, function (err) {
+        console.log(err ? 'Error, dl repo unsuccessful': 'Successfully downloaded repository.')
+        if (err) {
+            console.log(err);
+        }
+  
+        filterDir(destination, '.java');
+        convertRepo(repo);
+  
+     })
+}    
+    
+   //end stuff i added no
+function getXMLdata(res,repo){
+    var pathToXML = path.normalize(
+        path.join(__dirname, 'repository', 'xml',repo));
+    
+        console.log('***path to xml folder*** '+pathToXML);
+    
+       res.set('Content-Type', 'text/xml');
+    
+       fs.readFile(pathToXML+'.xml',(err,data)=>{
+        if(err) throw err;
+        //console.log('***data here***: '+ data + "**** end data*****");
+        res.status(201).send(
+            data
+            );
+        })
+}
 
 // structured like this '../LiteScript','.html'
 function filterDir(startPath,filter){
