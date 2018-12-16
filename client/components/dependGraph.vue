@@ -50,7 +50,7 @@ import * as d3 from 'd3';
     },
     
   methods: {
-      drawChart : function(data, drag, stringToColour) {
+      drawChart : function(data, drag, stringToColour, linkColour) {
         
         const links = data.links.map(d => Object.create(d));
         const nodes = data.nodes.map(d => Object.create(d));
@@ -74,7 +74,8 @@ import * as d3 from 'd3';
           .selectAll("line")
           .data(links)
           .enter().append("line")
-            .attr("stroke-width", d => Math.sqrt(d.value));
+            .attr("stroke-width", d => Math.sqrt(d.value))
+            .attr("stroke", d => linkColour(d.withinPackage));
             
         const node = svg.append("g")
             .attr("stroke", "#fff")
@@ -202,11 +203,21 @@ import * as d3 from 'd3';
         }
         return colour;
     }    
+    var linkColour = check => {
+
+        if(check === true) {
+            return '#00f904';
+        }
+        else if (check === false) {
+            return '#f90000';
+        }
+
+    }
    
   d3.json("/api/dependencies")
     .then( data =>  {
       console.log(JSON.stringify(data));
-      this.drawChart(data, drag, stringToColour);
+      this.drawChart(data, drag, stringToColour, linkColour);
     });
     
   },

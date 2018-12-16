@@ -57,7 +57,9 @@ function findDependencies(xml, callback) {
                 var currentNode = {"id": "", "package": "", "count": 0};
                 if (object[i].class != null) {      //check if the java file includes any class
                     var currentName = object[i].class[0].name;
-                    var currentPackage = object[i].package[0].name[0].name;
+                    if (object[i].package != null) {
+                        var currentPackage = object[i].package[0].name[0].name;
+                    }
                     currentNode.id = currentName.toString();
                     currentNode.package = currentPackage[currentPackage.length-1].toString();
                     stringsJson[i] = JSON.stringify(object[i].class); //object[i].class is the current class in java file at [i] .
@@ -65,7 +67,9 @@ function findDependencies(xml, callback) {
                 }
                 else if (object[i].interface != null) {         //check if the java file inclu  des any interface
                     var currentName = object[i].interface[0].name;
-                    var currentPackage = object[i].package[0].name[0].name;
+                    if (object[i].package != null) {
+                        var currentPackage = object[i].package[0].name[0].name;
+                    }
                     currentNode.id = currentName.toString();
                     currentNode.package = currentPackage[currentPackage.length-1].toString();
                     stringsJson[i] = JSON.stringify(object[i].interface);
@@ -82,17 +86,24 @@ function findDependencies(xml, callback) {
                     if (i == j) {   
                         continue;
                     }
+                    var comparePackage = object[j].package[0].name[0].name;
+
                     var pattern = new RegExp('"name":."' + allClasses[j]); 
                     var match;
                     var result = [];
                     if ((match = pattern.exec(stringsJson[i])) != null) {   //compares pattern (reg Expression) with stringsJson
                         result.push(match);
                         countDep++;
-                        var links = { "source": allClasses[i].toString(), "target": allClasses[j].toString(), "value": 1 };
-                        graphData.links.push(links);
-                    }
-
-                    
+                        var withinPackage = null;
+                        if(graphData.nodes[i].package === comparePackage[comparePackage.length-1].toString()) {
+                            withinPackage = true;
+                        }
+                        else {
+                            withinPackage = false;
+                        }
+                        var link = { "source": allClasses[i].toString(), "target": allClasses[j].toString(), "value": 1, "withinPackage": withinPackage };
+                        graphData.links.push(link);
+                    }  
                 }
                 graphData.nodes[i].count = countDep;
             }
