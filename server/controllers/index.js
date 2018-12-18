@@ -2,6 +2,8 @@ var path = require('path');
 var express = require('express');
 var router = express.Router()
 
+
+
 router.get('/api', function(req, res) {
     res.json({"message": "Welcome to your DIT341 backend project!"});
 });
@@ -28,7 +30,8 @@ router.all("/app1/*", function ( req, res ) {
 });*/
 
 // Insert routes below
-router.use('/api/gitProjects', require('../RepoHandler/repoController'));
+
+//router.use('/api/gitProjects', require('../RepoHandler/repoController'));
 
 // All other routes redirect to the index.html
 router.route('/*').get(function (req, res) {

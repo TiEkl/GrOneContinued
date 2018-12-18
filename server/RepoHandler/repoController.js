@@ -10,9 +10,18 @@ const exec =  require('child_process').exec;
 
 //var Promise = require('promise');
 //var Q = require('q');
-//var async = require('async');
+var async = require('async');
 
 // Method to download the repo to the filesystem
+
+// RANDOM TRY
+router.get("/",function(req,res,next) {
+        var data = "hello";
+        res.json(data);
+
+});
+// RANDOM TRY END
+
 router.post("/", function(req, res, next) {
   // the strings that we get from the front end
   var owner = req.body.owner;
@@ -34,8 +43,21 @@ router.post("/", function(req, res, next) {
    })
 
 
-   dlconrepo(repo,repoUrl,destination);
-   getXMLdata(res,repo);
+  
+   
+  // async.waterfall([
+    dlconrepo(repo,repoUrl,destination)
+    //setTimeout(getXMLdata,5000,[res,repo]);
+    setTimeout(() => { //this "guarantees" that this runs after the xml is already created (must find a better way of doing this)
+        getXMLdata(res,repo);
+    }, 3000);
+   
+    //getXMLdata(res,repo)
+   //], function(error){
+  //     if(error){
+  //      console.log(error);
+   //    }
+   //});
 
    //Actual method that downloads the files taking as input: owner/repo,directory.
    /*
@@ -53,18 +75,24 @@ router.post("/", function(req, res, next) {
    */
 });
 
-function dlconrepo(repo,repoUrl,destination){
+function dlconrepo(repo,repoUrl,destination, callback){
 
     downloadRepo(repoUrl, destination, function (err) {
         console.log(err ? 'Error, dl repo unsuccessful': 'Successfully downloaded repository.')
         if (err) {
             console.log(err);
         }
-  
+        
         filterDir(destination, '.java');
         convertRepo(repo);
   
+        if(callback){
+            callback();
+        } 
+
      })
+
+   
 }    
     
    //end stuff i added no

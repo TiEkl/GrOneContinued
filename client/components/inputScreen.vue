@@ -72,23 +72,33 @@
                var ownerName = path[1];
                var repoName = path[2];
                 // sending owner,repo to backend
-                axios.post('/api/gitProjects',
+                axios.post('/api/gitProjects', //used to be gitProjects
                 {owner: ownerName,
                  repo:  repoName 
                 })
                 .then((response)=>{
-                     console.log("get xml Success: " + response.status);
-                    console.log('***xml from backend*** '+ response.data + ' ***');
+                    console.log("get xml Success: " + response.status);
+                    //console.log('***xml from backend*** '+ response.data + ' ***');
                      this.Url_Input.url = "";
                     this.url_accepted = true;
                     this.wrong_url = false;
+                    
                     return axios.post('/api/dependencies',{xml: response.data});
                 })
                 .then(
                   (response) => {
-                    console.log("get json Success: " + response.status);
+                    //make get request to get the data
+                    //visualize the data
+                    console.log("post request to dependencies Success: " + response.status);
+                    //console.log('***json from backend*** '+ JSON.stringify(response.data) + ' ***');
+                    return axios.get('/api/dependencies'); //we should have some ID or something so that they know which request to get!!!
                    
-                    console.log('***json from backend*** '+ JSON.stringify(response.data) + ' ***');
+                })
+                .then((response)=>{
+                    console.log("get visison Success: " + response.status);
+                    console.log("data for visualization: " + JSON.stringify(response.data.data.classes)+"   data for visualization END" );
+                    var router = this.$router;
+                    router.push("graph");
                 })
               .catch(error => {
                   console.log(error.response);

@@ -1,9 +1,16 @@
 <!-- baserouter.vue -->
 <template>
-  <div>
-  <div class="frame"></div>
-</div>
+    <div>
+        <div>
+            <br>
+            <br>
+            <p>GRAPH PAGE</p>
+        </div>
+        <div class="frame"></div>
+    </div>
 </template>
+
+
 <style>
 body{
   
@@ -15,11 +22,6 @@ body{
     stroke-width: 1;
     shape-rendering: crispEdges;
 }
-      
-        
-    
-         
-        
          .text {
            fill: black;
             font: 12px sans-serif;
@@ -31,25 +33,26 @@ body{
          }
          .text:hover{
              fill:black;
-         }
-        
+         }   
 </style>
-<script>
 
-import * as d3 from 'd3';
-  module.exports = {
-    name:"dependGraph",
-    
-  data() {
-      return {
+
+<script>
+    import * as d3 from 'd3';
+    var axios = require('axios');
+    module.exports = {
+        name:"dependGraph",
+        data() {
+            return {
         
-     height : 600,
-     width : 800
+                height : 600,
+                width : 800
      
-      }
-    },
+            }
+        },
     
-  methods: {
+        methods: {
+
       drawChart : function(data, drag, stringToColour) {
         
         const links = data.links.map(d => Object.create(d));
@@ -116,7 +119,7 @@ import * as d3 from 'd3';
             return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
         }
 
-    // fade nodes on hover
+         // fade nodes on hover
         function mouseOver(opacity) {
             return function(d) {
                 // check all other nodes to see if they're connected
@@ -158,58 +161,59 @@ import * as d3 from 'd3';
         }
         return svg.node();
       },
-      forceSimulation : function(nodes, links) {
-        return d3.forceSimulation(nodes)
-            .force("link", d3.forceLink(links).id(d => d.id).distance(40).strength(1))
-            .force("charge", d3.forceManyBody())
-            .force("collide", d3.forceCollide().radius(25))
-            .force("center", d3.forceCenter());
-      }
+            forceSimulation : function(nodes, links) {
+                return d3.forceSimulation(nodes)
+                    .force("link", d3.forceLink(links).id(d => d.id).distance(40).strength(1))
+                    .force("charge", d3.forceManyBody())
+                    .force("collide", d3.forceCollide().radius(25))
+                    .force("center", d3.forceCenter());
+            }
     },
-  mounted() {
-     var drag = simulation => {
-      
-      function dragstarted(d) {
-        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-        d.fx = d.x;
-        d.fy = d.y;
-      }
-      
-      function dragged(d) {
-       // d.fx = d3.event.x;
-       // d.fy = d3.event.y;
-      }
-      
-      function dragended(d) {
-        if (!d3.event.active) simulation.alphaTarget(0);
-        d.fx = null;
-        d.fy = null;
-      }
-      return d3.drag()
-          .on("start", dragstarted)
-          .on("drag", dragged)
-          .on("end", dragended);
-    } 
-    var stringToColour = str => {
-        var hash = 0;
-        for (var i = 0; i < str.length; i++) {
-            hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    mounted() {
+        var drag = simulation => {
+        
+        function dragstarted(d) {
+            if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
         }
-        var colour = '#';
-        for (var i = 0; i < 3; i++) {
-            var value = (hash >> (i * 8)) & 0xFF;
-            colour += ('00' + value.toString(16)).substr(-2);
+        
+        function dragged(d) {
+        // d.fx = d3.event.x;
+        // d.fy = d3.event.y;
         }
-        return colour;
-    }    
+        
+        function dragended(d) {
+            if (!d3.event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+        return d3.drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended);
+        } 
+        var stringToColour = str => {
+            var hash = 0;
+            for (var i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            var colour = '#';
+            for (var i = 0; i < 3; i++) {
+                var value = (hash >> (i * 8)) & 0xFF;
+                colour += ('00' + value.toString(16)).substr(-2);
+            }
+            return colour;
+        }    
    
-  d3.json("/api/dependencies")
-    .then( data =>  {
-      console.log(JSON.stringify(data));
-      this.drawChart(data, drag, stringToColour);
-    });
+        d3.json("/api/dependencies")
+        .then( (data) =>  {
+        console.log('D3 DATA '+JSON.stringify(data.classes));
+        console.log('classes no stringify '+data.classes);
+        this.drawChart(data.classes, drag, stringToColour);
+        });
     
-  },
-};
+        }
+    };
 </script>
 

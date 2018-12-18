@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<unit xmlns="http://www.srcML.org/srcML/src" revision="0.9.5">
+
+<unit revision="0.9.5" language="Java" filename="server\RepoHandler\repository\GarageIOTest\src\Main.java" hash="973f0c2f80b9f0ef95cb4ce3b407cbc6d1328969"><class><specifier>public</specifier> class <name>Main</name> <block>{
+
+    <function><specifier>public</specifier> <specifier>static</specifier> <type><name>void</name></type> <name>main</name><parameter_list>(<parameter><decl><type><name><name>String</name><index>[]</index></name></type> <name>args</name></decl></parameter>)</parameter_list><block>{
+        <decl_stmt><decl><type><name>IOClass</name></type> <name>io</name> <init>= <expr><operator>new</operator> <call><name>IOClass</name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+
+        <comment type="block">/*Car car1 = new Car(io.readLine("Enter rgn: "),
+                io.readInteger("Enter model year: "),
+
+                io.readDouble("Enter weight: "),
+                io.readDouble("Enter price: "),
+                io.readDouble("Enter gas level: "),
+                io.readDouble("Enter mileage: "),
+                io.readDouble("Enter quality: "),
+                io.readLine("Enter status: "));*/</comment>
+        <decl_stmt><decl><type><name>Garage</name></type> <name>garage</name> <init>= <expr><operator>new</operator> <call><name>Garage</name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+        <expr_stmt><expr><call><name><name>garage</name><operator>.</operator><name>run</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+        <comment type="line">//System.out.println(car1.toString());</comment>
+
+    }</block></function>
+
+}</block></class>
+</unit>
+
+<unit revision="0.9.5" language="Java" filename="server\RepoHandler\repository\GarageIOTest\src\IOClass.java" hash="8609c007edf110d15f68f02626a76bdc32494ecb"><import>import <name><name>com</name><operator>.</operator><name>sun</name><operator>.</operator><name>org</name><operator>.</operator><name>apache</name><operator>.</operator><name>xpath</name><operator>.</operator><name>internal</name><operator>.</operator><name>SourceTree</name></name>;</import>
+
+<import>import <name><name>java</name><operator>.</operator><name>io</name><operator>.</operator><name>IOException</name></name>;</import>
+<import>import <name><name>java</name><operator>.</operator><name>util</name><operator>.</operator><name>Scanner</name></name>;</import>
+
+<class><specifier>public</specifier> class <name>IOClass</name> <block>{
+
+    <decl_stmt><decl><specifier>private</specifier> <type><name>Scanner</name></type> <name>sc</name></decl>;</decl_stmt>
+    <decl_stmt><decl><specifier>private</specifier> <type><specifier>final</specifier> <name>String</name></type> <name>END_OF_LINE</name> <init>= <expr><call><name><name>System</name><operator>.</operator><name>lineSeparator</name></name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+
+    <constructor><specifier>public</specifier> <name>IOClass</name><parameter_list>()</parameter_list><block>{
+        <expr_stmt><expr><name>sc</name> <operator>=</operator> <operator>new</operator> <call><name>Scanner</name><argument_list>(<argument><expr><name><name>System</name><operator>.</operator><name>in</name></name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    }</block></constructor>
+
+    <function><specifier>public</specifier> <type><name>String</name></type> <name>readLine</name><parameter_list>(<parameter><decl><type><name>String</name></type> <name>requestString</name></decl></parameter>)</parameter_list><block>{
+        <expr_stmt><expr><call><name><name>System</name><operator>.</operator><name>out</name><operator>.</operator><name>println</name></name><argument_list>(<argument><expr><name>requestString</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <return>return <expr><call><name><name>sc</name><operator>.</operator><name>nextLine</name></name><argument_list>()</argument_list></call></expr>;</return>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>double</name></type> <name>readDouble</name><parameter_list>(<parameter><decl><type><name>String</name></type> <name>requestDouble</name></decl></parameter>)</parameter_list><block>{
+        <expr_stmt><expr><call><name><name>System</name><operator>.</operator><name>out</name><operator>.</operator><name>println</name></name><argument_list>(<argument><expr><name>requestDouble</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <decl_stmt><decl><type><name>double</name></type> <name>banana</name> <init>= <expr><call><name><name>sc</name><operator>.</operator><name>nextDouble</name></name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+        <expr_stmt><expr><call><name><name>sc</name><operator>.</operator><name>nextLine</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+        <return>return <expr><name>banana</name></expr>;</return>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>int</name></type> <name>readInteger</name><parameter_list>(<parameter><decl><type><name>String</name></type> <name>requestInteger</name></decl></parameter>)</parameter_list><block>{
+        <expr_stmt><expr><call><name><name>System</name><operator>.</operator><name>out</name><operator>.</operator><name>println</name></name><argument_list>(<argument><expr><name>requestInteger</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        <decl_stmt><decl><type><name>int</name></type> <name>banana</name> <init>= <expr><call><name><name>sc</name><operator>.</operator><name>nextInt</name></name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+        <expr_stmt><expr><call><name><name>sc</name><operator>.</operator><name>nextLine</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+        <return>return <expr><name>banana</name></expr>;</return>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>String</name></type> <name>gasTankEmptyError</name><parameter_list>(<parameter><decl><type><name>String</name></type> <name>rgn</name></decl></parameter>)</parameter_list><block>{
+        <return>return <expr><literal type="string">"Error when driving car "</literal> <operator>+</operator> <name>rgn</name> <operator>+</operator><literal type="string">". Gas tank is empty."</literal></expr>;</return>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>int</name></type> <name>menu</name><parameter_list>()</parameter_list><block>{
+        <expr_stmt><expr><call><name><name>System</name><operator>.</operator><name>out</name><operator>.</operator><name>println</name></name><argument_list>(
+                <argument><expr><literal type="string">"Choose an option"</literal> <operator>+</operator> <name>END_OF_LINE</name>
+                <operator>+</operator> <literal type="string">"1. Register car"</literal> <operator>+</operator> <name>END_OF_LINE</name>
+                <operator>+</operator> <literal type="string">"2. Print all registered"</literal> <operator>+</operator> <name>END_OF_LINE</name>
+                <operator>+</operator> <literal type="string">"4. Print cheapest of classicifcation"</literal> <operator>+</operator> <name>END_OF_LINE</name>
+                <operator>+</operator> <literal type="string">"3. Print specific car (rgn)"</literal> <operator>+</operator> <name>END_OF_LINE</name>
+                <operator>+</operator> <literal type="string">"5. Test drive (rgn)"</literal> <operator>+</operator> <name>END_OF_LINE</name>
+                <operator>+</operator> <literal type="string">"6. Fill gas (rgn and gallons)"</literal> <operator>+</operator> <name>END_OF_LINE</name>
+                <operator>+</operator> <literal type="string">"7. Hire mechanic"</literal> <operator>+</operator> <name>END_OF_LINE</name>
+                <operator>+</operator> <literal type="string">"8. Repair a car"</literal> <operator>+</operator> <name>END_OF_LINE</name>
+                <operator>+</operator> <literal type="string">"9. Quit the application"</literal><operator>+</operator><name>END_OF_LINE</name>
+                <operator>+</operator> <name>END_OF_LINE</name>
+                <operator>+</operator> <literal type="string">"Enter an option: "</literal></expr></argument>
+        )</argument_list></call></expr>;</expr_stmt>
+        <decl_stmt><decl><type><name>int</name></type> <name>option</name> <init>= <expr><call><name><name>sc</name><operator>.</operator><name>nextInt</name></name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+        <expr_stmt><expr><call><name><name>sc</name><operator>.</operator><name>nextLine</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+        <return>return <expr><name>option</name></expr>;</return>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>void</name></type> <name>writeLine</name><parameter_list>(<parameter><decl><type><name>String</name></type> <name>outputToUser</name></decl></parameter>)</parameter_list><block>{
+        <expr_stmt><expr><call><name><name>System</name><operator>.</operator><name>out</name><operator>.</operator><name>println</name></name><argument_list>(<argument><expr><name>outputToUser</name></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+    }</block></function>
+
+}</block></class>
+</unit>
+
+<unit revision="0.9.5" language="Java" filename="server\RepoHandler\repository\GarageIOTest\src\Car.java" hash="8652e84ccaaf911bc96263bf9fe44958aa375e74"><class><specifier>public</specifier> class <name>Car</name> <block>{
+
+    <decl_stmt><decl><type><name>String</name></type> <name>rgn</name></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>int</name></type> <name>modelYear</name></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>double</name></type> <name>weight</name></decl>, <decl><type ref="prev"/><name>price</name></decl>, <decl><type ref="prev"/><name>gasmeter</name></decl>, <decl><type ref="prev"/><name>mileage</name></decl>, <decl><type ref="prev"/><name>quality</name></decl>;</decl_stmt>
+    <decl_stmt><decl><type><name>String</name></type> <name>status</name> <init>= <expr><literal type="string">"Good"</literal></expr></init></decl>;</decl_stmt>
+    <decl_stmt><decl><type><specifier>final</specifier> <name>String</name></type> <name>END_OF_LINE</name> <init>= <expr><call><name><name>System</name><operator>.</operator><name>lineSeparator</name></name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+    <decl_stmt><decl><type><specifier>final</specifier> <name>double</name></type> <name>MAX_GAS_LEVEL</name> <init>= <expr><literal type="number">10</literal></expr></init></decl>;</decl_stmt>
+
+    <constructor><specifier>public</specifier> <name>Car</name><parameter_list>(<parameter><decl><type><name>String</name></type> <name>rgn</name></decl></parameter>, <parameter><decl><type><name>int</name></type> <name>modelYear</name></decl></parameter>, <parameter><decl><type><name>double</name></type> <name>weight</name></decl></parameter>, <parameter><decl><type><name>double</name></type> <name>price</name></decl></parameter>, <parameter><decl><type><name>double</name></type> <name>gasMeter</name></decl></parameter>, <parameter><decl><type><name>double</name></type> <name>mileage</name></decl></parameter>, <parameter><decl><type><name>double</name></type> <name>quality</name></decl></parameter>, <parameter><decl><type><name>String</name></type> <name>status</name></decl></parameter>)</parameter_list><block>{
+        <expr_stmt><expr><name><name>this</name><operator>.</operator><name>rgn</name></name> <operator>=</operator> <name>rgn</name></expr>;</expr_stmt>
+        <expr_stmt><expr><name><name>this</name><operator>.</operator><name>modelYear</name></name> <operator>=</operator> <name>modelYear</name></expr>;</expr_stmt>
+        <expr_stmt><expr><name><name>this</name><operator>.</operator><name>weight</name></name> <operator>=</operator> <name>weight</name></expr>;</expr_stmt>
+        <expr_stmt><expr><name><name>this</name><operator>.</operator><name>price</name></name> <operator>=</operator> <name>price</name></expr>;</expr_stmt>
+        <expr_stmt><expr><name><name>this</name><operator>.</operator><name>gasmeter</name></name> <operator>=</operator> <name>gasMeter</name></expr>;</expr_stmt>
+        <expr_stmt><expr><name><name>this</name><operator>.</operator><name>mileage</name></name> <operator>=</operator> <name>mileage</name></expr>;</expr_stmt>
+        <expr_stmt><expr><name><name>this</name><operator>.</operator><name>quality</name></name> <operator>=</operator> <name>quality</name></expr>;</expr_stmt>
+        <expr_stmt><expr><name><name>this</name><operator>.</operator><name>status</name></name> <operator>=</operator> <name>status</name></expr>;</expr_stmt>
+    }</block></constructor>
+
+    <function><specifier>public</specifier> <type><name>String</name></type> <name>getRgn</name><parameter_list>()</parameter_list> <block>{
+        <return>return <expr><name>rgn</name></expr>;</return>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>void</name></type> <name>setRgn</name><parameter_list>(<parameter><decl><type><name>String</name></type> <name>rgn</name></decl></parameter>)</parameter_list> <block>{
+        <expr_stmt><expr><name><name>this</name><operator>.</operator><name>rgn</name></name> <operator>=</operator> <name>rgn</name></expr>;</expr_stmt>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>int</name></type> <name>getModelYear</name><parameter_list>()</parameter_list> <block>{
+        <return>return <expr><name>modelYear</name></expr>;</return>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>void</name></type> <name>setModelYear</name><parameter_list>(<parameter><decl><type><name>int</name></type> <name>modelYear</name></decl></parameter>)</parameter_list> <block>{
+        <expr_stmt><expr><name><name>this</name><operator>.</operator><name>modelYear</name></name> <operator>=</operator> <name>modelYear</name></expr>;</expr_stmt>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>double</name></type> <name>getWeight</name><parameter_list>()</parameter_list> <block>{
+        <return>return <expr><name>weight</name></expr>;</return>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>void</name></type> <name>setWeight</name><parameter_list>(<parameter><decl><type><name>double</name></type> <name>weight</name></decl></parameter>)</parameter_list> <block>{
+        <expr_stmt><expr><name><name>this</name><operator>.</operator><name>weight</name></name> <operator>=</operator> <name>weight</name></expr>;</expr_stmt>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>double</name></type> <name>getPrice</name><parameter_list>()</parameter_list> <block>{
+        <return>return <expr><name>price</name></expr>;</return>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>void</name></type> <name>setPrice</name><parameter_list>(<parameter><decl><type><name>double</name></type> <name>price</name></decl></parameter>)</parameter_list> <block>{
+        <expr_stmt><expr><name><name>this</name><operator>.</operator><name>price</name></name> <operator>=</operator> <name>price</name></expr>;</expr_stmt>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>double</name></type> <name>getGasmeter</name><parameter_list>()</parameter_list> <block>{
+        <return>return <expr><name>gasmeter</name></expr>;</return>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>double</name></type> <name>getGasInLiter</name><parameter_list>()</parameter_list><block>{
+        <return>return <expr><name><name>this</name><operator>.</operator><name>gasmeter</name></name> <operator>*</operator> <literal type="number">3.78</literal></expr>;</return>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>void</name></type> <name>setGasmeter</name><parameter_list>(<parameter><decl><type><name>double</name></type> <name>gasmeter</name></decl></parameter>)</parameter_list> <block>{
+        <expr_stmt><expr><name><name>this</name><operator>.</operator><name>gasmeter</name></name> <operator>=</operator> <name>gasmeter</name></expr>;</expr_stmt>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>double</name></type> <name>getMileage</name><parameter_list>()</parameter_list> <block>{
+        <return>return <expr><name>mileage</name></expr>;</return>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>double</name></type> <name>getMileageInKm</name><parameter_list>()</parameter_list><block>{
+        <return>return <expr><name><name>this</name><operator>.</operator><name>mileage</name></name> <operator>*</operator> <literal type="number">1.6</literal></expr>;</return>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>void</name></type> <name>setMileage</name><parameter_list>(<parameter><decl><type><name>double</name></type> <name>mileage</name></decl></parameter>)</parameter_list> <block>{
+        <expr_stmt><expr><name><name>this</name><operator>.</operator><name>mileage</name></name> <operator>=</operator> <name>mileage</name></expr>;</expr_stmt>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>double</name></type> <name>getQuality</name><parameter_list>()</parameter_list> <block>{
+        <return>return <expr><name>quality</name></expr>;</return>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>void</name></type> <name>setQuality</name><parameter_list>(<parameter><decl><type><name>double</name></type> <name>quality</name></decl></parameter>)</parameter_list> <block>{
+        <expr_stmt><expr><name><name>this</name><operator>.</operator><name>quality</name></name> <operator>=</operator> <name>quality</name></expr>;</expr_stmt>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>String</name></type> <name>getStatus</name><parameter_list>()</parameter_list> <block>{
+        <return>return <expr><name>status</name></expr>;</return>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>void</name></type> <name>setStatus</name><parameter_list>(<parameter><decl><type><name>String</name></type> <name>status</name></decl></parameter>)</parameter_list> <block>{
+        <expr_stmt><expr><name><name>this</name><operator>.</operator><name>status</name></name> <operator>=</operator> <name>status</name></expr>;</expr_stmt>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>String</name></type> <name>getClassification</name><parameter_list>()</parameter_list><block>{
+        <if>if<condition>(<expr><name>weight</name> <operator>&lt;=</operator> <literal type="number">1600</literal></expr>)</condition><then><block>{
+            <return>return <expr><literal type="string">"Light"</literal></expr>;</return>
+        }</block></then> <elseif>else <if>if <condition>(<expr><name>weight</name> <operator>&lt;</operator> <literal type="number">2300</literal></expr>)</condition><then><block>{
+            <return>return <expr><literal type="string">"Medium"</literal></expr>;</return>
+        }</block></then></if></elseif> <else>else <block>{
+            <return>return <expr><literal type="string">"Heavy"</literal></expr>;</return>
+        }</block></else></if>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>void</name></type> <name>testDrive</name><parameter_list>(<parameter><decl><type><name>double</name></type> <name>mileage</name></decl></parameter>)</parameter_list><block>{
+        <expr_stmt><expr><name><name>this</name><operator>.</operator><name>mileage</name></name> <operator>+=</operator> <name>mileage</name></expr>;</expr_stmt>
+        <expr_stmt><expr><name><name>this</name><operator>.</operator><name>gasmeter</name></name> <operator>=</operator> <name><name>this</name><operator>.</operator><name>gasmeter</name></name> <operator>+</operator> <name>mileage</name><operator>/</operator><literal type="number">25</literal></expr>;</expr_stmt>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>void</name></type> <name>fillGas</name><parameter_list>(<parameter><decl><type><name>double</name></type> <name>gallons</name></decl></parameter>)</parameter_list><block>{
+        <if>if<condition>(<expr><name>gasmeter</name> <operator>+</operator> <name>gallons</name> <operator>&gt;</operator> <name>MAX_GAS_LEVEL</name></expr>)</condition><then> <block>{
+            <expr_stmt><expr><name>gasmeter</name> <operator>=</operator> <name>MAX_GAS_LEVEL</name></expr>;</expr_stmt>
+        }</block></then><else>else <block>{
+            <expr_stmt><expr><name>gasmeter</name> <operator>+=</operator> <name>gallons</name></expr>;</expr_stmt>
+        }</block></else></if>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>String</name></type> <name>toString</name><parameter_list>()</parameter_list><block>{
+        <return>return <expr><name>rgn</name> <operator>+</operator> <literal type="string">": "</literal> <operator>+</operator> <call><name>getClassification</name><argument_list>()</argument_list></call> <operator>+</operator> <name>END_OF_LINE</name> <operator>+</operator>
+                <literal type="string">"Model Year: "</literal> <operator>+</operator> <name>modelYear</name> <operator>+</operator> <name>END_OF_LINE</name> <operator>+</operator>
+                <literal type="string">"Weight: "</literal> <operator>+</operator> <name>weight</name> <operator>+</operator> <literal type="string">" kg"</literal> <operator>+</operator> <name>END_OF_LINE</name> <operator>+</operator>
+                <literal type="string">"Price: "</literal> <operator>+</operator> <name>price</name> <operator>+</operator> <literal type="string">" kr"</literal> <operator>+</operator> <name>END_OF_LINE</name> <operator>+</operator>
+                <literal type="string">"Gas level: "</literal> <operator>+</operator> <name>gasmeter</name> <operator>+</operator> <literal type="string">" gallons ("</literal> <operator>+</operator> <call><name>getGasInLiter</name><argument_list>()</argument_list></call> <operator>+</operator> <literal type="string">" L)"</literal> <operator>+</operator> <name>END_OF_LINE</name> <operator>+</operator>
+                <literal type="string">"Mileage: "</literal> <operator>+</operator> <name>mileage</name> <operator>+</operator> <literal type="string">" miles ("</literal> <operator>+</operator> <call><name>getMileageInKm</name><argument_list>()</argument_list></call> <operator>+</operator> <literal type="string">" km)"</literal> <operator>+</operator> <name>END_OF_LINE</name> <operator>+</operator>
+                <literal type="string">"Quality value: "</literal> <operator>+</operator> <name>quality</name> <operator>+</operator> <name>END_OF_LINE</name> <operator>+</operator>
+                <literal type="string">"Status: "</literal> <operator>+</operator> <name>status</name></expr>;</return>
+    }</block></function>
+}</block></class>
+</unit>
+
+<unit revision="0.9.5" language="Java" filename="server\RepoHandler\repository\GarageIOTest\src\Garage.java" hash="43d206109326ddc4775b1bb62069d8ffaaee1536"><import>import <name><name>java</name><operator>.</operator><name>util</name><operator>.</operator><name>Scanner</name></name>;</import>
+<class><specifier>public</specifier> class <name>Garage</name> <block>{
+
+    <decl_stmt><decl><specifier>private</specifier> <specifier>static</specifier> <type><specifier>final</specifier> <name>int</name></type> <name>REGISTER_CAR</name> <init>= <expr><literal type="number">1</literal></expr></init></decl>;</decl_stmt>
+    <decl_stmt><decl><specifier>private</specifier> <specifier>static</specifier> <type><specifier>final</specifier> <name>int</name></type> <name>PRINT_CARS</name> <init>= <expr><literal type="number">2</literal></expr></init></decl>;</decl_stmt>
+    <decl_stmt><decl><specifier>private</specifier> <specifier>static</specifier> <type><specifier>final</specifier> <name>int</name></type> <name>PRINT_CAR</name> <init>= <expr><literal type="number">3</literal></expr></init></decl>;</decl_stmt>
+    <decl_stmt><decl><specifier>private</specifier> <specifier>static</specifier> <type><specifier>final</specifier> <name>int</name></type> <name>PRINT_CHEAPEST_CAR</name> <init>= <expr><literal type="number">4</literal></expr></init></decl>;</decl_stmt>
+    <decl_stmt><decl><specifier>private</specifier> <specifier>static</specifier> <type><specifier>final</specifier> <name>int</name></type> <name>DRIVE_CAR</name> <init>= <expr><literal type="number">5</literal></expr></init></decl>;</decl_stmt>
+    <decl_stmt><decl><specifier>private</specifier> <specifier>static</specifier> <type><specifier>final</specifier> <name>int</name></type> <name>FILL_GAS</name> <init>= <expr><literal type="number">6</literal></expr></init></decl>;</decl_stmt>
+    <decl_stmt><decl><specifier>private</specifier> <specifier>static</specifier> <type><specifier>final</specifier> <name>int</name></type> <name>REGISTER_MACHANIC</name> <init>= <expr><literal type="number">7</literal></expr></init></decl>;</decl_stmt>
+    <decl_stmt><decl><specifier>private</specifier> <specifier>static</specifier> <type><specifier>final</specifier> <name>int</name></type> <name>REPAIR_CAR</name> <init>= <expr><literal type="number">8</literal></expr></init></decl>;</decl_stmt>
+    <decl_stmt><decl><specifier>private</specifier> <specifier>static</specifier> <type><specifier>final</specifier> <name>int</name></type> <name>QUIT</name> <init>= <expr><literal type="number">9</literal></expr></init></decl>;</decl_stmt>
+
+    <decl_stmt><decl><specifier>private</specifier> <type><name><name>Car</name><index>[]</index></name></type> <name>cars</name></decl>;</decl_stmt>
+    <comment type="line">//private Mechanic[] mechanics;</comment>
+    <decl_stmt><decl><specifier>private</specifier> <type><specifier>final</specifier> <name>int</name></type> <name>MAX_GAS_LEVEL</name> <init>= <expr><literal type="number">10</literal></expr></init></decl>;</decl_stmt> <comment type="line">//10 gallons.</comment>
+    <decl_stmt><decl><specifier>private</specifier> <type><name>int</name></type> <name>registeredCars</name></decl>;</decl_stmt>
+    <decl_stmt><decl><specifier>private</specifier> <type><name>int</name></type> <name>registeredMechanics</name></decl>;</decl_stmt>
+
+    <decl_stmt><decl><specifier>private</specifier> <type><name>IOClass</name></type> <name>io</name></decl>;</decl_stmt>
+
+    <comment type="block">/*
+     * Constructor to initialize your data set of cars and mechanics.
+     * It begins empty. The default size is 5 cars and 5 mechanics.
+     */</comment>
+
+    <constructor><specifier>public</specifier> <name>Garage</name><parameter_list>()</parameter_list> <block>{
+        <decl_stmt><decl><type><specifier>final</specifier> <name>int</name></type> <name>MAX_CARS</name> <init>= <expr><literal type="number">5</literal></expr></init></decl>;</decl_stmt>
+        <expr_stmt><expr><name><name>this</name><operator>.</operator><name>cars</name></name> <operator>=</operator> <operator>new</operator> <name><name>Car</name><index>[<expr><name>MAX_CARS</name></expr>]</index></name></expr>;</expr_stmt>
+        <expr_stmt><expr><name><name>this</name><operator>.</operator><name>registeredCars</name></name> <operator>=</operator> <literal type="number">0</literal></expr>;</expr_stmt>
+        <decl_stmt><decl><type><specifier>final</specifier> <name>int</name></type> <name>MAX_MECHANICS</name> <init>= <expr><literal type="number">5</literal></expr></init></decl>;</decl_stmt>
+        <comment type="line">//this.mechanics = new Mechanic [MAX_MECHANICS];</comment>
+        <expr_stmt><expr><name><name>this</name><operator>.</operator><name>registeredMechanics</name></name> <operator>=</operator> <literal type="number">0</literal></expr>;</expr_stmt>
+        <expr_stmt><expr><name>io</name> <operator>=</operator> <operator>new</operator> <call><name>IOClass</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+    }</block></constructor>
+
+    <comment type="block">/*
+     * This method will retrieve a car from the array based on a specified rgn.
+     * If the car was not created and added to the array, it will return NULL,
+     * meaning that the car does not exist in the system.
+     *
+     */</comment>
+    <function><specifier>public</specifier> <type><name>Car</name></type> <name>retrieveCar</name><parameter_list>(<parameter><decl><type><name>String</name></type> <name>carRgn</name></decl></parameter>)</parameter_list> <block>{
+        <for>for <control>(<init><decl><type><name>int</name></type> <name>i</name> <init>= <expr><literal type="number">0</literal></expr></init></decl>;</init> <condition><expr><name>i</name> <operator>&lt;</operator> <name><name>this</name><operator>.</operator><name>cars</name><operator>.</operator><name>length</name></name></expr>;</condition> <incr><expr><name>i</name><operator>++</operator></expr></incr>)</control> <block>{
+            <if>if<condition>(<expr><operator>!</operator><name><name>cars</name><index>[<expr><name>i</name></expr>]</index></name><operator>.</operator><call><name>equals</name><argument_list>(<argument><expr><literal type="null">null</literal></expr></argument>)</argument_list></call> <operator>&amp;&amp;</operator> <name><name>cars</name><index>[<expr><name>i</name></expr>]</index></name><operator>.</operator><call><name>getRgn</name><argument_list>()</argument_list></call><operator>.</operator><call><name>equals</name><argument_list>(<argument><expr><name>carRgn</name></expr></argument>)</argument_list></call></expr>)</condition><then> <block>{
+                <return>return <expr><name><name>cars</name><index>[<expr><name>i</name></expr>]</index></name></expr>;</return>
+            }</block></then></if>
+
+        }</block></for>
+        <return>return <expr><literal type="null">null</literal></expr>;</return>
+    }</block></function>
+
+
+
+    <function><specifier>public</specifier> <type><name>Car</name></type> <name>createCar</name><parameter_list>()</parameter_list> <block>{
+        <return>return <expr><operator>new</operator> <call><name>Car</name><argument_list>(<argument><expr><call><name><name>io</name><operator>.</operator><name>readLine</name></name><argument_list>(<argument><expr><literal type="string">"Enter rgn: "</literal></expr></argument>)</argument_list></call></expr></argument>,
+                <argument><expr><call><name><name>io</name><operator>.</operator><name>readInteger</name></name><argument_list>(<argument><expr><literal type="string">"Enter model year: "</literal></expr></argument>)</argument_list></call></expr></argument>,
+
+                <argument><expr><call><name><name>io</name><operator>.</operator><name>readDouble</name></name><argument_list>(<argument><expr><literal type="string">"Enter weight: "</literal></expr></argument>)</argument_list></call></expr></argument>,
+                <argument><expr><call><name><name>io</name><operator>.</operator><name>readDouble</name></name><argument_list>(<argument><expr><literal type="string">"Enter price: "</literal></expr></argument>)</argument_list></call></expr></argument>,
+                <argument><expr><call><name><name>io</name><operator>.</operator><name>readDouble</name></name><argument_list>(<argument><expr><literal type="string">"Enter gas level: "</literal></expr></argument>)</argument_list></call></expr></argument>,
+                <argument><expr><call><name><name>io</name><operator>.</operator><name>readDouble</name></name><argument_list>(<argument><expr><literal type="string">"Enter mileage: "</literal></expr></argument>)</argument_list></call></expr></argument>,
+                <argument><expr><call><name><name>io</name><operator>.</operator><name>readDouble</name></name><argument_list>(<argument><expr><literal type="string">"Enter quality: "</literal></expr></argument>)</argument_list></call></expr></argument>,
+                <argument><expr><call><name><name>io</name><operator>.</operator><name>readLine</name></name><argument_list>(<argument><expr><literal type="string">"Enter status: "</literal></expr></argument>)</argument_list></call></expr></argument>)</argument_list></call></expr>;</return>
+    }</block></function>
+
+    <comment type="block">/*public Mechanic createMechanic() {
+        /*TODO: Add logic to this method.
+
+        1. read the mechanic's name and type.
+        2. use that information to create the mechanic.
+        3. change the null below to the
+         right reference that you need to return!! */</comment>
+      <comment type="line">//  return null; //&lt;--- change this.</comment>
+    <comment type="line">//}</comment>
+
+    <function><specifier>public</specifier> <type><name>void</name></type> <name>run</name><parameter_list>()</parameter_list> <block>{
+
+        <decl_stmt><decl><type><name>int</name></type> <name>option</name></decl>;</decl_stmt>
+        <do>do <block>{
+            <expr_stmt><expr><name>option</name> <operator>=</operator> <call><name><name>io</name><operator>.</operator><name>menu</name></name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+
+            <switch>switch <condition>(<expr><name>option</name></expr>)</condition> <block>{
+                <case>case <expr><name>REGISTER_CAR</name></expr>:</case>
+                    <decl_stmt><decl><type><name>Car</name></type> <name>newCar</name> <init>= <expr><call><name>createCar</name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+                    <expr_stmt><expr><name><name>this</name><operator>.</operator><name>cars</name><index>[<expr><name>registeredCars</name></expr>]</index></name> <operator>=</operator> <name>newCar</name></expr>;</expr_stmt>
+                    <expr_stmt><expr><name><name>this</name><operator>.</operator><name>registeredCars</name></name> <operator>=</operator> <name><name>this</name><operator>.</operator><name>registeredCars</name></name> <operator>+</operator> <literal type="number">1</literal></expr>;</expr_stmt>
+                    <break>break;</break>
+                <case>case <expr><name>PRINT_CARS</name></expr>:</case>
+                    <expr_stmt><expr><call><name>printAllCars</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+                    <break>break;</break>
+                <case>case <expr><name>PRINT_CAR</name></expr>:</case>
+                    <expr_stmt><expr><call><name>printOneCar</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+                    <break>break;</break>
+                <case>case <expr><name>PRINT_CHEAPEST_CAR</name></expr>:</case>
+                    <expr_stmt><expr><call><name>printCheapest</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+                    <break>break;</break>
+                <case>case <expr><name>DRIVE_CAR</name></expr>:</case>
+                    <expr_stmt><expr><call><name>drive</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+                    <break>break;</break>
+                <case>case <expr><name>FILL_GAS</name></expr>:</case>
+                    <expr_stmt><expr><call><name>fillGas</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+                    <break>break;</break>
+                <case>case <expr><name>REGISTER_MACHANIC</name></expr>:</case>
+                    <comment type="line">//createMechanic();</comment>
+                    <break>break;</break>
+                <case>case <expr><name>REPAIR_CAR</name></expr>:</case>
+                    <expr_stmt><expr><call><name>repairCar</name><argument_list>()</argument_list></call></expr>;</expr_stmt>
+                    <break>break;</break>
+                <case>case <expr><name>QUIT</name></expr>:</case>
+                    <expr_stmt><expr><call><name><name>io</name><operator>.</operator><name>writeLine</name></name><argument_list>(<argument><expr><literal type="string">"Thank you for visiting our Garage. See you soon! \n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+                    <break>break;</break>
+
+                <comment type="line">//case EDIT_CAR_INFORMATION:</comment>
+                 <comment type="line">//   editInfo();</comment>
+                  <comment type="line">//  break;</comment>
+
+                <default>default:</default>
+                    <expr_stmt><expr><call><name><name>io</name><operator>.</operator><name>writeLine</name></name><argument_list>(<argument><expr><literal type="string">"Option "</literal><operator>+</operator><name>option</name><operator>+</operator><literal type="string">" is not valid. \n"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+                    <break>break;</break>
+            }</block></switch>
+        }</block> while <condition>(<expr><name>option</name> <operator>!=</operator> <name>QUIT</name></expr>)</condition>;</do>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>void</name></type> <name>printAllCars</name><parameter_list>()</parameter_list> <block>{
+        <comment type="line">// TODO: Add the code for the logic below</comment>
+        <comment type="line">// 1. Iterate through all cars and print each one of them</comment>
+        <comment type="line">//    if they are not null!</comment>
+        <comment type="line">// BE CAREFUL! avoid printing nulls by checking:</comment>
+        <comment type="line">// if( car[i] != null ) { ... print it ... }</comment>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>void</name></type> <name>printOneCar</name><parameter_list>()</parameter_list> <block>{
+        <decl_stmt><decl><type><name>String</name></type> <name>carRgn</name> <init>= <expr><call><name>readCarRgn</name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+
+        <decl_stmt><decl><type><name>Car</name></type> <name>foundCar</name> <init>= <expr><call><name>retrieveCar</name><argument_list>(<argument><expr><name>carRgn</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+        <if>if<condition>(<expr><operator>!</operator><call><name><name>foundCar</name><operator>.</operator><name>equals</name></name><argument_list>(<argument><expr><literal type="null">null</literal></expr></argument>)</argument_list></call></expr>)</condition><then> <block>{
+            <expr_stmt><expr><call><name><name>io</name><operator>.</operator><name>writeLine</name></name><argument_list>(<argument><expr><call><name><name>foundCar</name><operator>.</operator><name>toString</name></name><argument_list>()</argument_list></call></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        }</block></then> <else>else <block>{
+            <expr_stmt><expr><call><name><name>io</name><operator>.</operator><name>writeLine</name></name><argument_list>(<argument><expr><literal type="string">"No car with that rgn"</literal></expr></argument>)</argument_list></call></expr>;</expr_stmt>
+        }</block></else></if>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>void</name></type> <name>printCheapest</name><parameter_list>()</parameter_list> <block>{
+        <comment type="line">// TODO: Add the code for the logic below</comment>
+        <comment type="line">// 1. ask for the car's classification</comment>
+        <comment type="line">// 2. Iterate through all cars to get the ones with the classification specified</comment>
+        <comment type="line">// 3. Iterate through all the cars with this classification and find the one with the lowest price</comment>
+        <comment type="line">// 4. Print the found (cheapest) car</comment>
+        <comment type="line">// BE CAREFUL! avoid printing nulls by checking:</comment>
+        <comment type="line">// if( car[i] != null ) { ... print it ... }</comment>
+    }</block></function>
+
+    <comment type="block">/*
+     * This method only reads a String that here, will be the rgn
+     * of a car that you want to use
+     * (for printing, driving, filling gas, etc.)
+     */</comment>
+    <function><specifier>public</specifier> <type><name>String</name></type> <name>readCarRgn</name><parameter_list>()</parameter_list> <block>{
+        <return>return <expr><call><name><name>io</name><operator>.</operator><name>readLine</name></name><argument_list>(<argument><expr><literal type="string">"Type rgn of car to use: "</literal></expr></argument>)</argument_list></call></expr>;</return>
+    }</block></function>
+    <function><specifier>public</specifier> <type><name>void</name></type> <name>drive</name><parameter_list>()</parameter_list> <block>{
+        <decl_stmt><decl><type><name>String</name></type> <name>carRgn</name> <init>= <expr><call><name>readCarRgn</name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+        <decl_stmt><decl><type><name>Car</name></type> <name>foundCar</name> <init>= <expr><call><name>retrieveCar</name><argument_list>(<argument><expr><name>carRgn</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+        <comment type="line">//TODO: write code for the following logic:</comment>
+        <comment type="line">// 1. Read a double value for the amount of miles to be driven.</comment>
+        <comment type="line">// 2. IF the car was really found, drive(i.e. lower the gas level of the car) it.</comment>
+        <comment type="line">// 3. Print the message: "&lt;car_rgn&gt; new gas level is &lt;car_gas_meter&gt;"</comment>
+        <comment type="line">// 4. Remember to not allow changing the gas level to negative values.</comment>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>void</name></type> <name>fillGas</name><parameter_list>()</parameter_list> <block>{
+
+        <decl_stmt><decl><type><name>String</name></type> <name>carRgn</name> <init>= <expr><call><name>readCarRgn</name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+        <decl_stmt><decl><type><name>Car</name></type> <name>foundCar</name> <init>= <expr><call><name>retrieveCar</name><argument_list>(<argument><expr><name>carRgn</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+        <comment type="line">//TODO: write code for the following logic:</comment>
+        <comment type="line">// 1. Read a double value for the amount of gas to be filled with.</comment>
+        <comment type="line">// 2. IF the car was really found, use the reference to increase the gas level (consider MAX_GAS_LEVEL so the gas level doesn't go beyond it).</comment>
+        <comment type="line">// 3. Print the message: "&lt;car_rgn&gt; new gas level is &lt;car_gas_meter&gt;"</comment>
+        <comment type="line">// 4. Remember to not allow changing the gas level to negative values.</comment>
+    }</block></function>
+
+    <function><specifier>public</specifier> <type><name>void</name></type> <name>repairCar</name><parameter_list>()</parameter_list> <block>{
+        <decl_stmt><decl><type><name>String</name></type> <name>carRgn</name> <init>= <expr><call><name>readCarRgn</name><argument_list>()</argument_list></call></expr></init></decl>;</decl_stmt>
+        <decl_stmt><decl><type><name>Car</name></type> <name>foundCar</name> <init>= <expr><call><name>retrieveCar</name><argument_list>(<argument><expr><name>carRgn</name></expr></argument>)</argument_list></call></expr></init></decl>;</decl_stmt>
+
+        <comment type="line">//TODO: write code for the following logic:</comment>
+        <comment type="line">// 1. Read the car rgn and check if it exists.</comment>
+        <comment type="line">// 2. Read the machanic name and check if they exist.</comment>
+        <comment type="line">// 3. Read the machanic type and check if it matches the car classification.</comment>
+        <comment type="line">// 2. IF the car and the mechanic satisfy the conditions, use the reference to change the car status to Good and lower the quality value by 0.1.</comment>
+        <comment type="line">// 3. Print the message: "&lt;car_rgn&gt; new status is &lt;car_status&gt; and quality value &lt;car_quality_value&gt;"</comment>
+        <comment type="line">// 4. Remember to not allow changing the quality value to negative values.</comment>
+    }</block></function>
+}</block></class>
+</unit>
+
+</unit>

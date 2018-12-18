@@ -46,6 +46,8 @@ const dependency_finder = '127.0.0.1';
 //A method that can be reused to reroute requests to different endpoints to be handled by different servers
 //note, the endpoint used on the front end should be the same as the endpoint we use here
 //and the endpoint we are rerouting to should also be the same, so it should match in 3 places (unless we change the method)
+
+
 function proxyRequestTo (ip,port,endpoint){
     app.use(endpoint, (req,res)=>{
         let url = 'http://'+ ip + ':' + port + endpoint;
@@ -59,9 +61,12 @@ function proxyRequestTo (ip,port,endpoint){
 // to the other computer (different ip) on another port
 //proxyRequestTo(repo_fetcher,'8001','/api/repo_fetcher');
 
+
 proxyRequestTo(repo_fetcher, repo_fetcher_port,'/api/gitProjects');
 proxyRequestTo(dependency_finder, dependency_finder_port,'/api/dependencies');
+
 ///PROXY REQUESTS END
+
 
 
 app.use(bodyParser.json());
@@ -72,8 +77,9 @@ var root = path.normalize(__dirname + '/..');
 app.use(express.static(path.join(root, 'client')));
 app.set('appPath', 'client');
 
+
 // Import routes
-app.use(require('./controllers/index'));
+app.use(require('./controllers/index'));  //moved this above body parser
 
 /**********MAIN SERVER listening to 8001 for repo_fetcher**************/
 //repo_fetcher is running on port 8001 so main server listens there
