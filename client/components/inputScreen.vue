@@ -96,7 +96,7 @@
                 })
                 .then((response)=>{
                     console.log("get visison Success: " + response.status);
-                    console.log("data for visualization: " + JSON.stringify(response.data.data.classes)+"   data for visualization END" );
+                    console.log("data for visualization: " + JSON.stringify(response.data.data[0].classes)+"   data for visualization END" );
                     var router = this.$router;
                     router.push("graph");
                 })

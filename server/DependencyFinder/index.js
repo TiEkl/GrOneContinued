@@ -37,7 +37,7 @@ router.route('/api/dependencies').post(function(req,res) { //should be a post re
     //fs.readFile('./GarageIOTest.xml', function(err, xml) {
         findDependencies(xml, function(result) {
             //res.set('Content-Type', 'application/json');
-            console.log('**postREQjsonRES** '+ JSON.stringify(result[0]) + ' end jsonRES***');
+            console.log('**postREQjsonRES** '+ JSON.stringify(result) + ' end jsonRES***');
             res.status(201).json(result);
         });
 

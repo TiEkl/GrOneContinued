@@ -208,9 +208,12 @@ body{
    
         d3.json("/api/dependencies")
         .then( (data) =>  {
-        console.log('D3 DATA '+JSON.stringify(data.classes));
-        console.log('classes no stringify '+data.classes);
-        this.drawChart(data.classes, drag, stringToColour);
+        console.log('inside D3 GRAPH STUFF');
+        console.log('classes no stringify '+ JSON.stringify(data.data[0].classes));
+        //console.log('D3 DATA '+JSON.stringify(data.data.data[0].classes));
+        var graphData = data.data[0].classes;
+        //console.log('classes no stringify '+data);
+        this.drawChart(graphData, drag, stringToColour);
         });
     
         }
