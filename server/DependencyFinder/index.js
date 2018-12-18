@@ -6,6 +6,8 @@ var parseString = require('xml2js').parseString;
 const fs = require('fs');
 const perf = require('execution-time')();
 
+var projectSchema = require('../models/projectNode.js');
+
 router.route('/').get(function (req, res) {
     var relativeAppPath = req.app.get('appPath');
     var absoluteAppPath = path.resolve(relativeAppPath);
@@ -16,20 +18,33 @@ router.get('/api', function(req, res) {
     res.json({"message": "Welcome to your backend"});
 });
 
-router.route('/api/dependencies').post(function(req,res) {
+
+router.route('/api/dependencies').get(function(req,res,next) {
+    projectSchema.find(({}), (err, data)=>{
+        if(err){
+            return next(err)
+        }
+        //console.log('**jsonRES** '+ JSON.stringify(data) + ' end jsonRES***');
+        res.status(200).json({ 'data' : data });
+    });
+});
+
+
+router.route('/api/dependencies').post(function(req,res) { //should be a post req
     var xml = req.body.xml;  //this looks like xml but is not interpreted as being xml
     //var xml = "<root>Hello xml2js!</root>"
     //console.log('***this should be xml***'+xml+'***endxml***');
-    //fs.readFile('./omni.xml', function(err, xml) {
+    //fs.readFile('./GarageIOTest.xml', function(err, xml) {
         findDependencies(xml, function(result) {
-            res.set('Content-Type', 'application/json');
-            //console.log('**jsonRES** '+result + ' end jsonRES***');
-            res.status(200).json(result);
+            //res.set('Content-Type', 'application/json');
+            console.log('**postREQjsonRES** '+ JSON.stringify(result[0]) + ' end jsonRES***');
+            res.status(201).json(result);
         });
 
     //})
 
-})
+});
+
 //Function for finding dependencies with an xml file as input and a callback function
 //that should handle the result from the function
 function findDependencies(xml, callback) {
@@ -49,6 +64,11 @@ function findDependencies(xml, callback) {
         var object = result.unit.unit;  //each .java file in json
         //console.log('****OBJECT LENGTH****' + object.length);
 
+        var project;
+        //Project name will probably be have to be fetched from the xmlhttprequest once that's implemented
+        if(object[0].$.filename != null) {
+            project = object[0].$.filename.toString().split("\\")[1];
+        }
         var graphData = { 
             "nodes":[], 
             "links":[] };
@@ -65,16 +85,28 @@ function findDependencies(xml, callback) {
                 if (object[i].class != null) {      //check if the java file includes any class
                     var currentName = object[i].class[0].name;
                     //var currentPackage = object[i].package[0].name[0].name;
+                    
+                    if (object[i].package != null) {
+                        var currentPackage = object[i].package[0].name[0].name;
+                        currentNode.package = currentPackage[currentPackage.length-1].toString();
+                    }
+                    
                     currentNode.id = currentName.toString();
-                    //currentNode.package = currentPackage[currentPackage.length-1].toString();
+                    
                     stringsJson[i] = JSON.stringify(object[i].class); //object[i].class is the current class in java file at [i] .
 
                 }
                 else if (object[i].interface != null) {         //check if the java file inclu  des any interface
                     var currentName = object[i].interface[0].name;
-                    var currentPackage = object[i].package[0].name[0].name;
+                    //var currentPackage = object[i].package[0].name[0].name;
+                   
+                    if (object[i].package != null) {
+                        var currentPackage = object[i].package[0].name[0].name;
+                        currentNode.package = currentPackage[currentPackage.length-1].toString();
+                    }
+                    
                     currentNode.id = currentName.toString();
-                    currentNode.package = currentPackage[currentPackage.length-1].toString();
+                    
                     stringsJson[i] = JSON.stringify(object[i].interface);
                 }
                 graphData.nodes.push(currentNode);
@@ -103,6 +135,16 @@ function findDependencies(xml, callback) {
                 }
                 graphData.nodes[i].count = countDep;
             }
+            var projectNode = new projectSchema({
+                projectName: project,
+                classes: graphData,
+            });
+            projectNode.save( function(error) {
+                console.log("project node and its dependencies saved");
+                if (error){
+                    console.error(error);
+                }
+            });
             //Stops execution timing and logs the time to the console
             const results = perf.stop();
             console.log(results.time);
