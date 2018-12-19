@@ -8,6 +8,9 @@ const { exec } = require('child_process');
 const fs = require('fs');
 var ip = require('ip');
 
+var _ = require('lodash');
+require('apply-diff')(_);
+
 // =========== "npm run dev" ============//
 
 //request module is used to route the reqests
@@ -62,15 +65,20 @@ function proxyRequestTo (ip,port,endpoint){
         console.log(endpoint);
         let url = 'http://'+ ip + ':' + port + endpoint;
         console.log('reroute to: ' + url);
-        console.log("res:" + res);
+        console.log("res:" + res.data);
         req.pipe(request(url)).pipe(res);
-        console.log(res.data);
+        return res;
     });
 }
 
+var localProjects = proxyRequestTo(localIp, port, '/api/dependencies'); 
+var remoteProjects = proxyRequestTo(remoteIp, port, '/api/dependencies'); 
 
+function compareDiff(){
+    _.applyDiff(localProjects, remoteProjects);
+}
 
-proxyRequestTo(remoteIp, port, '/api/dependencies'); 
+//proxyRequestTo(remoteIp, port, '/api/dependencies'); 
 //proxyRequestTo(remoteIp, repo_fetcher_port,'/api/allDependencies');
 
 // here we are telling the program to reroute all requests to /api/repo_fetch
