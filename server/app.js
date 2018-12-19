@@ -41,7 +41,7 @@ app.use(cors());
 
 // Import routes
 //app.use(require('./controllers/index'));
-//app.use('/api/dependencies', require('./DependencyFinder/index'));
+app.use('/api/dependencies', require('./DependencyFinder/index'));
 
 ///PROXY REQUESTS START
 
@@ -59,8 +59,6 @@ var localIp =  ip.address() === '192.168.1.104' ? ip.address() : repo_fetcher;
 //and the endpoint we are rerouting to should also be the same, so it should match in 3 places (unless we change the method)
 function proxyRequestTo (ip,port,endpoint){
     console.log("ip: " + ip);
-    console.log("port: " + port);
-    console.log("endpont: " + endpoint);
     app.use(endpoint, (req,res)=>{
         console.log(endpoint);
         let url = 'http://'+ ip + ':' + port + endpoint;
@@ -68,7 +66,7 @@ function proxyRequestTo (ip,port,endpoint){
         console.log('reroute to: ' + url);
         //req.pipe(request(url)).pipe(res);
         //req.pipe(request(url)).pipe(request.put());
-        request.get(url).pipe(request.put(remoteUrl));
+        request.get(url).pipe(request.post(remoteUrl));
         //console.log("res:" + res);
         //return res;
     });

@@ -36,6 +36,8 @@ router.get('/getAll', function ( req, res ) {
 })
 
 router.post('/getAll', function (req, res) {
+    console.log("in post all depen");
+    console.log(req.body);    
     var projects = new MovieSchema(req.body);
     projects.save(function(err) {
     if (err) {
