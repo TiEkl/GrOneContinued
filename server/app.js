@@ -63,7 +63,7 @@ function proxyRequestTo (ip,port,endpoint){
 // to the other computer (different ip) on another port
 //proxyRequestTo(repo_fetcher,'8001','/api/repo_fetcher');
 
-setInterval(proxyRequestTo(remoteIp, repo_fetcher_port,'/api/allDependencies'), 5000);
+setInterval(() => proxyRequestTo(remoteIp, repo_fetcher_port,'/api/allDependencies'), 5000);
 
 
 ///PROXY REQUESTS END
