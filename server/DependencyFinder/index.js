@@ -34,6 +34,16 @@ router.get('/getAll', function ( req, res ) {
         res.json({"data" : projectSchema}).status(200);
     });
 })
+
+router.post('/getAll', function (req, res) {
+    var projects = new MovieSchema(req.body);
+    projects.save(function(err) {
+    if (err) {
+      return next(err);
+    }
+      res.status(201).json(projects);
+    });
+})
 //Function for finding dependencies with an xml file as input and a callback function
 //that should handle the result from the function
 function findDependencies(xml, callback) {
