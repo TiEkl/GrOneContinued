@@ -40,10 +40,10 @@ app.use(cors());
 
 // LOCAL TESTING - POINTS TO SELF RIGHT NOW
 // FOR LOCAL TESTING
-const main_server = '192.168.0.104';
-const repo_fetcher = '192.168.0.101';   //want to replace this later with a constant from the constants file
-var remoteIp = ip.address() === '192.168.0.104' ? repo_fetcher : main_server;
-var localIp =  ip.address() === '192.168.0.104' ? main_server : repo_fetcher;
+const main_server = '192.168.1.104';
+const repo_fetcher = '192.168.1.101';   //want to replace this later with a constant from the constants file
+var remoteIp = ip.address() === '192.168.1.104' ? repo_fetcher : main_server;
+var localIp =  ip.address() === '192.168.1.104' ? ip.address() : repo_fetcher;
 
 // change this ip to other comp when distributed.
 
@@ -55,6 +55,8 @@ function proxyRequestTo (ip,port,endpoint){
         let url = 'http://'+ ip + ':' + port + endpoint;
         console.log('reroute to: ' + url);
         req.pipe(request(url)).pipe(res);
+        console.log("banana");
+        console.log("res:" + res);
     });
 }
 
@@ -62,8 +64,10 @@ function proxyRequestTo (ip,port,endpoint){
 // here we are telling the program to reroute all requests to /api/repo_fetch
 // to the other computer (different ip) on another port
 //proxyRequestTo(repo_fetcher,'8001','/api/repo_fetcher');
-
-setInterval(() => proxyRequestTo(remoteIp, repo_fetcher_port,'/api/allDependencies'), 5000);
+console.log("localip: " + localIp);
+setInterval(function(){
+    proxyRequestTo(remoteIp, repo_fetcher_port,'/api/allDependencies');
+} , 5000);
 
 
 ///PROXY REQUESTS END
