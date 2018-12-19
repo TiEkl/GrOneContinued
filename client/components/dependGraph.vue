@@ -46,9 +46,8 @@ body{
             }
         },
     
-        methods: {
-
-      drawChart : function(data, drag, stringToColour) {
+  methods: {
+      drawChart : function(data, drag, stringToColour, linkColour) {
         
         const links = data.links.map(d => Object.create(d));
         const nodes = data.nodes.map(d => Object.create(d));
@@ -72,7 +71,8 @@ body{
           .selectAll("line")
           .data(links)
           .enter().append("line")
-            .attr("stroke-width", d => Math.sqrt(d.value));
+            .attr("stroke-width", d => Math.sqrt(d.value))
+            .attr("stroke", d => linkColour(d.withinPackage));
             
         const node = svg.append("g")
             .attr("stroke", "#fff")
@@ -200,6 +200,17 @@ body{
             }
             return colour;
         }    
+
+            var linkColour = check => {
+
+        if(check === true) {
+            return '#00f904';
+        }
+        else if (check === false) {
+            return '#f90000';
+        }
+
+        }
    
         d3.json("/api/dependencies")
         .then( (data) =>  {
@@ -208,7 +219,7 @@ body{
         //console.log('D3 DATA '+JSON.stringify(data.data.data[0].classes));
         var graphData = data.data[0].classes;
         //console.log('classes no stringify '+data);
-        this.drawChart(graphData, drag, stringToColour);
+        this.drawChart(graphData, drag, stringToColour,linkColour);
         });
     
         }

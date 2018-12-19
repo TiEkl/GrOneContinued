@@ -19,18 +19,28 @@
                     <form>
                         <label for="url_input_form">Please enter a valid GitHub project url</label>
                         <input id="url_input_form" class="form-control" type ="url" v-model="Url_Input.url" required pattern="https?://.+">
-                        <button class="btn btn-info" type="button" @click="postProject()">Create visualization</button>
+                        <button class="btn btn-info" type="button" @click="postProject(), btn_clicked=true">Create visualization</button>
                         <div v-if="wrong_url===true">
                             <p>This is not a valid url</p>
+                        </div>
+                         <div v-if="wrong_url===false && btn_clicked===true">
+                            <p>Attempting to process repository</p>
                         </div>
                     </form>
                 </div>
 
                 <!-- hidden loading screen that only shows up
                 when the user has submitted valid url by pressing the btn -->
-                <div v-if="url_accepted===true">
+                <div v-if="url_accepted===true && error_in_process===false">
                     <div id="showProgress">
                         <div id="progressBar">Now loading visualization!</div>
+                    </div>
+                </div>
+
+                <!-- Error message that is displayed if the processing of a project failed -->
+                <div v-if="error_in_process===true">
+                    <div id="showProgress">
+                        <div id="progressBar">Error! Please try with another GitHub Project</div>
                     </div>
                 </div>
 
@@ -56,7 +66,9 @@
                     url:''
                 },
                 url_accepted: false,
-                wrong_url: false
+                wrong_url: false,
+                error_in_process: false,
+                btn_clicked: false
             }
         },
         methods:{
@@ -64,6 +76,7 @@
             postProject: function(){
                 var pattern = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
                 if(pattern.test(this.Url_Input.url)){
+                    this.wrong_url = false;
                 // this is from nigels method want to get owner and repo strings from the url
                console.log(this.Url_Input.url);
                var url_string = new URL(this.Url_Input.url);
@@ -101,7 +114,8 @@
                    
                 })
               .catch(error => {
-                  console.log(error.response);
+                    console.log(error.response);
+                    this.error_in_process = true;
               })
               .then(function () {
 

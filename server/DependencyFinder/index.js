@@ -121,17 +121,24 @@ function findDependencies(xml, callback) {
                     if (i == j) {   
                         continue;
                     }
+                    var comparePackage = object[j].package[0].name[0].name;
+
                     var pattern = new RegExp('"name":."' + allClasses[j]); 
                     var match;
                     var result = [];
                     if ((match = pattern.exec(stringsJson[i])) != null) {   //compares pattern (reg Expression) with stringsJson
                         result.push(match);
                         countDep++;
-                        var links = { "source": allClasses[i].toString(), "target": allClasses[j].toString(), "value": 1 };
-                        graphData.links.push(links);
-                    }
-
-                    
+                        var withinPackage = null;
+                        if(graphData.nodes[i].package === comparePackage[comparePackage.length-1].toString()) {
+                            withinPackage = true;
+                        }
+                        else {
+                            withinPackage = false;
+                        }
+                        var link = { "source": allClasses[i].toString(), "target": allClasses[j].toString(), "value": 1, "withinPackage": withinPackage };
+                        graphData.links.push(link);
+                    }  
                 }
                 graphData.nodes[i].count = countDep;
             }
