@@ -69,7 +69,7 @@ proxyRequestTo(dependency_finder, dependency_finder_port,'/api/dependencies');
 
 
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb', extended: true}));
 // HTTP request logger
 app.use(morgan('dev'));
 // Serve static assets (for frontend client)

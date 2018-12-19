@@ -50,7 +50,7 @@ router.post("/", function(req, res, next) {
     //setTimeout(getXMLdata,5000,[res,repo]);
     setTimeout(() => { //this "guarantees" that this runs after the xml is already created (must find a better way of doing this)
         getXMLdata(res,repo);
-    }, 3000);
+    }, 10000);
    
     //getXMLdata(res,repo)
    //], function(error){

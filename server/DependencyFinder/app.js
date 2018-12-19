@@ -26,7 +26,7 @@ var app = express();
 
 //app.use(xmlparser()); //I adde this
 // Parse requests of content-type 'application/json'
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb', extended: true}));
 //use cors to allow github
 app.use(cors());
 // HTTP request logger

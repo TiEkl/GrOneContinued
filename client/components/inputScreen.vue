@@ -30,7 +30,7 @@
                 when the user has submitted valid url by pressing the btn -->
                 <div v-if="url_accepted===true">
                     <div id="showProgress">
-                        <div id="progressBar">Not yet implemented!</div>
+                        <div id="progressBar">Now loading visualization!</div>
                     </div>
                 </div>
 
@@ -91,14 +91,14 @@
                     //visualize the data
                     console.log("post request to dependencies Success: " + response.status);
                     //console.log('***json from backend*** '+ JSON.stringify(response.data) + ' ***');
-                    return axios.get('/api/dependencies'); //we should have some ID or something so that they know which request to get!!!
-                   
-                })
-                .then((response)=>{
-                    console.log("get visison Success: " + response.status);
-                    console.log("data for visualization: " + JSON.stringify(response.data.data[0].classes)+"   data for visualization END" );
+                    //return axios.get('/api/dependencies'); //we should have some ID or something so that they know which request to get!!!
                     var router = this.$router;
                     router.push("graph");
+                })
+                .then((response)=>{
+                    //console.log("get visison Success: " + response.status);
+                    //console.log("data for visualization: " + JSON.stringify(response.data.data[0].classes)+"   data for visualization END" );
+                   
                 })
               .catch(error => {
                   console.log(error.response);

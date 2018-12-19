@@ -1,11 +1,6 @@
 <!-- baserouter.vue -->
 <template>
     <div>
-        <div>
-            <br>
-            <br>
-            <p>GRAPH PAGE</p>
-        </div>
         <div class="frame"></div>
     </div>
 </template>
