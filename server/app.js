@@ -36,6 +36,10 @@ var app = express();
 //use cors to allow github
 app.use(cors());
 
+// Import routes
+//app.use(require('./controllers/index'));
+app.use('/api/dependencies', require('./DependencyFinder/index'));
+
 ///PROXY REQUESTS START
 
 // LOCAL TESTING - POINTS TO SELF RIGHT NOW
@@ -62,7 +66,7 @@ function proxyRequestTo (ip,port,endpoint){
 }
 
 //function test() {
-    proxyRequestTo(remoteIp, port, '/api/allDependencies'); 
+proxyRequestTo(remoteIp, port, '/getAll'); 
 //}
 //test;
 //proxyRequestTo(remoteIp, repo_fetcher_port,'/api/allDependencies');
@@ -84,9 +88,6 @@ app.use(morgan('dev'));
 var root = path.normalize(__dirname + '/..');
 app.use(express.static(path.join(root, 'client')));
 app.set('appPath', 'client');
-
-// Import routes
-app.use(require('./controllers/index'));
 
 /**********MAIN SERVER listening to 8001 for repo_fetcher**************/
 //repo_fetcher is running on port 8001 so main server listens there
