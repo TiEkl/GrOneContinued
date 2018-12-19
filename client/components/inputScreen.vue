@@ -7,6 +7,8 @@
            <div class="col-sm-12">
                 <h1>GrOne Visualization Software</h1>
                 <p>See how good your code is by checking its dependencies, all with one single click of a button!</p>
+                <p>Classes will be represented by nodes that are colored by package.</p>
+                <p>Dependencies for a class will be shown as lines to other nodes when you hover over a node.</p>
            </div>
        </div>
 
@@ -72,62 +74,64 @@
             }
         },
         methods:{
-            // method to send owner and repo strings that we need in the backend
+            // method to process the URL input
+            // will make a post request and subsequent requests if a proper URL has been provided
             postProject: function(){
+                
                 var pattern = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+                
                 if(pattern.test(this.Url_Input.url)){
                     this.wrong_url = false;
-                // this is from nigels method want to get owner and repo strings from the url
-               console.log(this.Url_Input.url);
-               var url_string = new URL(this.Url_Input.url);
-               var path_string = url_string.pathname;
-               var path = path_string.split("/"); //splits string according to '/', creates array
-               var ownerName = path[1];
-               var repoName = path[2];
-                // sending owner,repo to backend
-                axios.post('/api/gitProjects', //used to be gitProjects
-                {owner: ownerName,
-                 repo:  repoName 
-                })
-                .then((response)=>{
-                    console.log("get xml Success: " + response.status);
-                    //console.log('***xml from backend*** '+ response.data + ' ***');
-                     this.Url_Input.url = "";
-                    this.url_accepted = true;
-                    this.wrong_url = false;
                     
-                    return axios.post('/api/dependencies',{xml: response.data});
-                })
-                .then(
-                  (response) => {
-                    //make get request to get the data
-                    //visualize the data
-                    console.log("post request to dependencies Success: " + response.status);
-                    //console.log('***json from backend*** '+ JSON.stringify(response.data) + ' ***');
-                    //return axios.get('/api/dependencies'); //we should have some ID or something so that they know which request to get!!!
-                    var router = this.$router;
-                    router.push("graph");
-                })
-                .then((response)=>{
-                    //console.log("get visison Success: " + response.status);
-                    //console.log("data for visualization: " + JSON.stringify(response.data.data[0].classes)+"   data for visualization END" );
-                   
-                })
-              .catch(error => {
-                    console.log(error.response);
-                    this.error_in_process = true;
-              })
-              .then(function () {
+                    console.log('Provided URL: '+this.Url_Input.url);
+                    
+                    var url_string = new URL(this.Url_Input.url);
+                    var path_string = url_string.pathname;
+                    var path = path_string.split("/");          //splits string according to '/', creates array
+                    var ownerName = path[1];
+                    var repoName = path[2];
+                    
+                    // *****sending owner,repo to backend
+                    // this is a chain of several requests to the backend
+                    // if all requests go as planned we will be redirected to the graph page
+                    // and the graph for our inputted project will be displayed*****
+                    axios.post('/api/gitProjects', {owner: ownerName,repo:  repoName})
+                    .then((response)=>{
+                        console.log("get xml Success: " + response.status);
+                        //console.log('***xml from backend*** '+ response.data + ' ***');
+                        this.Url_Input.url = "";
+                        this.url_accepted = true;
+                        this.wrong_url = false;
+                        
+                        //here we use the response from the previous request in order to
+                        //send XML data to the dependency finder
+                        return axios.post('/api/dependencies',{xml: response.data});
+                    })
+                    .then(
+                    (response) => {
+                        //Here we have successfully found dependencies and saved them in the DB
+                        //so now we get redirected to the GRAPH page which will display the data
+                        console.log("post request to dependencies Success: " + response.status);
+                        var router = this.$router;
+                        router.push("graph");
+                    })
+                    .catch(error => {
+                            console.log(error.response);
+                            this.error_in_process = true;
+                    })
+                    .then(function () {
 
-              });
+                    });
                 }
                 else{
                     this.wrong_url = true;
-                    }
-        }
-},
+                }
+            }
+        },
         
-        mounted(){}
+        mounted(){
+
+        }
     };
 </script>
 

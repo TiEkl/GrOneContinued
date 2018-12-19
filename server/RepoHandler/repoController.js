@@ -8,20 +8,7 @@ var fs = require('fs');
 
 const exec =  require('child_process').exec;
 
-//var Promise = require('promise');
-//var Q = require('q');
-var async = require('async');
-
 // Method to download the repo to the filesystem
-
-// RANDOM TRY
-router.get("/",function(req,res,next) {
-        var data = "hello";
-        res.json(data);
-
-});
-// RANDOM TRY END
-
 router.post("/", function(req, res, next) {
   // the strings that we get from the front end
   var owner = req.body.owner;
@@ -42,37 +29,18 @@ router.post("/", function(req, res, next) {
       console.log("destination directory cleared.")
    })
 
-
-  
-   
-  // async.waterfall([
+   //this method DOWNLOADS and CONVERTS the repo into XML
     dlconrepo(repo,repoUrl,destination)
-    //setTimeout(getXMLdata,5000,[res,repo]);
-    setTimeout(() => { //this "guarantees" that this runs after the xml is already created (must find a better way of doing this)
+ 
+    //This method gets xml data and sends it back in a response
+    //it is put in a timeout to ensure that it doesnt run before the project is actually created
+    //since this causes an error
+    //this solution is not fool proof and should be changed !!
+    //(I tried using promises etc but it didnt work out so this is what I was able to do this sprint!)
+    setTimeout(() => { 
         getXMLdata(res,repo);
     }, 10000);
-   
-    //getXMLdata(res,repo)
-   //], function(error){
-  //     if(error){
-  //      console.log(error);
-   //    }
-   //});
 
-   //Actual method that downloads the files taking as input: owner/repo,directory.
-   /*
-   downloadRepo(repoUrl, destination, function (err) {
-      console.log(err ? 'Error': 'Successfully downloaded repository.')
-      if (err) {
-        return next(err);
-      }
-
-      filterDir(destination, '.java');
-      convertRepo(repo);
-
-   })
-   res.status(201).json("Project Downloaded.");
-   */
 });
 
 function dlconrepo(repo,repoUrl,destination, callback){
@@ -89,19 +57,13 @@ function dlconrepo(repo,repoUrl,destination, callback){
         if(callback){
             callback();
         } 
-
      })
-
-   
 }    
     
-   //end stuff i added no
 function getXMLdata(res,repo){
     var pathToXML = path.normalize(
         path.join(__dirname, 'repository', 'xml',repo));
-    
-        console.log('***path to xml folder*** '+pathToXML);
-    
+
        res.set('Content-Type', 'text/xml');
     
        fs.readFile(pathToXML+'.xml',(err,data)=>{
