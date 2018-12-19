@@ -68,27 +68,30 @@ function proxyRequestTo (ip,port,endpoint){
     });
 }
 var testURL = 'http://'+ localIp + ':' + port + '/api/bb';
+var remoteURL = 'http://'+ remoteIp + ':' + port + '/api/bb';
 
 //var testGET = request(testURL).pipe(request.put(testURL+"/5c19664e388e0ebe40fad19f"));
-var testGET = request(testURL, function (err, response, body) {
+request(testURL, function (err, response, body) {
     var json = JSON.parse(body);
-    for(var i = 0 ; i < json.length; i++){
-        console.log(testURL+json[i]._id);
-        request(testURL+'/'+json[i]._id, function (err, response, body) {
-            console.log(JSON.parse(body));
-        });
-    };
+    request(remoteURL, function (error, response2, body2) {
+        var jsonRemote = JSON.parse(body2);
+        for(var i = 0 ; i < json.length; i++){
+            // do get request of remoteDB to check if all ids present in remote
+            // if not add object of that id
+            if(jsonRemote.length < 1){
+                request.post({
+                    uri:remoteURL,
+                    headers:{'content-type': 'application/json'},
+                    body:json
+                });
+            }
+            /*request(testURL+'/'+json[i]._id, function (err, response, body) {
+                console.log(JSON.parse(body));
+            });*/
+        };
+    });
     //console.log(json);
 });
-
-/*app.use('/', function(req, res) {
-    var testGET = request(testURL).pipe(res);
-    console.log(testGET);
-});*/
-
-
-
-
 
 //proxyRequestTo(remoteIp, port, '/api/bb'); 
 //proxyRequestTo(remoteIp, port, '/api/dependencies'); 
