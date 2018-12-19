@@ -6,6 +6,7 @@ var path = require('path');
 var cors = require('cors');
 const { exec } = require('child_process');
 const fs = require('fs');
+var ip = require('ip');
 
 // =========== "npm run dev" ============//
 
@@ -38,7 +39,11 @@ app.use(cors());
 ///PROXY REQUESTS START
 
 // LOCAL TESTING - POINTS TO SELF RIGHT NOW
-const repo_fetcher = '127.0.0.1';   //want to replace this later with a constant from the constants file
+// FOR LOCAL TESTING
+const main_server = '192.168.0.104';
+const repo_fetcher = '192.168.0.101';   //want to replace this later with a constant from the constants file
+var remoteIp = ip.address() === '192.168.0.104' ? repo_fetcher : main_server;
+var localIp =  ip.address() === '192.168.0.104' ? main_server : repo_fetcher;
 
 // change this ip to other comp when distributed.
 
@@ -58,7 +63,8 @@ function proxyRequestTo (ip,port,endpoint){
 // to the other computer (different ip) on another port
 //proxyRequestTo(repo_fetcher,'8001','/api/repo_fetcher');
 
-proxyRequestTo(repo_fetcher, repo_fetcher_port,'/api/gitProjects');
+setInterval(proxyRequestTo(remoteIp, repo_fetcher_port,'/api/allDependencies'), 5000);
+
 
 ///PROXY REQUESTS END
 
@@ -79,11 +85,10 @@ app.use(require('./controllers/index'));
 // proxy server sends request to this port
 // const main_server = '192.168.1.171';    //want to replace this later with a constand from the constants file
 
-// FOR LOCAL TESTING
- const main_server = '127.0.0.1';
 
 
-app.listen(port, main_server);
+
+app.listen(port, localIp);
 
 /**************************************/
 
@@ -104,13 +109,13 @@ app.use(function (err, req, res, next) {
 //var port = 3000;
 var arrayOfClass = [];
 
-app.listen(port, function (err) {
+/*app.listen(port, function (err) {
     if (err) throw err;
     console.log(`Express server listening on port ${port}, in ${env} mode`);
     console.log(`Backend: http://localhost:${port}/api/`);
     console.log(`Frontend: http://localhost:${port}/`);
     
-});
+});*/
 
 
 
