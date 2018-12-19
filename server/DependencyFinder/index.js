@@ -27,7 +27,7 @@ router.route('/api/dependencies').get(function(req,res) {
 
 })
 
-router.get('/getAll', function ( res, req ) {
+router.get('/getAll', function ( req, res ) {
     console.log("in get all depe");
     projectSchema.find(function(err,projectSchema){
         if (err) { return next(err); }

@@ -38,7 +38,7 @@ app.use(cors());
 
 // Import routes
 //app.use(require('./controllers/index'));
-app.use('/api/dependencies', require('./DependencyFinder/index'));
+//app.use('/api/dependencies', require('./DependencyFinder/index'));
 
 ///PROXY REQUESTS START
 
@@ -55,26 +55,27 @@ var localIp =  ip.address() === '192.168.1.104' ? ip.address() : repo_fetcher;
 //note, the endpoint used on the front end should be the same as the endpoint we use here
 //and the endpoint we are rerouting to should also be the same, so it should match in 3 places (unless we change the method)
 function proxyRequestTo (ip,port,endpoint){
+    console.log("ip: " + ip);
+    console.log("port: " + port);
+    console.log("endpont: " + endpoint);
     app.use(endpoint, (req,res)=>{
         console.log(endpoint);
         let url = 'http://'+ ip + ':' + port + endpoint;
         console.log('reroute to: ' + url);
         console.log("res:" + res);
         req.pipe(request(url)).pipe(res);
-
+        console.log(res.data);
     });
 }
 
-//function test() {
-proxyRequestTo(remoteIp, port, '/getAll'); 
-//}
-//test;
+
+
+proxyRequestTo(remoteIp, port, '/api/dependencies'); 
 //proxyRequestTo(remoteIp, repo_fetcher_port,'/api/allDependencies');
 
 // here we are telling the program to reroute all requests to /api/repo_fetch
 // to the other computer (different ip) on another port
 //proxyRequestTo(repo_fetcher,'8001','/api/repo_fetcher');
-console.log("localip: " + localIp);
 //setInterval(test, 5000);
 
 
