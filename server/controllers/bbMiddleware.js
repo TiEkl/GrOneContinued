@@ -7,7 +7,7 @@ router.get('/', function ( req, res ) {
     console.log("in get all depe");
     projectSchema.find(function(err,projectSchema){
         if (err) { return next(err); }
-        res.json({"data" : projectSchema}).status(200);
+        res.json(projectSchema).status(200);
     });
 });
 

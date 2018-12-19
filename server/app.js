@@ -64,23 +64,33 @@ function proxyRequestTo (ip,port,endpoint){
         let url = 'http://'+ ip + ':' + port + endpoint;
         let remoteUrl = 'http://'+ remoteIp + ':' + port + endpoint;
         console.log('reroute to: ' + url);
-        //req.pipe(request(url)).pipe(res);
-
-        const proxy = request({ url: testURL + req.path });
-        console.log(proxy.body);
-        proxy.on('response', proxyResponse => {
-
-        }).pipe(res)
-
-        req.pipe(proxy);
+        req.pipe(request(url)).pipe(res);
     });
 }
 var testURL = 'http://'+ localIp + ':' + port + '/api/bb';
+
 //var testGET = request(testURL).pipe(request.put(testURL+"/5c19664e388e0ebe40fad19f"));
+var testGET = request(testURL, function (err, response, body) {
+    var json = JSON.parse(body);
+    for(var i = 0 ; i < json.length; i++){
+        console.log(testURL+json[i]._id);
+        request(testURL+'/'+json[i]._id, function (err, response, body) {
+            console.log(JSON.parse(body));
+        });
+    };
+    //console.log(json);
+});
+
+/*app.use('/', function(req, res) {
+    var testGET = request(testURL).pipe(res);
+    console.log(testGET);
+});*/
 
 
 
-proxyRequestTo(localIp, port, '/api/bb'); 
+
+
+//proxyRequestTo(remoteIp, port, '/api/bb'); 
 //proxyRequestTo(remoteIp, port, '/api/dependencies'); 
 
 // here we are telling the program to reroute all requests to /api/repo_fetch
