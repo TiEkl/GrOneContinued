@@ -28,6 +28,7 @@ router.route('/api/dependencies').get(function(req,res) {
 })
 
 router.get('/api/allDependencies', function ( res, req ) {
+    console.log("in get all depe");
     projectSchema.find(function(err,projectSchema){
         if (err) { return next(err); }
         res.json({"data" : projectSchema})

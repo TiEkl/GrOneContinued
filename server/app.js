@@ -52,22 +52,26 @@ var localIp =  ip.address() === '192.168.1.104' ? ip.address() : repo_fetcher;
 //and the endpoint we are rerouting to should also be the same, so it should match in 3 places (unless we change the method)
 function proxyRequestTo (ip,port,endpoint){
     app.use(endpoint, (req,res)=>{
+        console.log(endpoint);
         let url = 'http://'+ ip + ':' + port + endpoint;
         console.log('reroute to: ' + url);
-        req.pipe(request(url)).pipe(res);
-        console.log("banana");
         console.log("res:" + res);
+        req.pipe(request(url)).pipe(res);
+
     });
 }
 
+//function test() {
+    proxyRequestTo(remoteIp, port, '/api/allDependencies'); 
+//}
+//test;
+//proxyRequestTo(remoteIp, repo_fetcher_port,'/api/allDependencies');
 
 // here we are telling the program to reroute all requests to /api/repo_fetch
 // to the other computer (different ip) on another port
 //proxyRequestTo(repo_fetcher,'8001','/api/repo_fetcher');
 console.log("localip: " + localIp);
-setInterval(function(){
-    proxyRequestTo(remoteIp, repo_fetcher_port,'/api/allDependencies');
-} , 5000);
+//setInterval(test, 5000);
 
 
 ///PROXY REQUESTS END
