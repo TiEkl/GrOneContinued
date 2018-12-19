@@ -64,21 +64,23 @@ function proxyRequestTo (ip,port,endpoint){
     app.use(endpoint, (req,res)=>{
         console.log(endpoint);
         let url = 'http://'+ ip + ':' + port + endpoint;
+        let remoteUrl = 'http://'+ remoteIp + ':' + port + endpoint;
         console.log('reroute to: ' + url);
-        console.log("res:" + res.data);
-        req.pipe(request(url)).pipe(res);
-        return res;
+        //req.pipe(request(url)).pipe(res);
+        //req.pipe(request(url)).pipe(request.put());
+        request.get(url).pipe(request.put(remoteUrl));
+        //console.log("res:" + res);
+        //return res;
     });
 }
 
-var localProjects = proxyRequestTo(localIp, port, '/api/dependencies'); 
-var remoteProjects = proxyRequestTo(remoteIp, port, '/api/dependencies'); 
+//var remoteProjects = proxyRequestTo(remoteIp, port, '/api/dependencies'); 
 
-function compareDiff(){
+/*function compareDiff(){
     _.applyDiff(localProjects, remoteProjects);
-}
+}*/
 
-//proxyRequestTo(remoteIp, port, '/api/dependencies'); 
+proxyRequestTo(remoteIp, port, '/api/dependencies'); 
 //proxyRequestTo(remoteIp, repo_fetcher_port,'/api/allDependencies');
 
 // here we are telling the program to reroute all requests to /api/repo_fetch
