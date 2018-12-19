@@ -27,25 +27,6 @@ router.route('/api/dependencies').get(function(req,res) {
 
 })
 
-router.get('/getAll', function ( req, res ) {
-    console.log("in get all depe");
-    projectSchema.find(function(err,projectSchema){
-        if (err) { return next(err); }
-        res.json({"data" : projectSchema}).status(200);
-    });
-})
-
-router.post('/', function (req, res) {
-    console.log("in post all depen");
-    console.log(req.body);    
-    var projects = new projectSchema(req.body);
-    projects.save(function(err) {
-    if (err) {
-      return next(err);
-    }
-      res.status(201).json(projects);
-    });
-})
 //Function for finding dependencies with an xml file as input and a callback function
 //that should handle the result from the function
 function findDependencies(xml, callback) {

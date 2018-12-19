@@ -41,7 +41,7 @@ app.use(cors());
 
 // Import routes
 //app.use(require('./controllers/index'));
-app.use('/api/dependencies', require('./DependencyFinder/index'));
+app.use('/api/bb', require('./controllers/bbMiddleware'));
 
 ///PROXY REQUESTS START
 
@@ -65,28 +65,27 @@ function proxyRequestTo (ip,port,endpoint){
         let remoteUrl = 'http://'+ remoteIp + ':' + port + endpoint;
         console.log('reroute to: ' + url);
         //req.pipe(request(url)).pipe(res);
-        //req.pipe(request(url)).pipe(request.put());
-        console.log(remoteUrl);
-        request.get(url).pipe(request.post(remoteUrl));
-        //console.log("res:" + res);
-        //return res;
+
+        const proxy = request({ url: testURL + req.path });
+        console.log(proxy.body);
+        proxy.on('response', proxyResponse => {
+
+        }).pipe(res)
+
+        req.pipe(proxy);
     });
 }
+var testURL = 'http://'+ localIp + ':' + port + '/api/bb';
+//var testGET = request(testURL).pipe(request.put(testURL+"/5c19664e388e0ebe40fad19f"));
 
-//var remoteProjects = proxyRequestTo(remoteIp, port, '/api/dependencies'); 
 
-/*function compareDiff(){
-    _.applyDiff(localProjects, remoteProjects);
-}*/
 
-proxyRequestTo(localIp, port, '/api/dependencies'); 
+proxyRequestTo(localIp, port, '/api/bb'); 
 //proxyRequestTo(remoteIp, port, '/api/dependencies'); 
-//proxyRequestTo(remoteIp, repo_fetcher_port,'/api/allDependencies');
 
 // here we are telling the program to reroute all requests to /api/repo_fetch
 // to the other computer (different ip) on another port
 //proxyRequestTo(repo_fetcher,'8001','/api/repo_fetcher');
-//setInterval(test, 5000);
 
 
 ///PROXY REQUESTS END
