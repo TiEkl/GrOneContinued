@@ -48,9 +48,9 @@ app.use('/api/bb', require('./controllers/bbMiddleware'));
 // LOCAL TESTING - POINTS TO SELF RIGHT NOW
 // FOR LOCAL TESTING
 const main_server = '192.168.1.104';
-const repo_fetcher = '192.168.1.101';   //want to replace this later with a constant from the constants file
-var remoteIp = ip.address() === '192.168.1.104' ? repo_fetcher : main_server;
-var localIp =  ip.address() === '192.168.1.104' ? ip.address() : repo_fetcher;
+const repo_fetcher = '192.168.1.100';   //want to replace this later with a constant from the constants file
+var remoteIp = ip.address() === main_server ? repo_fetcher : main_server;
+var localIp =  ip.address() === main_server ? ip.address() : repo_fetcher;
 
 // change this ip to other comp when distributed.
 

@@ -18,9 +18,9 @@ router.get('/:id', function(req, res, next) {
 	});
 });
 
-router.post('/:id', function (req, res) {
+router.post('/', function (req, res) {
     console.log("in post all depen");
-    console.log(req.body);    
+    console.log(JSON.parse(req.body));    
     var projects = new projectSchema(req.body);
     projects.save(function(err) {
     if (err) {
