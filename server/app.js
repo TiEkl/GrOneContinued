@@ -72,17 +72,20 @@ var remoteURL = 'http://'+ remoteIp + ':' + port + '/api/bb';
 
 //var testGET = request(testURL).pipe(request.put(testURL+"/5c19664e388e0ebe40fad19f"));
 request(testURL, function (err, response, body) {
-    var json = JSON.parse(body);
+    var j = JSON.parse(body);
     request(remoteURL, function (error, response2, body2) {
         var jsonRemote = JSON.parse(body2);
-        for(var i = 0 ; i < json.length; i++){
+        console.log(jsonRemote);
+        for(var i = 0 ; i < j.length; i++){
             // do get request of remoteDB to check if all ids present in remote
             // if not add object of that id
+            console.log(j[i]);
             if(jsonRemote.length < 1){
-                request.post({
-                    uri:remoteURL,
-                    headers:{'content-type': 'application/json'},
-                    body:json
+                request.post(remoteURL, {
+                    json:j[i]
+                }, function(e, r, b) {
+                    console.log(b);
+                    console.log(r.statusCode);
                 });
             }
             /*request(testURL+'/'+json[i]._id, function (err, response, body) {
