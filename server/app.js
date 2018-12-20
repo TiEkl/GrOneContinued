@@ -70,23 +70,39 @@ function proxyRequestTo (ip,port,endpoint){
 var testURL = 'http://'+ localIp + ':' + port + '/api/bb';
 var remoteURL = 'http://'+ remoteIp + ':' + port + '/api/bb';
 
+var headers = {
+    'User-Agent':       'Super Agent/0.0.1',
+    'Content-Type':     'application/x-www-form-urlencoded'
+}
+
+var options = {
+    url: remoteURL,
+    method: 'POST',
+    headers: headers,
+    form: {'key1': 'xxx', 'key2': 'yyy'}
+}
+
 //var testGET = request(testURL).pipe(request.put(testURL+"/5c19664e388e0ebe40fad19f"));
 request(testURL, function (err, response, body) {
     var j = JSON.parse(body);
     request(remoteURL, function (error, response2, body2) {
         var jsonRemote = JSON.parse(body2);
-        console.log(jsonRemote);
+        console.log("jsonremote: " + jsonRemote);
         for(var i = 0 ; i < j.length; i++){
             // do get request of remoteDB to check if all ids present in remote
             // if not add object of that id
             console.log(j[i]);
             if(jsonRemote.length < 1){
-                request.post(remoteURL, {
-                    json:j[i]
+                request(options, function(e,r,b){
+                    console.log(b);
+                });
+                /*request.post(remoteURL, {
+                    body:JSON.stringify(j[i])
+                    //json:j[i]
                 }, function(e, r, b) {
                     console.log(b);
                     console.log(r.statusCode);
-                });
+                });*/
             }
             /*request(testURL+'/'+json[i]._id, function (err, response, body) {
                 console.log(JSON.parse(body));
