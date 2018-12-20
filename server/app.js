@@ -44,7 +44,7 @@ app.use(cors());
 app.use('/api/bb', require('./controllers/bbMiddleware'));
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({extended: false}));
 // HTTP request logger
 app.use(morgan('dev'));
 // Serve static assets (for frontend client)
@@ -79,22 +79,10 @@ function proxyRequestTo (ip,port,endpoint){
 var testURL = 'http://'+ localIp + ':' + port + '/api/bb';
 var remoteURL = 'http://'+ remoteIp + ':' + port + '/api/bb';
 
-var headers = {
-    'User-Agent':       'Super Agent/0.0.1',
-    'Content-Type':     'application/json'
-}
-
-var options = {
-    url: remoteURL,
-    method: 'POST',
-    headers: headers,
-    form: {'key1': 'xxx', 'key2': 'yyy'}
-}
-
 //var testGET = request(testURL).pipe(request.put(testURL+"/5c19664e388e0ebe40fad19f"));
 request(testURL, function (err, response, body) {
     var j = JSON.parse(body);
-    console.log(j.data);
+    console.log("localdata: " + j.data);
     request(remoteURL, function (error, response2, body2) {
         var jsonRemote = body2;
         console.log("jsonremote: " + jsonRemote);
@@ -102,15 +90,16 @@ request(testURL, function (err, response, body) {
         for(var i = 0 ; i < j.data.length; i++){
             // do get request of remoteDB to check if all ids present in remote
             // if not add object of that id
-            if(Object.keys(j).length > 1){
-                console.log("local current: " + j);
-                /*var postData = {
-                    projectName: jsonRemote[i].projectName,
-                    classes: jsonRemote[i].classes
-                };*/
+            console.log("local data len: " + j.data.length);
+            if(j.data.length > 1){
+                console.log("local current: " + j.data[i]._id);
                 var options = {
                     method: 'post',
-                    body: j[i],
+                    body: {
+                        _id: j.data[i]._id,
+                        projectName: j.data[i].projectName,
+                        classes: j.data[i].classes
+                    },
                     json: true,
                     url: remoteURL,
                     headers: {
