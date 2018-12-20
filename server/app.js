@@ -43,6 +43,15 @@ app.use(cors());
 //app.use(require('./controllers/index'));
 app.use('/api/bb', require('./controllers/bbMiddleware'));
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: true}));
+// HTTP request logger
+app.use(morgan('dev'));
+// Serve static assets (for frontend client)
+var root = path.normalize(__dirname + '/..');
+app.use(express.static(path.join(root, 'client')));
+app.set('appPath', 'client');
+
 ///PROXY REQUESTS START
 
 // LOCAL TESTING - POINTS TO SELF RIGHT NOW
@@ -72,7 +81,7 @@ var remoteURL = 'http://'+ remoteIp + ':' + port + '/api/bb';
 
 var headers = {
     'User-Agent':       'Super Agent/0.0.1',
-    'Content-Type':     'application/x-www-form-urlencoded'
+    'Content-Type':     'application/json'
 }
 
 var options = {
@@ -84,25 +93,28 @@ var options = {
 
 //var testGET = request(testURL).pipe(request.put(testURL+"/5c19664e388e0ebe40fad19f"));
 request(testURL, function (err, response, body) {
-    var j = JSON.parse(body);
+    var j = body;
     request(remoteURL, function (error, response2, body2) {
-        var jsonRemote = JSON.parse(body2);
+        var jsonRemote = body2;
         console.log("jsonremote: " + jsonRemote);
         for(var i = 0 ; i < j.length; i++){
             // do get request of remoteDB to check if all ids present in remote
             // if not add object of that id
 
-            if(jsonRemote.length < 1){
-                console.log(j[i]);
+            if(Object.keys(j).length > 1){
+                console.log(jsonRemote[i]);
                 var postData = {
-                    projectName: j[i].projectName,
-                    classes: j[i].classes
+                    projectName: jsonRemote[i].projectName,
+                    classes: jsonRemote[i].classes
                 };
                 var options = {
                     method: 'post',
-                    body: postData,
+                    body: j[i],
                     json: true,
-                    url: remoteURL
+                    url: remoteURL,
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
                 };
                 request(options, function(e,r,body){
                     if(!err && r.statusCode == 200) {
@@ -136,13 +148,6 @@ request(testURL, function (err, response, body) {
 ///PROXY REQUESTS END
 
 
-app.use(bodyParser.json());
-// HTTP request logger
-app.use(morgan('dev'));
-// Serve static assets (for frontend client)
-var root = path.normalize(__dirname + '/..');
-app.use(express.static(path.join(root, 'client')));
-app.set('appPath', 'client');
 
 /**********MAIN SERVER listening to 8001 for repo_fetcher**************/
 //repo_fetcher is running on port 8001 so main server listens there
