@@ -93,20 +93,21 @@ var options = {
 
 //var testGET = request(testURL).pipe(request.put(testURL+"/5c19664e388e0ebe40fad19f"));
 request(testURL, function (err, response, body) {
-    var j = body;
+    var j = JSON.parse(body);
+    console.log(j.data);
     request(remoteURL, function (error, response2, body2) {
         var jsonRemote = body2;
         console.log("jsonremote: " + jsonRemote);
-        for(var i = 0 ; i < j.length; i++){
+
+        for(var i = 0 ; i < j.data.length; i++){
             // do get request of remoteDB to check if all ids present in remote
             // if not add object of that id
-
             if(Object.keys(j).length > 1){
-                console.log(jsonRemote[i]);
-                var postData = {
+                console.log("local current: " + j);
+                /*var postData = {
                     projectName: jsonRemote[i].projectName,
                     classes: jsonRemote[i].classes
-                };
+                };*/
                 var options = {
                     method: 'post',
                     body: j[i],
@@ -121,20 +122,10 @@ request(testURL, function (err, response, body) {
                         console.log(body);
                     }
                 });
-                /*request.post(remoteURL, {
-                    body:JSON.stringify(j[i])
-                    //json:j[i]
-                }, function(e, r, b) {
-                    console.log(b);
-                    console.log(r.statusCode);
-                });*/
             }
-            /*request(testURL+'/'+json[i]._id, function (err, response, body) {
-                console.log(JSON.parse(body));
-            });*/
+
         };
     });
-    //console.log(json);
 });
 
 //proxyRequestTo(remoteIp, port, '/api/bb'); 
