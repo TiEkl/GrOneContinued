@@ -2,16 +2,10 @@ var express = require('express');
 var cors = require('cors');
 var request = require('request');
 var app = express();
+var roundround = require('roundround');
 
 app.use(cors());
 var port = 8000;
-// array of server ip intended to be used in the loadbalancer
-var serverip = ['0.0.0.0','10.0.0.0'];
-
-// make a roundrobin algo to select server
-
-
-// add a check to make sure the server selected is not down : if it dosent respond in x time go to the next server.
 
 function proxyRequestTo (ip,port,endpoint){
     app.use(endpoint, (req,res)=>{
@@ -21,4 +15,15 @@ function proxyRequestTo (ip,port,endpoint){
     });
 }
 
-proxyRequestTo(ip, port,'/api/gitProjects');
+// array of server ip intended to be used in the loadbalancer
+var serverip = ['0.0.0.0','10.0.0.0'];
+
+// implement a algo to select server 
+var ip = roundround(serverip);
+
+
+// add a check to make sure the server selected is not down : 
+//if it dosent respond in x time go to the next server.
+
+
+proxyRequestTo(ip(), port,'/api/gitProjects');

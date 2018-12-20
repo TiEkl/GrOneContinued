@@ -38,6 +38,7 @@
     "mongoose": "^5.2.12",
     "morgan": "^1.9.1",
     "request": "^2.88.0",
+    "roundround": "^0.2.0",
     "svg": "^0.1.0",
     "traverse": "^0.6.6",
     "underscore": "^1.9.1",
