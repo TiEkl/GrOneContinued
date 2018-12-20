@@ -1,7 +1,9 @@
 <!-- baserouter.vue -->
 <template>
   <div>
-  <div class="frame"></div>
+  <div class="frame">
+      
+  </div>
 </div>
 </template>
 <style>
@@ -16,10 +18,6 @@ body{
     shape-rendering: crispEdges;
 }
       
-        
-    
-         
-        
          .text {
            fill: black;
             font: 12px sans-serif;
@@ -43,8 +41,8 @@ import * as d3 from 'd3';
   data() {
       return {
         
-     height : 600,
-     width : 800
+     height : 1000,
+     width : 1000
      
       }
     },
@@ -56,8 +54,11 @@ import * as d3 from 'd3';
         const nodes = data.nodes.map(d => Object.create(d));
         const simulation = this.forceSimulation(nodes, links).on("tick", ticked);
         
+        
+
         const svg = d3.select(".frame").append("svg")
-            .attr("viewBox", [-this.width / 2, -this.height /2, this.width, this.height]);
+            .attr("viewBox", [-this.width / 2, -this.height /2, this.width, this.height])
+         
 
         var text = svg.append("g").selectAll("text")
                 .data(nodes)
@@ -69,22 +70,22 @@ import * as d3 from 'd3';
                 .text(function(d) { return d.id; });
         
         const link = svg.append("g")
-            .attr("stroke", "#999")
-            .attr("stroke-opacity", 0)
+            .attr("stroke", "#ddd")
+            .attr("stroke-opacity", 0.3)
           .selectAll("line")
           .data(links)
           .enter().append("line")
             .attr("stroke-width", d => Math.sqrt(d.value))
-            .attr("stroke", d => linkColour(d.withinPackage));
+            
             
         const node = svg.append("g")
             .attr("stroke", "#fff")
-            .attr("stroke-width", 3)
+            .attr("stroke-width", 1)
           .selectAll("circle")
           .data(nodes)
           .enter().append("circle")
           .attr("class", "circle")
-            .attr("r", 5)
+            .attr("r", d => Math.sqrt(d.count)+3)
 
             .attr("fill",  d => stringToColour(d.package))
             .call(drag(simulation))
@@ -132,11 +133,12 @@ import * as d3 from 'd3';
                 var thisOpacity = isConnected(d, o) ? 1 : opacity;
                     return thisOpacity;})
                     .transition().duration(1000);
+
                 link.style("stroke-opacity", function(o) {
                     return o.source === d || o.target === d ? 1 : opacity;
                 }).transition().duration(1000);
                 link.style("stroke", function(o){
-                    return o.source === d || o.target === d ? o.source.colour : "#fff";
+                    return o.source === d || o.target === d ? linkColour(o.withinPackage) : "#fff";
                 }).transition().duration(1000);
                 
                 text.style("opacity", function(o) {
@@ -144,14 +146,14 @@ import * as d3 from 'd3';
                     return thisOpacity;})
                     .transition().duration(1000);;
                 text.style("fill-opacity", function(o) {
-                var thisOpacity = isConnected(d, o) ? 1 : opacity;
+                var thisOpacity = isConnected(d, o) ? 1 : 0;
                     return thisOpacity;})
             };
         }
         function mouseOut() {
             node.style("stroke-opacity", 1).transition().duration(1000);
             node.style("fill-opacity", 1).transition().duration(1000);
-            link.style("stroke-opacity", 0).transition().duration(1000);
+            link.style("stroke-opacity", 0.3).transition().duration(1000);
             link.style("stroke", "#ddd").transition().duration(1000);
             text.style("opacity", 0).transition().duration(1000);
             
@@ -160,10 +162,10 @@ import * as d3 from 'd3';
         return svg.node();
       },
       forceSimulation : function(nodes, links) {
-        return d3.forceSimulation(nodes)
-            .force("link", d3.forceLink(links).id(d => d.id).distance(40).strength(1))
-            .force("charge", d3.forceManyBody())
-            .force("collide", d3.forceCollide().radius(25))
+         return d3.forceSimulation(nodes)
+            .force("link", d3.forceLink(links).id(d => d.id)) //.distance(100))
+            .force("charge", d3.forceManyBody().distanceMax(180).strength(-80))
+            .force("collide", d3.forceCollide().radius(20))
             .force("center", d3.forceCenter());
       }
     },
