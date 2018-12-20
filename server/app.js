@@ -92,15 +92,17 @@ request(testURL, function (err, response, body) {
             // do get request of remoteDB to check if all ids present in remote
             // if not add object of that id
             console.log(j[i]);
+            var postData = j[i];
+            var options = {
+                method: 'post',
+                body: postData,
+                json: true,
+                url: remoteURL
+            };
             if(jsonRemote.length < 1){
-                request({
-                    url:remoteURL,
-                    headers:headers,
-                    method:'POST',
-                    body:JSON.stringify(j[i])
-                }, function(e,r,b){
+                request(options, function(e,r,body){
                     if(!err && r.statusCode == 200) {
-                        console.log(b);
+                        console.log(body);
                     }
                 });
                 /*request.post(remoteURL, {
