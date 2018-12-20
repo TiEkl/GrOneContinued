@@ -93,8 +93,15 @@ request(testURL, function (err, response, body) {
             // if not add object of that id
             console.log(j[i]);
             if(jsonRemote.length < 1){
-                request(options, function(e,r,b){
-                    console.log(b);
+                request({
+                    url:remoteURL,
+                    headers:headers,
+                    method:'POST',
+                    body:JSON.stringify(j[i])
+                }, function(e,r,b){
+                    if(!err && r.statusCode == 200) {
+                        console.log(b);
+                    }
                 });
                 /*request.post(remoteURL, {
                     body:JSON.stringify(j[i])
