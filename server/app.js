@@ -44,7 +44,7 @@ app.use(cors());
 app.use('/api/bb', require('./controllers/bbMiddleware'));
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({extended: true}));
 // HTTP request logger
 app.use(morgan('dev'));
 // Serve static assets (for frontend client)
@@ -83,15 +83,17 @@ request(testURL, function (err, response, body) {
     console.log("localdata: " + JSON.stringify(j.data));
 
     request(remoteURL, function (error, response2, body2) {
-        var jsonRemote = JSON.parse(body2);
-        console.log("jsonremote: " + jsonRemote.data);
+        if(typeof body2 != undefined){
+            var jsonRemote = JSON.parse(body2);
+            console.log("jsonremote: " + jsonRemote.data);
+        }
 
         for(var i = 0 ; i < j.data.length; i++){
             // do get request of remoteDB to check if all ids present in remote
             // if not add object of that id
             console.log("local data len: " + j.data.length);
             if(j.data.length > 0){
-                console.log("local current: " + j.data[i].projectName);
+                console.log("local current: " + JSON.stringify(j.data[i]));
                 var options = {
                     method: 'POST',
                     body: JSON.stringify(j.data[i]),
@@ -101,11 +103,11 @@ request(testURL, function (err, response, body) {
                         'Content-Type': 'application/json'
                     }
                 };
-                request(options, function(e,r,body){
-                    console.log("body: " + body);
-                    if(!err && r.statusCode == 201) {
-                        console.log("body: " + body);
-                        r.send(body);
+                request(options, function(err,res,body){
+                    console.log("res: " + JSON.stringify(res));
+                    if(!err && res.statusCode == 201) {
+                        console.log("body: " + options.body);
+                        res.send(body);
                     }
                 });
             }
