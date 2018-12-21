@@ -57,7 +57,7 @@ app.set('appPath', 'client');
 // LOCAL TESTING - POINTS TO SELF RIGHT NOW
 // FOR LOCAL TESTING
 const main_server = '192.168.1.104';
-const repo_fetcher = '192.168.1.100';   //want to replace this later with a constant from the constants file
+const repo_fetcher = '192.168.1.101';   //want to replace this later with a constant from the constants file
 var remoteIp = ip.address() === main_server ? repo_fetcher : main_server;
 var localIp =  ip.address() === main_server ? ip.address() : repo_fetcher;
 
@@ -78,10 +78,10 @@ var testURL = 'http://'+ localIp + ':' + port + '/api/bb';
 var remoteURL = 'http://'+ remoteIp + ':' + port + '/api/bb';
 
 request(testURL, function (err, response, body) {
-    var j = JSON.parse(body);
+    var j = body;
     console.log("localdata: " + j.data);
     request(remoteURL, function (error, response2, body2) {
-        var jsonRemote = JSON.parse(body2);
+        var jsonRemote = body2;
         console.log("jsonremote: " + jsonRemote.data);
 
         for(var i = 0 ; i < j.data.length; i++){
@@ -111,18 +111,6 @@ request(testURL, function (err, response, body) {
         };
     });
 });
-
-app.use('/api/bb', function (req, res) {
-    console.log("in post all depen");
-    console.log(req.body);
-    var projects = new projectSchema(req.body);
-    projects.save(function(err) {
-    if (err) {
-      return next(err);
-    }
-      res.status(201).json(projects);
-    });
-})
 
 // here we are telling the program to reroute all requests to /api/repo_fetch
 // to the other computer (different ip) on another port

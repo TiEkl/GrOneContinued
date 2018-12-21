@@ -1,6 +1,11 @@
 var express = require('express');
 var router = express.Router();
 
+var bodyParser = require('body-parser');
+var app = require('../app.js');
+
+app.use(bodyParser.json());
+
 var projectSchema = require('../models/projectNode.js');
 
 router.get('/', function ( req, res ) {
