@@ -78,10 +78,12 @@ var testURL = 'http://'+ localIp + ':' + port + '/api/bb';
 var remoteURL = 'http://'+ remoteIp + ':' + port + '/api/bb';
 
 request(testURL, function (err, response, body) {
-    var j = body;
-    console.log("localdata: " + j.data);
+    var j = JSON.parse(body);
+    console.log(j);
+    console.log("localdata: " + JSON.stringify(j.data));
+
     request(remoteURL, function (error, response2, body2) {
-        var jsonRemote = body2;
+        var jsonRemote = JSON.parse(body2);
         console.log("jsonremote: " + jsonRemote.data);
 
         for(var i = 0 ; i < j.data.length; i++){
@@ -91,10 +93,10 @@ request(testURL, function (err, response, body) {
             if(j.data.length > 0){
                 console.log("local current: " + j.data[i].projectName);
                 var options = {
-                    method: 'post',
-                    body: j.data[i],
+                    method: 'POST',
+                    body: JSON.stringify(j.data[i]),
                     json: true,
-                    url: remoteURL,
+                    uri: remoteURL,
                     headers: {
                         'Content-Type': 'application/json'
                     }
