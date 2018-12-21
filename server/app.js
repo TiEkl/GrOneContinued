@@ -102,8 +102,8 @@ request(testURL, function (err, response, body) {
                     }
                 };
                 request(options, function(e,r,body){
-                    console.log("banana");
-                    if(!err && r.statusCode == 200) {
+                    console.log("body: " + body);
+                    if(!err && r.statusCode == 201) {
                         console.log("body: " + body);
                         r.send(body);
                     }
