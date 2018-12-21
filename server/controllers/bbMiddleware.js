@@ -1,14 +1,22 @@
 var express = require('express');
 var router = express.Router();
+var cors = require('cors');
+
 
 var bodyParser = require('body-parser');
-var app = require('../app.js');
+var app = require('../app');
+app = express();
+//use cors to allow github
+app.use(cors());
 
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+
+//app.use(bodyParser.json());
 
 var projectSchema = require('../models/projectNode.js');
 
-router.get('/', function ( req, res ) {
+app.get('/', function ( req, res ) {
     console.log("in get all depe");
     projectSchema.find(function(err,projectSchema){
         if (err) { return next(err); }
@@ -23,7 +31,7 @@ router.get('/:id', function(req, res, next) {
 	});
 });
 
-router.post('/', function (req, res) {
+app.post('/', function (req, res) {
     console.log("in post all depen");
     console.log(JSON.stringify(req.body));
     var projects = new projectSchema(req.body);
