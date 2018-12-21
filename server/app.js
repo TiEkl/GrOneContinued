@@ -69,9 +69,7 @@ var localIp =  ip.address() === main_server ? ip.address() : repo_fetcher;
 function proxyRequestTo (ip,port,endpoint){
     console.log("ip: " + ip);
     app.use(endpoint, (req,res)=>{
-        console.log(endpoint);
         let url = 'http://'+ ip + ':' + port + endpoint;
-        let remoteUrl = 'http://'+ remoteIp + ':' + port + endpoint;
         console.log('reroute to: ' + url);
         req.pipe(request(url)).pipe(res);
     });
@@ -79,27 +77,22 @@ function proxyRequestTo (ip,port,endpoint){
 var testURL = 'http://'+ localIp + ':' + port + '/api/bb';
 var remoteURL = 'http://'+ remoteIp + ':' + port + '/api/bb';
 
-//var testGET = request(testURL).pipe(request.put(testURL+"/5c19664e388e0ebe40fad19f"));
 request(testURL, function (err, response, body) {
     var j = JSON.parse(body);
     console.log("localdata: " + j.data);
     request(remoteURL, function (error, response2, body2) {
-        var jsonRemote = body2;
-        console.log("jsonremote: " + jsonRemote);
+        var jsonRemote = JSON.parse(body2);
+        console.log("jsonremote: " + jsonRemote.data);
 
         for(var i = 0 ; i < j.data.length; i++){
             // do get request of remoteDB to check if all ids present in remote
             // if not add object of that id
             console.log("local data len: " + j.data.length);
-            if(j.data.length > 1){
-                console.log("local current: " + j.data[i]._id);
+            if(j.data.length > 0){
+                console.log("local current: " + j.data[i].projectName);
                 var options = {
                     method: 'post',
-                    body: {
-                        _id: j.data[i]._id,
-                        projectName: j.data[i].projectName,
-                        classes: j.data[i].classes
-                    },
+                    body: j.data[i],
                     json: true,
                     url: remoteURL,
                     headers: {
@@ -107,8 +100,10 @@ request(testURL, function (err, response, body) {
                     }
                 };
                 request(options, function(e,r,body){
+                    console.log("banana");
                     if(!err && r.statusCode == 200) {
-                        console.log(body);
+                        console.log("body: " + body);
+                        r.send(body);
                     }
                 });
             }
@@ -117,8 +112,17 @@ request(testURL, function (err, response, body) {
     });
 });
 
-//proxyRequestTo(remoteIp, port, '/api/bb'); 
-//proxyRequestTo(remoteIp, port, '/api/dependencies'); 
+app.use('/api/bb', function (req, res) {
+    console.log("in post all depen");
+    console.log(req.body);
+    var projects = new projectSchema(req.body);
+    projects.save(function(err) {
+    if (err) {
+      return next(err);
+    }
+      res.status(201).json(projects);
+    });
+})
 
 // here we are telling the program to reroute all requests to /api/repo_fetch
 // to the other computer (different ip) on another port
