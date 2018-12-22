@@ -157,9 +157,9 @@ body{
       },
             forceSimulation : function(nodes, links) {
                 return d3.forceSimulation(nodes)
-                    .force("link", d3.forceLink(links).id(d => d.id).distance(40).strength(1))
+                    .force("link", d3.forceLink(links).id(d => d.id)) //.distance(40).strength(1))
                     .force("charge", d3.forceManyBody())
-                    .force("collide", d3.forceCollide().radius(25))
+                    .force("collide", d3.forceCollide()) //.radius(25))
                     .force("center", d3.forceCenter());
             }
     },

@@ -38,9 +38,9 @@ app.use(cors());
 
 ///PROXY REQUESTS START
 
-// LOCAL TESTING - POINTS TO SELF RIGHT NOW
+// LOCAL TESTING - POINTS TO SELF RIGHT NOW - LOCAL:
 const repo_fetcher = '127.0.0.1';   //want to replace this later with a constant from the constants file
-const dependency_finder = '127.0.0.1'; 
+const dependency_finder = '127.0.0.1';  //192.168.43.26 tim dator på virusvarning
 // change this ip to other comp when distributed.
 
 //A method that can be reused to reroute requests to different endpoints to be handled by different servers
