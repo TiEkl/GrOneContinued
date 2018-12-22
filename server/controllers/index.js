@@ -6,7 +6,6 @@ router.get('/api', function(req, res) {
     res.json({"message": "Welcome to your DIT341 backend project!"});
 });
 
-
 /***********PROXY SERVER**************************/
 //var httpProxy = require('http-proxy');
 //var apiProxy = httpProxy.createProxyServer();
@@ -26,9 +25,6 @@ router.all("/app1/*", function ( req, res ) {
 /*router.route('/').get(function (req, res) { //??
     res.sendfile(req.app.get('appPath') + '/index.html');
 });*/
-
-// Insert routes below
-router.use('/api/gitProjects', require('../RepoHandler/repoController'));
 
 // All other routes redirect to the index.html
 router.route('/*').get(function (req, res) {

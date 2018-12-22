@@ -1,4 +1,3 @@
-<!-- baserouter.vue -->
 <template>
   <div>
   <div class="frame">
@@ -6,6 +5,8 @@
   </div>
 </div>
 </template>
+
+
 <style>
 body{
   
@@ -17,7 +18,6 @@ body{
     stroke-width: 1;
     shape-rendering: crispEdges;
 }
-      
          .text {
            fill: black;
             font: 12px sans-serif;
@@ -29,45 +29,49 @@ body{
          }
          .text:hover{
              fill:black;
-         }
-        
+         }   
 </style>
-<script>
 
-import * as d3 from 'd3';
-  module.exports = {
-    name:"dependGraph",
-    
-  data() {
-      return {
+
+<script>
+    import * as d3 from 'd3';
+    var axios = require('axios');
+    module.exports = {
+        name:"dependGraph",
+        data() {
+            return {
         
+
      height : 1000,
      width : 1000
+
      
-      }
-    },
+            }
+        },
     
-  methods: {
-      drawChart : function(data, drag, stringToColour, linkColour) {
+        methods: {
+            drawChart : function(data, drag, stringToColour, linkColour) {
         
-        const links = data.links.map(d => Object.create(d));
-        const nodes = data.nodes.map(d => Object.create(d));
-        const simulation = this.forceSimulation(nodes, links).on("tick", ticked);
+                const links = data.links.map(d => Object.create(d));
+                const nodes = data.nodes.map(d => Object.create(d));
+                const simulation = this.forceSimulation(nodes, links).on("tick", ticked);
         
+
         
 
         const svg = d3.select(".frame").append("svg")
             .attr("viewBox", [-this.width / 2, -this.height /2, this.width, this.height])
          
 
-        var text = svg.append("g").selectAll("text")
-                .data(nodes)
-                .enter().append("text")
-                .attr("class", "text")
-                .attr("opacity", 0)
-                .attr("x", 20)
-                .attr("y", ".31em")
-                .text(function(d) { return d.id; });
+
+                var text = svg.append("g").selectAll("text")
+                        .data(nodes)
+                        .enter().append("text")
+                        .attr("class", "text")
+                        .attr("opacity", 0)
+                        .attr("x", 20)
+                        .attr("y", ".31em")
+                        .text(function(d) { return d.id; });
         
         const link = svg.append("g")
             .attr("stroke", "#ddd")
@@ -86,37 +90,36 @@ import * as d3 from 'd3';
           .enter().append("circle")
           .attr("class", "circle")
             .attr("r", d => Math.sqrt(d.count)+3)
-
-            .attr("fill",  d => stringToColour(d.package))
-            .call(drag(simulation))
-            .on("mouseover", mouseOver(.2))
-        .on("mouseout", mouseOut)
+                    .attr("fill",  d => stringToColour(d.package))
+                    .call(drag(simulation))
+                    .on("mouseover", mouseOver(.2))
+                .on("mouseout", mouseOut)
         
 
-        function ticked() {
-          link
-              .attr("x1", d => d.source.x)
-              .attr("y1", d => d.source.y)
-              .attr("x2", d => d.target.x)
-              .attr("y2", d => d.target.y);
+                function ticked() {
+                link
+                    .attr("x1", d => d.source.x)
+                    .attr("y1", d => d.source.y)
+                    .attr("x2", d => d.target.x)
+                    .attr("y2", d => d.target.y);
           
-          node
-              .attr("cx", d => d.x)
-              .attr("cy", d => d.y);
-            text.attr("transform", transform);
-        }
+                node
+                    .attr("cx", d => d.x)
+                    .attr("cy", d => d.y);
+                    text.attr("transform", transform);
+                }
 
-        function transform(d) {
-            return "translate(" + d.x + "," + d.y + ")";
-        }
+                function transform(d) {
+                    return "translate(" + d.x + "," + d.y + ")";
+                }
 
-        var linkedByIndex = {};
-        links.forEach(function(d) {
-            linkedByIndex[d.source.index + "," + d.target.index] = 1;
-        });
-        function isConnected(a, b) {
-            return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
-        }
+                var linkedByIndex = {};
+                links.forEach(function(d) {
+                    linkedByIndex[d.source.index + "," + d.target.index] = 1;
+                });
+                function isConnected(a, b) {
+                    return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
+                }
 
     // fade nodes on hover
         function mouseOver(opacity) {
@@ -161,6 +164,7 @@ import * as d3 from 'd3';
         }
         return svg.node();
       },
+
       forceSimulation : function(nodes, links) {
          return d3.forceSimulation(nodes)
             .force("link", d3.forceLink(links).id(d => d.id)) //.distance(100))
@@ -169,43 +173,44 @@ import * as d3 from 'd3';
             .force("center", d3.forceCenter());
       }
     },
-  mounted() {
-     var drag = simulation => {
-      
-      function dragstarted(d) {
-        if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-        d.fx = d.x;
-        d.fy = d.y;
-      }
-      
-      function dragged(d) {
-       // d.fx = d3.event.x;
-       // d.fy = d3.event.y;
-      }
-      
-      function dragended(d) {
-        if (!d3.event.active) simulation.alphaTarget(0);
-        d.fx = null;
-        d.fy = null;
-      }
-      return d3.drag()
-          .on("start", dragstarted)
-          .on("drag", dragged)
-          .on("end", dragended);
-    } 
-    var stringToColour = str => {
-        var hash = 0;
-        for (var i = 0; i < str.length; i++) {
-            hash = str.charCodeAt(i) + ((hash << 5) - hash);
+    mounted() {
+        var drag = simulation => {
+        
+        function dragstarted(d) {
+            if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+            d.fx = d.x;
+            d.fy = d.y;
         }
-        var colour = '#';
-        for (var i = 0; i < 3; i++) {
-            var value = (hash >> (i * 8)) & 0xFF;
-            colour += ('00' + value.toString(16)).substr(-2);
+        
+        function dragged(d) {
+        // d.fx = d3.event.x;
+        // d.fy = d3.event.y;
         }
-        return colour;
-    }    
-    var linkColour = check => {
+        
+        function dragended(d) {
+            if (!d3.event.active) simulation.alphaTarget(0);
+            d.fx = null;
+            d.fy = null;
+        }
+        return d3.drag()
+            .on("start", dragstarted)
+            .on("drag", dragged)
+            .on("end", dragended);
+        } 
+        var stringToColour = str => {
+            var hash = 0;
+            for (var i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            var colour = '#';
+            for (var i = 0; i < 3; i++) {
+                var value = (hash >> (i * 8)) & 0xFF;
+                colour += ('00' + value.toString(16)).substr(-2);
+            }
+            return colour;
+        }    
+
+            var linkColour = check => {
 
         if(check === true) {
             return '#00f904';
@@ -214,15 +219,16 @@ import * as d3 from 'd3';
             return '#f90000';
         }
 
-    }
+        }
    
-  d3.json("/api/dependencies")
-    .then( data =>  {
-      console.log(JSON.stringify(data));
-      this.drawChart(data, drag, stringToColour, linkColour);
-    });
+        d3.json("/api/dependencies")
+        .then( (data) =>  {
+            console.log('classes: '+ JSON.stringify(data.data[0].classes));
+            var graphData = data.data[0].classes;
+            this.drawChart(graphData, drag, stringToColour,linkColour);
+        });
     
-  },
-};
+        }
+    };
 </script>
 
