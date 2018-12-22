@@ -72,7 +72,7 @@
                var ownerName = path[1];
                var repoName = path[2];
                 // sending owner,repo to backend
-                axios.post('/api/gitProjects',
+                axios.post('http://127.0.0.1:8002/api/gitProjects', //now making it post to the load balancer instead
                 {owner: ownerName,
                  repo:  repoName })
                 
