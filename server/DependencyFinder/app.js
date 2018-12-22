@@ -5,7 +5,6 @@ var morgan = require('morgan');
 var path = require('path');
 var cors = require('cors');
 
-
 // Variables
 var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
 var port = process.env.PORT || 9000;
@@ -22,8 +21,9 @@ mongoose.connect(mongoURI, { useNewUrlParser: true }, function(err) {
 
 // Create Express app
 var app = express();
+
 // Parse requests of content-type 'application/json'
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb', extended: true}));
 //use cors to allow github
 app.use(cors());
 // HTTP request logger
