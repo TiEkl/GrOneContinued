@@ -96,7 +96,7 @@ request(testURL, function (err, response, body) {
                 console.log("local current: " + JSON.stringify(j.data[i]));
                 var options = {
                     method: 'POST',
-                    body: JSON.stringify(j.data[i]),
+                    body: j.data[i],
                     json: true,
                     uri: remoteURL,
                     headers: {
@@ -107,6 +107,7 @@ request(testURL, function (err, response, body) {
                     console.log("res: " + JSON.stringify(res));
                     if(!err && res.statusCode == 201) {
                         console.log("body: " + JSON.stringify(body));
+                        res.json(JSON.parse(body));
                         //res.send(body);
                     }
                 });
