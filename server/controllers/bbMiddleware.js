@@ -31,14 +31,14 @@ router.get('/:id', function(req, res, next) {
 
 router.post('/', function (req, res) {
     console.log("in post all depen");
-    console.log(require('body-parser').json(req.body));
+    console.log(req.body);
     var projects = new projectSchema(req.body);
     projects.save(function(err) {
     if (err) {
       console.log("error");
       return next(err);
     }
-      res.status(201).json(projects);
+      res.status(201).json({"banana": projects});
     });
 })
 
