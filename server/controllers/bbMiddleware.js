@@ -3,17 +3,6 @@ var router = express.Router();
 
 var projectSchema = require('../models/projectNode.js');
 
-var express = require('express');
-var bodyParser = require('body-parser');
-var cors = require('cors');
-
-var app = express();
-//use cors to allow github
-app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
-
-
 router.get('/', function ( req, res ) {
     console.log("in get all depe");
     projectSchema.find(function(err,projectSchema){

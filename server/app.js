@@ -39,9 +39,6 @@ var app = express();
 //use cors to allow github
 app.use(cors());
 
-// Import routes
-//app.use(require('./controllers/index'));
-app.use('/api/bb', require('./controllers/bbMiddleware'));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
@@ -51,6 +48,11 @@ app.use(morgan('dev'));
 var root = path.normalize(__dirname + '/..');
 app.use(express.static(path.join(root, 'client')));
 app.set('appPath', 'client');
+
+
+// Import routes
+//app.use(require('./controllers/index'));
+app.use('/api/bb', require('./controllers/bbMiddleware'));
 
 ///PROXY REQUESTS START
 
