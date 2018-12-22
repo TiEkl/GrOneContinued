@@ -106,9 +106,7 @@ request(testURL, function (err, response, body) {
                 request(options, function(err,res,body){
                     console.log("res: " + JSON.stringify(res));
                     if(!err && res.statusCode == 201) {
-                        console.log("body: " + JSON.stringify(body));
-                        res.json(JSON.parse(body));
-                        //res.send(body);
+                        console.log("body: " + body);
                     }
                 });
             }
