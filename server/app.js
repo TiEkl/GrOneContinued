@@ -82,10 +82,10 @@ request(testURL, function (err, response, body) {
     console.log(j);
     console.log("localdata: " + JSON.stringify(j.data));
 
-    request(remoteURL, function (error, response2, body2) {
-        if(typeof body2 != undefined){
-            var jsonRemote = JSON.parse(body2);
-            console.log("jsonremote: " + jsonRemote.data);
+    request(remoteURL, function (error, response2, resRemoteBody) {
+        if(typeof resRemoteBody != undefined){
+            var jsonRemote = JSON.parse(resRemoteBody);
+            console.log("jsonremote: " + JSON.stringify(jsonRemote.data));
         }
 
         for(var i = 0 ; i < j.data.length; i++){
@@ -106,8 +106,8 @@ request(testURL, function (err, response, body) {
                 request(options, function(err,res,body){
                     console.log("res: " + JSON.stringify(res));
                     if(!err && res.statusCode == 201) {
-                        console.log("body: " + options.body);
-                        res.send(body);
+                        console.log("body: " + JSON.stringify(body));
+                        //res.send(body);
                     }
                 });
             }

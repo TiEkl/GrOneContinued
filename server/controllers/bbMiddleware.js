@@ -20,7 +20,7 @@ router.get('/:id', function(req, res, next) {
 
 router.post('/', function (req, res) {
     console.log("in post all depen");
-    console.log(req.body);
+    console.log(require('body-parser').json(req.body));
     var projects = new projectSchema(req.body);
     projects.save(function(err) {
     if (err) {
