@@ -111,9 +111,13 @@
                     (response) => {
                         //Here we have successfully found dependencies and saved them in the DB
                         //so now we get redirected to the GRAPH page which will display the data
+                        console.log('in the last response!');
                         console.log("post request to dependencies Success: " + response.status);
                         var router = this.$router;
-                        router.push("graph");
+                      
+                        console.log(JSON.stringify(response.data));
+                        
+                        router.push({name:'graph'});
                     })
                     .catch(error => {
                             console.log(error.response);

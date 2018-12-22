@@ -33,13 +33,7 @@ router.post("/", function(req, res, next) {
     dlconrepo(repo,repoUrl,destination)
  
     //This method gets xml data and sends it back in a response
-    //it is put in a timeout to ensure that it doesnt run before the project is actually created
-    //since this causes an error
-    //this solution is not fool proof and should be changed !!
-    //(I tried using promises etc but it didnt work out so this is what I was able to do this sprint!)
-    setTimeout(() => { 
-        getXMLdata(res,repo);
-    }, 10000);
+     getXMLdata(res,repo);
 
 });
 
@@ -59,20 +53,29 @@ function dlconrepo(repo,repoUrl,destination, callback){
         } 
      })
 }    
-    
+
+//function for getting xml data
+//if the date exists we get it
+//if not we try again later (using timeout)
 function getXMLdata(res,repo){
     var pathToXML = path.normalize(
         path.join(__dirname, 'repository', 'xml',repo));
 
-       res.set('Content-Type', 'text/xml');
-    
-       fs.readFile(pathToXML+'.xml',(err,data)=>{
-        if(err) throw err;
-        //console.log('***data here***: '+ data + "**** end data*****");
-        res.status(201).send(
-            data
-            );
-        })
+        if(fs.existsSync(pathToXML+'.xml')){
+            res.set('Content-Type', 'text/xml');
+            fs.readFile(pathToXML+'.xml',(err,data)=>{
+                if(err) throw err;
+                //console.log('***data here***: '+ data + "**** end data*****");
+                res.status(201).send(
+                    data
+                );
+            })
+        }
+        else{
+            setTimeout(() => { 
+                getXMLdata(res,repo);
+            }, 1000);
+        }      
 }
 
 // structured like this '../LiteScript','.html'
