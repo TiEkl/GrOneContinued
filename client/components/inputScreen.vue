@@ -86,28 +86,12 @@
                var path_string = url_string.pathname;
                var path = path_string.split("/"); //splits string according to '/', creates array
                var ownerName = path[1];
-               var repoName = path[2];
-                // sending owner,repo to backend
-                axios.post('http://127.0.0.1:8002/api/gitProjects', //now making it post to the load balancer instead
-                {owner: ownerName,
-                 repo:  repoName })
-                
-                if(pattern.test(this.Url_Input.url)){
-                    this.wrong_url = false;
-                    
-                    console.log('Provided URL: '+this.Url_Input.url);
-                    
-                    var url_string = new URL(this.Url_Input.url);
-                    var path_string = url_string.pathname;
-                    var path = path_string.split("/");          //splits string according to '/', creates array
-                    var ownerName = path[1];
-                    var repoName = path[2];
-                    
+               var repoName = path[2];         
                     // *****sending owner,repo to backend
                     // this is a chain of several requests to the backend
                     // if all requests go as planned we will be redirected to the graph page
                     // and the graph for our inputted project will be displayed*****
-                    axios.post('/api/gitProjects', {owner: ownerName,repo:  repoName})
+                    axios.post('http://127.0.0.1:8002/api/gitProjects', {owner: ownerName,repo:  repoName})
                     .then((response)=>{
                         console.log("get xml Success: " + response.status);
                         //console.log('***xml from backend*** '+ response.data + ' ***');
@@ -117,7 +101,7 @@
                         
                         //here we use the response from the previous request in order to
                         //send XML data to the dependency finder
-                        return axios.post('/api/dependencies',{xml: response.data});
+                        return axios.post('http://127.0.0.1:8002/api/gitProjects',{xml: response.data});
                     })
                     .then(
                     (response) => {
@@ -148,7 +132,7 @@
         mounted(){
 
         }
-    }}
+    }
 </script>
 
 

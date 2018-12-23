@@ -7,7 +7,6 @@ var roundround = require('roundround');
 //var router = express.Router();
 
 var bodyParser = require('body-parser');
-//var mongoose = require('mongoose');
 var morgan = require('morgan');
 var path = require('path');
 
@@ -20,12 +19,12 @@ const load_balancer_port = 8002;
 const bbServer1 = 'http://127.0.0.1';
 const bbServer2 = 'http://127.0.0.1'; //set to 8002 for now but that will change
 const bbServer1withPort = 'http://127.0.0.1:8000';
-const bbServer2withPort = 'http://127.0.0.1:8003'; //set to 8002 for now but that will change
+const bbServer2withPort = 'http://127.0.0.1:10000'; //set to 10.000 for now but that will change
 const bbServer1Port = 8000;
-const bbServer2Port = 2; //doesnt exist yet 
+const bbServer2Port = 10000; //doesnt exist yet 
 
 // array of server ip intended to be used in the loadbalancer
-var serverips = [bbServer1withPort,bbServer2withPort];
+var serverips = [bbServer2withPort,bbServer1withPort];
 // implement a algo to select server 
 var ips = roundround(serverips);
 
@@ -41,17 +40,23 @@ function checkAvailability(){
 }
 
 function proxyRequestTo (ip,endpoint){
-    app.use(endpoint, (req,res)=>{
-        
-        if((async ()=>{await isReachable(bbServer1withPort)})() && (async ()=>{await isReachable(bbServer2withPort)})()){
-            //both servers are down, nothing we can do
+    app.use(endpoint, (req,res)=>{   
+        console.log('   BEGINNING OF method, the initial ip: '+ip+endpoint);
+        if((async ()=>{await isReachable(bbServer1withPort)})()===false && (async ()=>{await isReachable(bbServer2withPort)})()===false){
+            //both servers are down, nothing we can do but wait for them to go back up and redo request
+            console.log('ALL SERVERS OFFLINE');
         }
-        else if((async ()=>{await isReachable(ip)})()){
+        else if((async ()=>{await isReachable(ip)})()===true){ //if the server is online we reroute request to it
+            console.log('The first server tried was online');
             let url = ip + endpoint;
             console.log('reroute to: ' + url);
             req.pipe(request(url)).pipe(res);
+            
         }
-        else{ //maybe can do this better with a recursive function! (BUT then it could become a never ending LOOP if both servers are down)
+        else{ //if the first server we tried is down we try again.
+            console.log('first server tried was not online, try again with recursive call');
+            proxyRequestTo(ips(),endpoint);
+            /*
             console.log('ip of ' + ip + ' not online');
             ip = ips(); //if the first one wasnt online we jump to the next one (not good cuz its hardcoded so if we add more servers this is bad)
             if((async ()=>{await isReachable(ip)})()){
@@ -62,6 +67,7 @@ function proxyRequestTo (ip,endpoint){
             else{
                 console.log('both servers offline');
             }
+            */
         }
     
     });
@@ -70,8 +76,13 @@ function proxyRequestTo (ip,endpoint){
 // add a check to make sure the server selected is not down : 
 //if it dosent respond in x time go to the next server.
 
+//console.log(ips());
+//console.log(ips());
+//console.log(ips());
 checkAvailability();
 proxyRequestTo(ips(),'/api/gitProjects');
+
+
 
 ///All the stuff an app.js needs. (Not sure if we need all of them).
 //Now we can run balanceController.js on port 8002 so that we can make a request from the front end to port 8002
@@ -83,9 +94,6 @@ app.use(morgan('dev'));
 var root = path.normalize(__dirname + '/..');
 app.use(express.static(path.join(root, 'client')));
 app.set('appPath', 'client');
-
-// Import routes
-//app.use(require('./balanceController'));
 
 /********** Listening to a port **************/
 // DISTRIBUTED
