@@ -19,6 +19,7 @@ var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
 var port = process.env.PORT || 8000;
 // This variable is here for the proxy request.
 var repo_fetcher_port = process.env.PORT || 8001;
+var dependency_finder_port = process.env.PORT || 9000;
 
 // Connect to MongoDB
 mongoose.connect(mongoURI, { useNewUrlParser: true }, function (err) {
@@ -37,9 +38,9 @@ app.use(cors());
 
 ///PROXY REQUESTS START
 
-// LOCAL TESTING - POINTS TO SELF RIGHT NOW
+// LOCAL TESTING - POINTS TO SELF RIGHT NOW - LOCAL:
 const repo_fetcher = '127.0.0.1';   //want to replace this later with a constant from the constants file
-
+const dependency_finder = '127.0.0.1';  //192.168.43.26 tim dator på virusvarning
 // change this ip to other comp when distributed.
 
 //A method that can be reused to reroute requests to different endpoints to be handled by different servers
@@ -57,13 +58,14 @@ function proxyRequestTo (ip,port,endpoint){
 // here we are telling the program to reroute all requests to /api/repo_fetch
 // to the other computer (different ip) on another port
 //proxyRequestTo(repo_fetcher,'8001','/api/repo_fetcher');
-
 proxyRequestTo(repo_fetcher, repo_fetcher_port,'/api/gitProjects');
+proxyRequestTo(dependency_finder, dependency_finder_port,'/api/dependencies');
 
 ///PROXY REQUESTS END
 
 
-app.use(bodyParser.json());
+
+app.use(bodyParser.json({limit: '50mb', extended: true}));
 // HTTP request logger
 app.use(morgan('dev'));
 // Serve static assets (for frontend client)
@@ -71,8 +73,9 @@ var root = path.normalize(__dirname + '/..');
 app.use(express.static(path.join(root, 'client')));
 app.set('appPath', 'client');
 
+
 // Import routes
-app.use(require('./controllers/index'));
+app.use(require('./controllers/index'));  //moved this above body parser
 
 /**********MAIN SERVER listening to 8001 for repo_fetcher**************/
 //repo_fetcher is running on port 8001 so main server listens there
