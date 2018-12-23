@@ -16,12 +16,13 @@ const isReachable = require('is-reachable');
 //THIS LOAD BALANCER IS RUNNING ON PORT 8002
 const load_balancer_port = 8002;
 
-const bbServer1 = 'http://127.0.0.1';
-const bbServer2 = 'http://127.0.0.1'; //set to 8002 for now but that will change
-const bbServer1withPort = 'http://127.0.0.1:8000';
-const bbServer2withPort = 'http://127.0.0.1:10000'; //set to 10.000 for now but that will change
+//I removed http:// from all these since is-reachable would say some of them are offline if i included it 
+const bbServer1 = '127.0.0.1';
+const bbServer2 = '127.0.0.1'; //set to 8002 for now but that will change
+const bbServer1withPort = '127.0.0.1:8000';
+const bbServer2withPort = '127.0.0.1:8005'; //set to 10.000 for now but that will change
 const bbServer1Port = 8000;
-const bbServer2Port = 10000; //doesnt exist yet 
+const bbServer2Port = 10000; 
 
 // array of server ip intended to be used in the loadbalancer
 var serverips = [bbServer2withPort,bbServer1withPort];
@@ -34,28 +35,28 @@ app.use(cors());
 //performs a handshake with the server and returns true if the server responded and is up
 function checkAvailability(){
     (async ()=>{
-        console.log('check if blackboard1 is up: ' + await isReachable(bbServer1withPort));
-        console.log('check if blackboard2 is up: ' + await isReachable(bbServer2withPort));
+        console.log('check if blackboard1 is up: ' + await isReachable(bbServer2withPort));
+        console.log('check if blackboard2 is up: ' + await isReachable(bbServer1withPort));
     })();
 }
 
 function proxyRequestTo (ip,endpoint){
     app.use(endpoint, (req,res)=>{   
         console.log('   BEGINNING OF method, the initial ip: '+ip+endpoint);
-        if((async ()=>{await isReachable(bbServer1withPort)})()===false && (async ()=>{await isReachable(bbServer2withPort)})()===false){
+        if(!(async ()=>{await isReachable(bbServer1withPort)})() && !(async ()=>{await isReachable(bbServer2withPort)})()){ //these should be if(false and false)
             //both servers are down, nothing we can do but wait for them to go back up and redo request
             console.log('ALL SERVERS OFFLINE');
         }
-        else if((async ()=>{await isReachable(ip)})()===true){ //if the server is online we reroute request to it
+        else if((async ()=>{await isReachable(ip)})()){ //if the server is online we reroute request to it
             console.log('The first server tried was online');
-            let url = ip + endpoint;
+            let url = 'http://'+ip + endpoint;
             console.log('reroute to: ' + url);
             req.pipe(request(url)).pipe(res);
             
         }
         else{ //if the first server we tried is down we try again.
             console.log('first server tried was not online, try again with recursive call');
-            proxyRequestTo(ips(),endpoint);
+            return proxyRequestTo(ips(),endpoint);
             /*
             console.log('ip of ' + ip + ' not online');
             ip = ips(); //if the first one wasnt online we jump to the next one (not good cuz its hardcoded so if we add more servers this is bad)
@@ -76,9 +77,6 @@ function proxyRequestTo (ip,endpoint){
 // add a check to make sure the server selected is not down : 
 //if it dosent respond in x time go to the next server.
 
-//console.log(ips());
-//console.log(ips());
-//console.log(ips());
 checkAvailability();
 proxyRequestTo(ips(),'/api/gitProjects');
 

@@ -7,8 +7,6 @@ var cors = require('cors');
 const { exec } = require('child_process');
 const fs = require('fs');
 
-// =========== "npm run dev" ============//
-
 //request module is used to route the reqests
 var request = require('request');
 
@@ -16,7 +14,7 @@ var request = require('request');
 var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
 
 // Please only modify the port here ffs
-var port = process.env.PORT || 10000;
+var port = process.env.PORT || 8005;
 // This variable is here for the proxy request.
 var repo_fetcher_port = process.env.PORT || 8001;
 var dependency_finder_port = process.env.PORT || 9000;
@@ -54,7 +52,6 @@ function proxyRequestTo (ip,port,endpoint){
     });
 }
 
-
 // here we are telling the program to reroute all requests to /api/repo_fetch
 // to the other computer (different ip) on another port
 //proxyRequestTo(repo_fetcher,'8001','/api/repo_fetcher');
@@ -75,7 +72,7 @@ app.set('appPath', 'client');
 
 
 // Import routes
-//app.use(require('./controllers/index'));  //moved this above body parser
+app.use(require('./index'));  
 
 /**********MAIN SERVER listening to 8001 for repo_fetcher**************/
 //repo_fetcher is running on port 8001 so main server listens there
@@ -86,7 +83,7 @@ app.set('appPath', 'client');
  const main_server = '127.0.0.1';
 
 
-app.listen(port, main_server);
+//app.listen(port, main_server);
 
 /**************************************/
 
