@@ -37,48 +37,49 @@ function checkAvailability(){
     (async ()=>{
         console.log('check if blackboard1 is up: ' + await isReachable(bbServer2withPort));
         console.log('check if blackboard2 is up: ' + await isReachable(bbServer1withPort));
+        if(await isReachable(bbServer1withPort)){
+            console.log('its all true! well 1 atleast');
+        }
+        if(!await isReachable(bbServer2withPort)){
+            console.log('its all false! well 1 atleast');
+        }
     })();
 }
 
 function proxyRequestTo (ip,endpoint){
+    
+    
     app.use(endpoint, (req,res)=>{   
-        console.log('   BEGINNING OF method, the initial ip: '+ip+endpoint);
-        if(!(async ()=>{await isReachable(bbServer1withPort)})() && !(async ()=>{await isReachable(bbServer2withPort)})()){ //these should be if(false and false)
-            //both servers are down, nothing we can do but wait for them to go back up and redo request
-            console.log('ALL SERVERS OFFLINE');
-        }
-        else if((async ()=>{await isReachable(ip)})()){ //if the server is online we reroute request to it
-            console.log('The first server tried was online');
-            let url = 'http://'+ip + endpoint;
-            console.log('reroute to: ' + url);
-            req.pipe(request(url)).pipe(res);
-            
-        }
-        else{ //if the first server we tried is down we try again.
-            console.log('first server tried was not online, try again with recursive call');
-            return proxyRequestTo(ips(),endpoint);
-            /*
-            console.log('ip of ' + ip + ' not online');
-            ip = ips(); //if the first one wasnt online we jump to the next one (not good cuz its hardcoded so if we add more servers this is bad)
-            if((async ()=>{await isReachable(ip)})()){
-                let url = ip + endpoint;
+        (async ()=>{
+            console.log('   BEGINNING OF method, the initial ip: '+ip+endpoint);
+            if( !await isReachable(bbServer1withPort) && !await isReachable(bbServer2withPort) ){ //these should be if(false and false)
+                //both servers are down, nothing we can do but wait for them to go back up and redo request
+                console.log('ALL SERVERS OFFLINE');
+            }
+            else if(await isReachable(ip)){ //if the server is online we reroute request to it
+                console.log(await isReachable(ip));
+                console.log('The first server tried was online');
+                let url = 'http://'+ip + endpoint;
                 console.log('reroute to: ' + url);
                 req.pipe(request(url)).pipe(res);
+                
             }
-            else{
-                console.log('both servers offline');
+            else{ //if the first server we tried is down we try again.
+                console.log(await isReachable(ip));
+                console.log('first server tried was not online, try again with recursive call');
+                ip = ips();
+                console.log(ip); //should be the next ip in the array
+                return proxyRequestTo(ip,endpoint);
             }
-            */
-        }
-    
+        })();
     });
+    
+
+ 
 }
 
-// add a check to make sure the server selected is not down : 
-//if it dosent respond in x time go to the next server.
-
 checkAvailability();
-proxyRequestTo(ips(),'/api/gitProjects');
+proxyRequestTo(ips(),'/api/gitProjects'); 
 
 
 
