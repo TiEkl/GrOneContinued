@@ -34,8 +34,6 @@ var current = 0;
 app.use(cors());
 
 function proxyRequestTo (ip,endpoint){
-    
-    
     app.use(endpoint, (req,res)=>{   
         (async ()=>{
             console.log('   BEGINNING OF method, the initial ip: '+ip+endpoint);

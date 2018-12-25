@@ -101,7 +101,7 @@
                         
                         //here we use the response from the previous request in order to
                         //send XML data to the dependency finder
-                        return axios.post('http://127.0.0.1:8002/api/gitProjects',{xml: response.data});
+                        return axios.post('http://127.0.0.1:8002/api/dependencies',{xml: response.data});
                     })
                     .then(
                     (response) => {
