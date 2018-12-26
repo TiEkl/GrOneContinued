@@ -21,6 +21,7 @@ var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
 
 // Please only modify the port here ffs
 var port = process.env.PORT || 8000;
+var localSyncTestPort = process.env.PORT || 7999;
 // This variable is here for the proxy request.
 var repo_fetcher_port = process.env.PORT || 8001;
 
@@ -82,61 +83,99 @@ var remoteURL = 'http://'+ remoteIp + ':' + port + '/api/bb';
 console.log("     REMOTE IP: " + remoteIp);
 console.log("     LOCAL IP: " + localIp);
 
-setInterval(function(){
-    syncDb();
-}, 5000);
+function syncDb() {
 
-function syncDb(){
-    request(localURL, function (err, response, body) { //body has local objects
-        if(typeof body != undefined){
-            var localData = JSON.parse(body);
-            console.log(localData);
-            console.log("    Local JSON Data: " + JSON.stringify(localData.projectSchemas));
-        
-            request(remoteURL, function (error, response2, resRemoteBody) { //remotebody has remote objects
-                if(typeof resRemoteBody != undefined){
-                    var remoteData = JSON.parse(resRemoteBody);
-                    console.log("       Remote Json Data: " + JSON.stringify(remoteData.projectSchemas));
-        
-                    for(var i = 0 ; i < localData.projectSchemas.length; i++){
-                        // do get request of remoteDB to check if all ids present in remote
-                        // if not add object of that id
-                        console.log("       Local data length: " + localData.projectSchemas.length);
-                        
-                        for(var n = 0; n < remoteData.projectSchemas.length; n++){
-                            console.log(remoteData.projectSchemas[n]);
-                            console.log(localData.projectSchemas[i]);
-                            //if the project is not in remote, then push it
-                            if(!remoteData.projectSchemas[n]._id.equals(localData.projectSchemas[i]._id)) {
-                                var options = {
-                                    method: 'POST',
-                                    body: localData.projectSchemas[i],
-                                    json: true,
-                                    uri: remoteURL,
-                                    headers: {
-                                        'Content-Type': 'application/json'
-                                    }
-                                };
-                                request(options, function(err,res,body){
-                                    console.log("res: " + JSON.stringify(res));
-                                    if(!err && res.statusCode == 201) {
-                                        console.log("body: " + body);
-                                    }
-                                });
-                            } else {
-                                continue;
+    // GET Local server's projects
+     request(localURL, function (err, response, body) { //body has local objects
+         if(typeof body != undefined){
+             var localData = JSON.parse(body);
+             // console.log("    Local JSON Data: " + JSON.stringify(localData.projectSchemas));
+             console.log("       Local data length: " + localData.projectSchemas.length);
+ 
+             // GET remote server's projects
+             request(remoteURL, function (error, response2, resRemoteBody) { //remotebody has remote objects
+                 if(typeof resRemoteBody != undefined) {
+                     var remoteData = JSON.parse(resRemoteBody);
+                     // console.log("    Remote JSON Data: " + JSON.stringify(remoteData.projectSchemas));
+                     console.log("       Remote data length: " + remoteData.projectSchemas.length);
+ 
+                     //Iterate through all local projects
+                     for(var i = 0 ; i < localData.projectSchemas.length; i++) {
+                         // do get request of remoteDB to check if all ids present in remote
+                         // if not add object of that id
+ 
+                         // First check if remote server is empty > if empty put everything
+                         if (remoteData.projectSchemas.length <= 0) {
+                            var options = {
+                                method: 'POST',
+                                body: localData.projectSchemas[i],
+                                json: true,
+                                uri: remoteURL,
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                }
+                            };
+                            request(options, function(err,res,body){
+                                console.log("res: " + JSON.stringify(res));
+                                if(!err && res.statusCode == 201) {
+                                    console.log("body: " + body);
+                                }
+                            });
+                         }
+ 
+                         // if remote has projects compare each local project's id to remote's
+                         else if (remoteData.projectSchemas.length > 0) {
+                             var hasProject = false;
+                            for(var n = 0; n < remoteData.projectSchemas.length; n++) {
+                                console.log("    Current Remote: >> " + remoteData.projectSchemas[n]._id);
+                                console.log("    Current Local: >> " + localData.projectSchemas[i]._id);
+
+                                if(remoteData.projectSchemas[n]._id === localData.projectSchemas[i]._id){
+                                    hasProject = true;
+                                }
+
+                                // If id is the same then tell the server and move on
+                                /*else if (remoteData.projectSchemas[n]._id === localData.projectSchemas[i]._id){
+                                   console.log("                   Current Local Exists in Remote");
+                                   continue;
+                                }*/
                             }
-                        }
-            
-                    };
-                }
-        
-        
-            });
-        }
-    });
-    
-}
+                             //if the project is not in remote, then push it
+                             if (!hasProject) {
+                                 var options = {
+                                     method: 'POST',
+                                     body: localData.projectSchemas[i],
+                                     json: true,
+                                     uri: remoteURL,
+                                     headers: {
+                                         'Content-Type': 'application/json'
+                                     }
+                                 };
+                                 request(options, function (err, res, body) {
+                                     console.log("res: " + JSON.stringify(res));
+                                     if (!err && res.statusCode == 201) {
+                                         console.log("body: " + body);
+                                     }
+                                 });
+                             }
+                         }
+                     };
+                 }
+             });
+         }
+     });
+ }
+ 
+ // Basic version of syncing db every 5 seconds.
+ setInterval(function () {
+    //portscanner checks if remote is dead. Only begin sync if not ded.
+    portscanner.checkPortStatus(localSyncTestPort, remoteIp, function(error, status) {
+      // Status is 'open' if currently in use or 'closed' if available
+       console.log("remote server status: " + status);
+       if (status === "open") {syncDb();}
+       if (status === "closed") {console.log("remote server ded")}
+    })
+ }, 5000)
 
 // here we are telling the program to reroute all requests to /api/repo_fetch
 // to the other computer (different ip) on another port
