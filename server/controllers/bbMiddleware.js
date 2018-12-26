@@ -7,19 +7,19 @@ router.get('/', function ( req, res ) {
     console.log("in get all depe");
     projectSchema.find(function(err,projectSchema){
         if (err) { return next(err); }
-        res.json({"data": projectSchema}).status(200);
+        res.json({"projectSchemas": projectSchema}).status(200);
     });
 });
 
 router.get('/:id', function(req, res, next) {
 	projectSchema.findById(req.params.id, function (err, projectSchema) {
 		if (err) { return next(err); }
-		res.status(200).json({"data" : projectSchema});
+		res.status(200).json({"projectSchema" : projectSchema});
 	});
 });
 
 router.post('/', function (req, res) {
-    console.log("in post all depen");
+    console.log("in posting all dependencies");
     console.log(req.body);
     var projects = new projectSchema(req.body);
     projects.save(function(err) {
@@ -27,7 +27,7 @@ router.post('/', function (req, res) {
       console.log("error");
       return next(err);
     }
-      res.status(201).json({"banana": projects});
+      res.status(201).json(projects);
     });
 })
 

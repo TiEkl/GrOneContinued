@@ -13,7 +13,7 @@ require('apply-diff')(_);
 
 // =========== "npm run dev" ============//
 
-//request module is used to route the reqests
+//request module is used to route the requests
 var request = require('request');
 
 // Variables
@@ -76,46 +76,67 @@ function proxyRequestTo (ip,port,endpoint){
         req.pipe(request(url)).pipe(res);
     });
 }
-var testURL = 'http://'+ localIp + ':' + port + '/api/bb';
+var localURL = 'http://'+ localIp + ':' + port + '/api/bb';
 var remoteURL = 'http://'+ remoteIp + ':' + port + '/api/bb';
 
-request(testURL, function (err, response, body) {
-    var j = JSON.parse(body);
-    console.log(j);
-    console.log("localdata: " + JSON.stringify(j.data));
+console.log("     REMOTE IP: " + remoteIp);
+console.log("     LOCAL IP: " + localIp);
 
-    request(remoteURL, function (error, response2, resRemoteBody) {
-        if(typeof resRemoteBody != undefined){
-            var jsonRemote = JSON.parse(resRemoteBody);
-            console.log("jsonremote: " + JSON.stringify(jsonRemote.data));
+setInterval(function(){
+    syncDb();
+}, 5000);
+
+function syncDb(){
+    request(localURL, function (err, response, body) { //body has local objects
+        if(typeof body != undefined){
+            var localData = JSON.parse(body);
+            console.log(localData);
+            console.log("    Local JSON Data: " + JSON.stringify(localData.projectSchemas));
+        
+            request(remoteURL, function (error, response2, resRemoteBody) { //remotebody has remote objects
+                if(typeof resRemoteBody != undefined){
+                    var remoteData = JSON.parse(resRemoteBody);
+                    console.log("       Remote Json Data: " + JSON.stringify(remoteData.projectSchemas));
+        
+                    for(var i = 0 ; i < localData.projectSchemas.length; i++){
+                        // do get request of remoteDB to check if all ids present in remote
+                        // if not add object of that id
+                        console.log("       Local data length: " + localData.projectSchemas.length);
+                        
+                        for(var n = 0; n < remoteData.projectSchemas.length; n++){
+                            console.log(remoteData.projectSchemas[n]);
+                            console.log(localData.projectSchemas[i]);
+                            //if the project is not in remote, then push it
+                            if(!remoteData.projectSchemas[n]._id.equals(localData.projectSchemas[i]._id)) {
+                                var options = {
+                                    method: 'POST',
+                                    body: localData.projectSchemas[i],
+                                    json: true,
+                                    uri: remoteURL,
+                                    headers: {
+                                        'Content-Type': 'application/json'
+                                    }
+                                };
+                                request(options, function(err,res,body){
+                                    console.log("res: " + JSON.stringify(res));
+                                    if(!err && res.statusCode == 201) {
+                                        console.log("body: " + body);
+                                    }
+                                });
+                            } else {
+                                continue;
+                            }
+                        }
+            
+                    };
+                }
+        
+        
+            });
         }
-
-        for(var i = 0 ; i < j.data.length; i++){
-            // do get request of remoteDB to check if all ids present in remote
-            // if not add object of that id
-            console.log("local data len: " + j.data.length);
-            if(j.data.length > 0){
-                console.log("local current: " + JSON.stringify(j.data[i]));
-                var options = {
-                    method: 'POST',
-                    body: j.data[i],
-                    json: true,
-                    uri: remoteURL,
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                };
-                request(options, function(err,res,body){
-                    console.log("res: " + JSON.stringify(res));
-                    if(!err && res.statusCode == 201) {
-                        console.log("body: " + body);
-                    }
-                });
-            }
-
-        };
     });
-});
+    
+}
 
 // here we are telling the program to reroute all requests to /api/repo_fetch
 // to the other computer (different ip) on another port
