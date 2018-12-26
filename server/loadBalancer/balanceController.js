@@ -76,10 +76,13 @@ function balanceLoad(req,res){
         }
         else if(await isReachable(serverips[current])){
             console.log('The first server tried was online');
-            req.pipe(request({url: http + serverips[current] + req.url})).pipe(res); //will not work now since we are not just calling /api/gitprojects in the front end!!
+            const request_server = request({ url: http + serverips[current] + req.url}).on('error', (error) => {
+                res.status(500).send(error.message);
+            }); 
+            req.pipe(request_server).pipe(res); 
             current = (current+1) % serverips.length;
         }
-        else{ //a bit hardcoded so should change this bit!
+        else{ //if we know 1 BB is online but the first one we tried was not, we try again with the 2nd one using a callback.
             console.log('The first server tried was NOT online, try NEXT');
             current = (current+1) % serverips.length;
             return balanceLoad(req,res);
