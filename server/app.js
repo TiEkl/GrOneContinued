@@ -8,9 +8,6 @@ const { exec } = require('child_process');
 const fs = require('fs');
 var ip = require('ip');
 
-var _ = require('lodash');
-require('apply-diff')(_);
-
 // =========== "npm run dev" ============//
 
 //request module is used to route the requests
@@ -21,7 +18,7 @@ var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
 
 // Please only modify the port here ffs
 var port = process.env.PORT || 8000;
-var localSyncTestPort = process.env.PORT || 7999;
+//var localSyncTestPort = process.env.PORT || 7999;
 // This variable is here for the proxy request.
 var repo_fetcher_port = process.env.PORT || 8001;
 
@@ -163,7 +160,7 @@ function syncDb() {
  // Basic version of syncing db every 5 seconds.
  setInterval(function () {
     //portscanner checks if remote is dead. Only begin sync if not ded.
-    portscanner.checkPortStatus(localSyncTestPort, remoteIp, function(error, status) {
+    portscanner.checkPortStatus(port, remoteIp, function(error, status) {
       // Status is 'open' if currently in use or 'closed' if available
        console.log("remote server status: " + status);
        if (status === "open") {syncDb();}
