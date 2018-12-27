@@ -32,14 +32,14 @@ router.route('/api/dependencies').get(function(req,res,next) {
 //Post request, uncomment the fs.readfile stuff and comment our var xml if you want
 //to run this with an XML file from the file system.
 router.route('/api/dependencies').post(function(req,res) { 
-    var xml = req.body.xml;  
-    //fs.readFile('./GarageIOTest.xml', function(err, xml) {
+    //var xml = req.body.xml;  
+    fs.readFile('./omni.xml', function(err, xml) {
         findDependencies(xml, function(result) {
             //console.log('**postREQjsonRES** '+ JSON.stringify(result) + ' end jsonRES***');
             res.status(201).json(result);
         });
 
-    //})
+    })
 
 });
 
@@ -93,12 +93,12 @@ function findDependencies(xml, callback) {
                     }
                     
                     currentNode.id = currentName.toString();
-                    
                     stringsJson[i] = JSON.stringify(object[i].interface);
                 }
                 graphData.nodes.push(currentNode);
                 allClasses.push(currentName);
             }
+
             //Outter loop is the current class we're searching through
             for (var i = 0; i < allClasses.length; i++) {
                 var countDep = 0;       //total amount of dependencies for current class for class [i].

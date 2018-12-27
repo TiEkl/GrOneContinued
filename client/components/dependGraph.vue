@@ -1,5 +1,11 @@
 <template>
   <div>
+     <div id="sidebar" style="display: none;">
+    <div class="item-group">
+        <label class="item-label">Filter</label>  
+            <div id="filterContainer" class="filterContainer checkbox-interaction-group"></div>
+    </div>
+</div>
   <div class="frame">
       
   </div>
@@ -8,8 +14,46 @@
 
 
 <style>
-body{
-  
+#sidebar {
+    position: absolute;
+    z-index: 2;
+    background-color: #FFF;
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #6895b4;
+    min-height: 3px;
+    min-width: 8px;
+}
+.item-group {
+    margin-bottom: 5px;
+}
+.item-group .item-label {
+    width: 90px;
+    text-align: right;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    font-weight: bold;
+    position: relative;
+    min-height: 1px;
+    margin-top: 5px;
+    display: inline;
+    padding-right: 5px;
+    font-size: .90em;
+}
+.checkbox-interaction-group {
+    margin-left: 10px;
+    margin-top: 5px;
+    clear: both;
+}
+.checkbox-container {
+    display: block;
+    min-height: 22px;
+    vertical-align: middle;
+    margin-left: 10px;
+}
+.checkbox-container label {
+    display:inline;
+    margin-bottom: 0px;
 }
 .axis path,
 .axis line {
@@ -40,30 +84,27 @@ body{
         name:"dependGraph",
         data() {
             return {
-        
-
-     height : 1000,
-     width : 1000
-
-     
+            height : 1000,
+            width : 1000
             }
         },
     
         methods: {
             drawChart : function(data, drag, stringToColour, linkColour) {
-        
+                var packageSet = new Set();
+                console.log("hello");
                 const links = data.links.map(d => Object.create(d));
                 const nodes = data.nodes.map(d => Object.create(d));
                 const simulation = this.forceSimulation(nodes, links).on("tick", ticked);
         
-
-        
+                for(let i=0; i < data.nodes.length; i++) {
+                    packageSet.add(data.nodes.package);
+                }
+                var packageArr = [...packageSet];
+                console.log(packageArr.toString());
 
         const svg = d3.select(".frame").append("svg")
             .attr("viewBox", [-this.width / 2, -this.height /2, this.width, this.height])
-         
-
-
                 var text = svg.append("g").selectAll("text")
                         .data(nodes)
                         .enter().append("text")
@@ -174,6 +215,7 @@ body{
       }
     },
     mounted() {
+        createFilter();        
         var drag = simulation => {
         
         function dragstarted(d) {
@@ -183,8 +225,8 @@ body{
         }
         
         function dragged(d) {
-        // d.fx = d3.event.x;
-        // d.fy = d3.event.y;
+         d.fx = d3.event.x;
+         d.fy = d3.event.y;
         }
         
         function dragended(d) {
@@ -223,12 +265,76 @@ body{
    
         d3.json("/api/dependencies")
         .then( (data) =>  {
-            console.log('classes: '+ JSON.stringify(data.data[0].classes));
+            //console.log('classes: '+ JSON.stringify(data.data[0].classes));
             var graphData = data.data[0].classes;
             this.drawChart(graphData, drag, stringToColour,linkColour);
         });
     
         }
     };
+    function createFilter() {
+        d3.select(".filterContainer")
+        .selectAll("div")
+        .data(["licensing", "suit", "resolved"])
+        .enter()
+        .append("div")
+        .attr("class", "checkbox-container")
+        .append("label")
+        .each(function(d) {
+      // create checkbox for each data
+        d3.select(this)
+        .append("input")
+        .attr("type", "checkbox")
+        .attr("id", function(d) {
+          return "chk_" + d;
+        })
+        
+        .attr("checked", true)
+        .on("click", function(d, i) {
+          // register on click event
+          var lVisibility = this.checked ? "visible" : "hidden";
+          filterGraph(d, lVisibility);
+        });
+      d3.select(this)
+        .append("span")
+        .text(function(d) {
+          return d;
+        });
+    });
+
+  $("#sidebar").show(); // show sidebar
+}
+function filterGraph(aType, aVisibility) {
+  // change the visibility of the connection path
+  path.style("visibility", function(o) {
+    var lOriginalVisibility = $(this).css("visibility");
+    return o.type === aType ? aVisibility : lOriginalVisibility;
+  });
+
+  // change the visibility of the node
+  // if all the links with that node are invisibile, the node should also be invisible
+  // otherwise if any link related to that node is visibile, the node should be visible
+  circle.style("visibility", function(o, i) {
+    var lHideNode = true;
+    path.each(function(d, i) {
+      if (d.source === o || d.target === o) {
+        if ($(this).css("visibility") === "visible") {
+          lHideNode = false;
+          // we need show the text for this circle
+          d3.select(d3.selectAll(".nodeText")[0][i]).style(
+            "visibility",
+            "visible"
+          );
+          return "visible";
+        }
+      }
+    });
+    if (lHideNode) {
+      // we need hide the text for this circle
+      d3.select(d3.selectAll(".nodeText")[0][i]).style("visibility", "hidden");
+      return "hidden";
+    }
+  });
+}
 </script>
 
