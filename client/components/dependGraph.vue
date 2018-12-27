@@ -92,49 +92,47 @@
         methods: {
             drawChart : function(data, drag, stringToColour, linkColour) {
                 var packageSet = new Set();
-                console.log("hello");
                 const links = data.links.map(d => Object.create(d));
                 const nodes = data.nodes.map(d => Object.create(d));
                 const simulation = this.forceSimulation(nodes, links).on("tick", ticked);
         
                 for(let i=0; i < data.nodes.length; i++) {
-                    packageSet.add(data.nodes.package);
+                    packageSet.add(data.nodes[i].package);
                 }
                 var packageArr = [...packageSet];
-                console.log(packageArr.toString());
 
-        const svg = d3.select(".frame").append("svg")
-            .attr("viewBox", [-this.width / 2, -this.height /2, this.width, this.height])
+                const svg = d3.select(".frame").append("svg")
+                    .attr("viewBox", [-this.width / 2, -this.height /2, this.width, this.height])
                 var text = svg.append("g").selectAll("text")
-                        .data(nodes)
-                        .enter().append("text")
-                        .attr("class", "text")
-                        .attr("opacity", 0)
-                        .attr("x", 20)
-                        .attr("y", ".31em")
-                        .text(function(d) { return d.id; });
+                                .data(nodes)
+                                .enter().append("text")
+                                .attr("class", "text")
+                                .attr("opacity", 0)
+                                .attr("x", 20)
+                                .attr("y", ".31em")
+                                .text(function(d) { return d.id; });
         
-        const link = svg.append("g")
-            .attr("stroke", "#ddd")
-            .attr("stroke-opacity", 0.3)
-          .selectAll("line")
-          .data(links)
-          .enter().append("line")
-            .attr("stroke-width", d => Math.sqrt(d.value))
+                const link = svg.append("g")
+                    .attr("stroke", "#ddd")
+                    .attr("stroke-opacity", 0.3)
+                .selectAll("line")
+                .data(links)
+                .enter().append("line")
+                    .attr("stroke-width", d => Math.sqrt(d.value))
             
             
-        const node = svg.append("g")
-            .attr("stroke", "#fff")
-            .attr("stroke-width", 1)
-          .selectAll("circle")
-          .data(nodes)
-          .enter().append("circle")
-          .attr("class", "circle")
-            .attr("r", d => Math.sqrt(d.count)+3)
-                    .attr("fill",  d => stringToColour(d.package))
-                    .call(drag(simulation))
-                    .on("mouseover", mouseOver(.2))
-                .on("mouseout", mouseOut)
+                const node = svg.append("g")
+                    .attr("stroke", "#fff")
+                    .attr("stroke-width", 1)
+                .selectAll("circle")
+                .data(nodes)
+                .enter().append("circle")
+                .attr("class", "circle")
+                    .attr("r", d => Math.sqrt(d.count)+3)
+                            .attr("fill",  d => stringToColour(d.package))
+                            .call(drag(simulation))
+                            .on("mouseover", mouseOver(.2))
+                        .on("mouseout", mouseOut)
         
 
                 function ticked() {
@@ -163,46 +161,106 @@
                 }
 
     // fade nodes on hover
-        function mouseOver(opacity) {
-            return function(d) {
-                // check all other nodes to see if they're connected
-                // to this one. if so, keep the opacity at 1, otherwise
-                // fade
-                // also style link accordingly
-                node.style("stroke-opacity", function(o) {
-                    var thisOpacity = isConnected(d, o) ? 1 : opacity;
-                    return thisOpacity;})
-                    .transition().duration(1000);;
-                node.style("fill-opacity", function(o) {
-                var thisOpacity = isConnected(d, o) ? 1 : opacity;
-                    return thisOpacity;})
-                    .transition().duration(1000);
+                function mouseOver(opacity) {
+                    return function(d) {
+                        // check all other nodes to see if they're connected
+                        // to this one. if so, keep the opacity at 1, otherwise
+                        // fade
+                        // also style link accordingly
+                        node.style("stroke-opacity", function(o) {
+                            var thisOpacity = isConnected(d, o) ? 1 : opacity;
+                            return thisOpacity;})
+                            .transition().duration(1000);;
+                        node.style("fill-opacity", function(o) {
+                        var thisOpacity = isConnected(d, o) ? 1 : opacity;
+                            return thisOpacity;})
+                            .transition().duration(1000);
 
-                link.style("stroke-opacity", function(o) {
-                    return o.source === d || o.target === d ? 1 : opacity;
-                }).transition().duration(1000);
-                link.style("stroke", function(o){
-                    return o.source === d || o.target === d ? linkColour(o.withinPackage) : "#fff";
-                }).transition().duration(1000);
-                
-                text.style("opacity", function(o) {
-                    var thisOpacity = isConnected(d, o) ? 1 : opacity;
-                    return thisOpacity;})
-                    .transition().duration(1000);;
-                text.style("fill-opacity", function(o) {
-                var thisOpacity = isConnected(d, o) ? 1 : 0;
-                    return thisOpacity;})
-            };
-        }
-        function mouseOut() {
-            node.style("stroke-opacity", 1).transition().duration(1000);
-            node.style("fill-opacity", 1).transition().duration(1000);
-            link.style("stroke-opacity", 0.3).transition().duration(1000);
-            link.style("stroke", "#ddd").transition().duration(1000);
-            text.style("opacity", 0).transition().duration(1000);
-            
-            
-        }
+                        link.style("stroke-opacity", function(o) {
+                            return o.source === d || o.target === d ? 1 : opacity;
+                        }).transition().duration(1000);
+                        link.style("stroke", function(o){
+                            return o.source === d || o.target === d ? linkColour(o.withinPackage) : "#fff";
+                        }).transition().duration(1000);
+                        
+                        text.style("opacity", function(o) {
+                            var thisOpacity = isConnected(d, o) ? 1 : opacity;
+                            return thisOpacity;})
+                            .transition().duration(1000);;
+                        text.style("fill-opacity", function(o) {
+                        var thisOpacity = isConnected(d, o) ? 1 : 0;
+                            return thisOpacity;})
+                    };
+                }
+                function mouseOut() {
+                    node.style("stroke-opacity", 1).transition().duration(1000);
+                    node.style("fill-opacity", 1).transition().duration(1000);
+                    link.style("stroke-opacity", 0.3).transition().duration(1000);
+                    link.style("stroke", "#ddd").transition().duration(1000);
+                    text.style("opacity", 0).transition().duration(1000);
+                    
+                    
+                }
+                createFilter(); 
+                function createFilter() {
+                    d3.select(".filterContainer")
+                    .selectAll("div")
+                    .data(packageArr)
+                    .enter()
+                    .append("div")
+                    .attr("class", "checkbox-container")
+                    .append("label")
+                    .each(function(d) {
+                // create checkbox for each data
+                    d3.select(this)
+                    .append("input")
+                    .attr("type", "checkbox")
+                    .attr("id", function(d) {
+                    return "chk_" + d;
+                    })
+                    .attr("checked", true)
+                    .on("click", function(d, i) {
+                    // register on click event
+                    var lVisibility = this.checked ? "visible" : "hidden";
+                    filterGraph(d, lVisibility);
+                    });
+                d3.select(this)
+                    .append("span")
+                    .text(function(d) {
+                    return d;
+                    });
+                });
+
+                    $("#sidebar").show(); // show sidebar
+                }
+                function filterGraph(aType, aVisibility) {
+                    // change the visibility of the connection path
+                    link.style("visibility", function(o) {
+                        var lOriginalVisibility = $(this).css("visibility");
+                        return o.package === aType ? aVisibility : lOriginalVisibility;
+                    });
+
+                    // change the visibility of the node
+                    // if all the links with that node are invisibile, the node should also be invisible
+                    // otherwise if any link related to that node is visibile, the node should be visible
+                    node.style("visibility", function(o, i) {
+                        var lHideNode = true;
+                        node.each(function(d, i) {
+                        if (d.source === o || d.target === o) {
+                            if ($(this).css("visibility") === "visible") {
+                            lHideNode = false;
+                            // we need show the text for this circle
+                         /* d3.select(d3.selectAll(".nodeText")[0][i]).style(
+                                "visibility",
+                                "visible"
+                            );*/
+                            return "visible";
+                            }
+                        }
+                        });
+                        
+                    });
+                }
         return svg.node();
       },
 
@@ -214,8 +272,7 @@
             .force("center", d3.forceCenter());
       }
     },
-    mounted() {
-        createFilter();        
+    mounted() {       
         var drag = simulation => {
         
         function dragstarted(d) {
@@ -272,69 +329,5 @@
     
         }
     };
-    function createFilter() {
-        d3.select(".filterContainer")
-        .selectAll("div")
-        .data(["licensing", "suit", "resolved"])
-        .enter()
-        .append("div")
-        .attr("class", "checkbox-container")
-        .append("label")
-        .each(function(d) {
-      // create checkbox for each data
-        d3.select(this)
-        .append("input")
-        .attr("type", "checkbox")
-        .attr("id", function(d) {
-          return "chk_" + d;
-        })
-        
-        .attr("checked", true)
-        .on("click", function(d, i) {
-          // register on click event
-          var lVisibility = this.checked ? "visible" : "hidden";
-          filterGraph(d, lVisibility);
-        });
-      d3.select(this)
-        .append("span")
-        .text(function(d) {
-          return d;
-        });
-    });
-
-  $("#sidebar").show(); // show sidebar
-}
-function filterGraph(aType, aVisibility) {
-  // change the visibility of the connection path
-  path.style("visibility", function(o) {
-    var lOriginalVisibility = $(this).css("visibility");
-    return o.type === aType ? aVisibility : lOriginalVisibility;
-  });
-
-  // change the visibility of the node
-  // if all the links with that node are invisibile, the node should also be invisible
-  // otherwise if any link related to that node is visibile, the node should be visible
-  circle.style("visibility", function(o, i) {
-    var lHideNode = true;
-    path.each(function(d, i) {
-      if (d.source === o || d.target === o) {
-        if ($(this).css("visibility") === "visible") {
-          lHideNode = false;
-          // we need show the text for this circle
-          d3.select(d3.selectAll(".nodeText")[0][i]).style(
-            "visibility",
-            "visible"
-          );
-          return "visible";
-        }
-      }
-    });
-    if (lHideNode) {
-      // we need hide the text for this circle
-      d3.select(d3.selectAll(".nodeText")[0][i]).style("visibility", "hidden");
-      return "hidden";
-    }
-  });
-}
 </script>
 
