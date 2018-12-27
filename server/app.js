@@ -133,12 +133,6 @@ function syncDb() {
                                 if(remoteData.projectSchemas[n]._id === localData.projectSchemas[i]._id){
                                     hasProject = true;
                                 }
-
-                                // If id is the same then tell the server and move on
-                                /*else if (remoteData.projectSchemas[n]._id === localData.projectSchemas[i]._id){
-                                   console.log("                   Current Local Exists in Remote");
-                                   continue;
-                                }*/
                             }
                              //if the project is not in remote, then push it
                              if (!hasProject) {
