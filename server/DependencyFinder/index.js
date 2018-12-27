@@ -2,6 +2,7 @@ var path = require('path');
 var express = require('express');
 var router = express.Router();
 var xml2js = require('xml2js');
+var parseString = require('xml2js').parseString;
 const fs = require('fs');
 const perf = require('execution-time')();
 
@@ -17,27 +18,41 @@ router.get('/api', function(req, res) {
     res.json({"message": "Welcome to your backend"});
 });
 
-router.route('/api/dependencies').get(function(req,res) {
-    fs.readFile('./server/DependencyFinder/omni.xml', function(err, data) {
-        findDependencies(data, function(result) {
-            res.status(200).json(result);
+
+router.route('/api/dependencies').get(function(req,res,next) {
+    projectSchema.find(({}), (err, data)=>{
+        if(err){
+            return next(err)
+        }
+        //console.log('**jsonRES** '+ JSON.stringify(data) + ' end jsonRES***');
+        res.status(200).json({ 'data' : data });
+    });
+});
+
+//Post request, uncomment the fs.readfile stuff and comment our var xml if you want
+//to run this with an XML file from the file system.
+router.route('/api/dependencies').post(function(req,res) { 
+    var xml = req.body.xml;  
+    //fs.readFile('./GarageIOTest.xml', function(err, xml) {
+        findDependencies(xml, function(result) {
+            //console.log('**postREQjsonRES** '+ JSON.stringify(result) + ' end jsonRES***');
+            res.status(201).json(result);
         });
 
-    })
+    //})
 
-})
+});
 
 //Function for finding dependencies with an xml file as input and a callback function
 //that should handle the result from the function
 function findDependencies(xml, callback) {
-    var parser = new xml2js.Parser();
 
     perf.start();       //calculate time of excecution until perf.stop()
 
-    parser.parseString(xml, function (err, result) {
+    parseString(xml, function (err, result) {
  
-
         var object = result.unit.unit;  //each .java file in json
+ 
         var project;
         //Project name will probably be have to be fetched from the xmlhttprequest once that's implemented
         if(object[0].$.filename != null) {
@@ -58,27 +73,33 @@ function findDependencies(xml, callback) {
                 var currentNode = {"id": "", "package": "", "count": 0};
                 if (object[i].class != null) {      //check if the java file includes any class
                     var currentName = object[i].class[0].name;
+            
                     if (object[i].package != null) {
                         var currentPackage = object[i].package[0].name[0].name;
+                        currentNode.package = currentPackage[currentPackage.length-1].toString();
                     }
+                    
                     currentNode.id = currentName.toString();
-                    currentNode.package = currentPackage[currentPackage.length-1].toString();
+                    
                     stringsJson[i] = JSON.stringify(object[i].class); //object[i].class is the current class in java file at [i] .
 
                 }
-                else if (object[i].interface != null) {         //check if the java file inclu  des any interface
+                else if (object[i].interface != null) {         //check if the java file includes any interface
                     var currentName = object[i].interface[0].name;
+  
                     if (object[i].package != null) {
                         var currentPackage = object[i].package[0].name[0].name;
+                        currentNode.package = currentPackage[currentPackage.length-1].toString();
                     }
+                    
                     currentNode.id = currentName.toString();
-                    currentNode.package = currentPackage[currentPackage.length-1].toString();
+                    
                     stringsJson[i] = JSON.stringify(object[i].interface);
                 }
                 graphData.nodes.push(currentNode);
                 allClasses.push(currentName);
             }
-            //Outer loop is the current class we're searching through
+            //Outter loop is the current class we're searching through
             for (var i = 0; i < allClasses.length; i++) {
                 var countDep = 0;       //total amount of dependencies for current class for class [i].
                 //Loop that searches for each class name [j] inside the stringsJson[i]
@@ -133,4 +154,4 @@ function findDependencies(xml, callback) {
 }
 
 
-module.exports = router
+module.exports = router;
