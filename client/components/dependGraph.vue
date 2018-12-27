@@ -103,7 +103,7 @@
 
                 const svg = d3.select(".frame").append("svg")
                     .attr("viewBox", [-this.width / 2, -this.height /2, this.width, this.height])
-                var text = svg.append("g").selectAll("text")
+                        var text = svg.append("g").selectAll("text")
                                 .data(nodes)
                                 .enter().append("text")
                                 .attr("class", "text")
@@ -118,6 +118,7 @@
                 .selectAll("line")
                 .data(links)
                 .enter().append("line")
+                .attr("class", "line")
                     .attr("stroke-width", d => Math.sqrt(d.value))
             
             
@@ -218,6 +219,7 @@
                     .attr("id", function(d) {
                     return "chk_" + d;
                     })
+                    
                     .attr("checked", true)
                     .on("click", function(d, i) {
                     // register on click event
@@ -235,7 +237,9 @@
                 }
                 function filterGraph(aType, aVisibility) {
                     // change the visibility of the connection path
-                    link.style("visibility", function(o) {
+                    console.log(aType +" space " +  aVisibility);
+                    
+                    node.style("visibility", function(o) {
                         var lOriginalVisibility = $(this).css("visibility");
                         return o.package === aType ? aVisibility : lOriginalVisibility;
                     });
@@ -246,18 +250,21 @@
                     node.style("visibility", function(o, i) {
                         var lHideNode = true;
                         node.each(function(d, i) {
-                        if (d.source === o || d.target === o) {
+                        if (d.package === o.package) {
                             if ($(this).css("visibility") === "visible") {
                             lHideNode = false;
                             // we need show the text for this circle
-                         /* d3.select(d3.selectAll(".nodeText")[0][i]).style(
-                                "visibility",
-                                "visible"
-                            );*/
+                            d3.select(d3.selectAll(".circle")[i]).style("visibility", "visible");
                             return "visible";
                             }
                         }
                         });
+                                    if (lHideNode) {
+                // we need hide the text for this circle 
+                d3.select(d3.selectAll(".circle")[i]).style("visibility", "hidden");
+                return "hidden";
+            }
+        
                         
                     });
                 }
