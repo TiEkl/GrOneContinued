@@ -28,9 +28,6 @@ const bbServer2Port = 10000;
 var serverips = [bbServer2withPort,bbServer1withPort];
 // implement a algo to select server 
 var ips = roundround(serverips);
-
-var current = 0;
-
 app.use(cors());
 
 function proxyRequestTo (ip,endpoint){
@@ -67,46 +64,40 @@ function proxyRequestTo (ip,endpoint){
 //so with this one is a BB is down it will not try to connect to it. and it will use the recursive call to try to find it again
 //for some reason there is still the problem that I think the method is sending the same request twice for some reason
 function balanceLoad(req,res){
-    console.log('WHERE we SEND the stuff '+serverips[current] + req.url);
+    //console.log('WHERE we SEND the stuff '+serverips[current] + req.url);
     var http = 'http://';
     (async ()=>{
-        if( !await isReachable(bbServer1withPort) && !await isReachable(bbServer2withPort) ){ //these should be if(false and false)
-            //both servers are down, nothing we can do but wait for them to go back up and redo request
-            console.log('ALL SERVERS OFFLINE');
-        }
-        else if(await isReachable(serverips[current])){
-            console.log('The first server tried was online');
-            const request_server = request({ url: http + serverips[current] + req.url}).on('error', (error) => {
-                res.status(500).send(error.message);
+        
+        if(checkAvailability() === false){
+        console.log('All servers down');
+         return;
+         }
+         else{ 
+            const request_server = request({ url: http + ips() + req.url}).on('error', (error) => {
+                return balanceLoad(req,res);
             }); 
-            req.pipe(request_server).pipe(res); 
-            current = (current+1) % serverips.length;
+            req.pipe(request_server).pipe(res);
+            
         }
-        else{ //if we know 1 BB is online but the first one we tried was not, we try again with the 2nd one using a callback.
-            console.log('The first server tried was NOT online, try NEXT');
-            current = (current+1) % serverips.length;
-            return balanceLoad(req,res);
-        }
-    })();
     
-}
+    })}
+    
+
 
 //Check if the servers are up and runnning before we attempt to connect to them
 //performs a handshake with the server and returns true if the server responded and is up
 function checkAvailability(){
     (async ()=>{
-        console.log('check if blackboard1 is up: ' + await isReachable(bbServer2withPort));
-        console.log('check if blackboard2 is up: ' + await isReachable(bbServer1withPort));
-        if(await isReachable(bbServer1withPort)){
-            console.log('its all true! well 1 atleast');
-        }
-        if(!await isReachable(bbServer2withPort)){
-            console.log('its all false! well 1 atleast');
-        }
+        var i;
+            for(i = 0; i <= serverips.length, i++;){
+                if(await isReachable(serverips[i] === true)){
+                 return true;
+                }}
+        return false;
     })();
 }
 
-checkAvailability();
+//checkAvailability();
 //proxyRequestTo(serverips[current],'/api/gitProjects'); 
 
 
