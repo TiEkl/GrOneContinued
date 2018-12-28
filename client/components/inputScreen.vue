@@ -116,6 +116,7 @@
                         var router = this.$router;
                       
                         console.log(JSON.stringify(response.data));
+                        console.log(JSON.stringify('            '+response.data.graphid));
                         
                         router.push({name:'graph'});
                     })

@@ -5,6 +5,7 @@ var xml2js = require('xml2js');
 var parseString = require('xml2js').parseString;
 const fs = require('fs');
 const perf = require('execution-time')();
+var uniqid = require('uniqid');
 
 var projectSchema = require('../models/projectNode.js');
 
@@ -58,9 +59,14 @@ function findDependencies(xml, callback) {
         if(object[0].$.filename != null) {
             project = object[0].$.filename.toString().split("\\")[1];
         }
+        
+        var generatedID = uniqid();
+
         var graphData = { 
             "nodes":[], 
-            "links":[] };
+            "links":[], 
+            "graphid": generatedID
+        };
         regexSearch(object);
         
         function regexSearch(object) {
