@@ -31,8 +31,8 @@ router.route('/api/dependencies').get(function(req,res,next) {
 
 //Post request, uncomment the fs.readfile stuff and comment our var xml if you want
 //to run this with an XML file from the file system.
-router.route('/api/dependencies').post(function(req,res) { 
-    var xml = req.body.xml;  
+router.route('/api/dependencies').post(function(req,res) {
+    var xml = req.body.xml;
     //fs.readFile('./GarageIOTest.xml', function(err, xml) {
         findDependencies(xml, function(result) {
             //console.log('**postREQjsonRES** '+ JSON.stringify(result) + ' end jsonRES***');
@@ -50,19 +50,19 @@ function findDependencies(xml, callback) {
     perf.start();       //calculate time of excecution until perf.stop()
 
     parseString(xml, function (err, result) {
- 
+
         var object = result.unit.unit;  //each .java file in json
- 
+
         var project;
         //Project name will probably be have to be fetched from the xmlhttprequest once that's implemented
         if(object[0].$.filename != null) {
             project = object[0].$.filename.toString().split("\\")[1];
         }
-        var graphData = { 
-            "nodes":[], 
+        var graphData = {
+            "nodes":[],
             "links":[] };
         regexSearch(object);
-        
+
         function regexSearch(object) {
             var allClasses = []; //Will contain all classnames
             var stringsJson = []; //Will contain all json representations of classes, stringified
@@ -70,30 +70,36 @@ function findDependencies(xml, callback) {
             //For loop that creates each Node for the graphData, checks for classes and interfaces.
             //Also stringifies each class/interface to prepare for the regex matching.
             for (var i = 0; i < object.length; i++) {
-                var currentNode = {"id": "", "package": "", "count": 0};
-                if (object[i].class != null) {      //check if the java file includes any class
+               console.log("              Current object length: >>  " + i);
+               var currentNode = {"id": "", "package": "", "count": 0};
+
+               if (object[i].class != null) {      //check if the java file includes any class
                     var currentName = object[i].class[0].name;
-            
+
                     if (object[i].package != null) {
-                        var currentPackage = object[i].package[0].name[0].name;
-                        currentNode.package = currentPackage[currentPackage.length-1].toString();
+                       console.log("      object[i].package: " + object[i].package);
+
+                       var currentPackage = object[i].package[0].name[0].name;
+                       console.log("      currentPackage: " + currentPackage);
+
+                       currentNode.package = currentPackage[currentPackage.length-1].toString();
                     }
-                    
+
                     currentNode.id = currentName.toString();
-                    
+
                     stringsJson[i] = JSON.stringify(object[i].class); //object[i].class is the current class in java file at [i] .
 
                 }
                 else if (object[i].interface != null) {         //check if the java file includes any interface
                     var currentName = object[i].interface[0].name;
-  
+
                     if (object[i].package != null) {
                         var currentPackage = object[i].package[0].name[0].name;
                         currentNode.package = currentPackage[currentPackage.length-1].toString();
                     }
-                    
+
                     currentNode.id = currentName.toString();
-                    
+
                     stringsJson[i] = JSON.stringify(object[i].interface);
                 }
                 graphData.nodes.push(currentNode);
@@ -105,12 +111,12 @@ function findDependencies(xml, callback) {
                 //Loop that searches for each class name [j] inside the stringsJson[i]
                 for (var j = 0; j < allClasses.length; j++) {
 
-                    if (i == j) {   
+                    if (i == j) {
                         continue;
                     }
                     var comparePackage = object[j].package[0].name[0].name;
 
-                    var pattern = new RegExp('"name":."' + allClasses[j]); 
+                    var pattern = new RegExp('"name":."' + allClasses[j]);
                     var match;
                     var result = [];
                     if ((match = pattern.exec(stringsJson[i])) != null) {   //compares pattern (reg Expression) with stringsJson
@@ -125,7 +131,7 @@ function findDependencies(xml, callback) {
                         }
                         var link = { "source": allClasses[i].toString(), "target": allClasses[j].toString(), "value": 1, "withinPackage": withinPackage };
                         graphData.links.push(link);
-                    }  
+                    }
                 }
                 graphData.nodes[i].count = countDep;
             }
