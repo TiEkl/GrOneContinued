@@ -13,8 +13,7 @@
     "dependencyfinder": "node ./server/DependencyFinder/app.js",
     "test": "newman run ./tests/api-tests.postman.json",
     "dev": "nodemon ./server/app.js",
-    "repohandler": "nodemon ./server/RepoHandler/app.js",
-    "build": "browserify -t vueify -e client/main.js -o client/build/mainBuild.js"
+    "repofetcher": "nodemon ./server/RepoFetcher/app.js"
   },
   "repository": {
     "type": "git",
@@ -43,8 +42,7 @@
     "underscore": "^1.9.1",
     "vue": "^2.5.17",
     "vue-router": "^3.0.1",
-    "xml2js": "^0.4.19",
-    "xmlhttprequest": "^1.8.0"
+    "xml2js": "^0.4.19"
   },
   "devDependencies": {
     "babel-core": "^6.26.3",
