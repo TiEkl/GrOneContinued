@@ -51,7 +51,17 @@ function findDependencies(xml, callback) {
 
     parseString(xml, function (err, result) {
 
+      // testing stuff
+      if (result != undefined) {
+         throw Error("error! result undefined");
+      }
+      console.log(result);
+      console.log(result.unit);
+      console.log(result.unit.unit);
+      // end
+
         var object = result.unit.unit;  //each .java file in json
+
 
         var project;
         //Project name will probably be have to be fetched from the xmlhttprequest once that's implemented
@@ -76,13 +86,27 @@ function findDependencies(xml, callback) {
                if (object[i].class != null) {      //check if the java file includes any class
                     var currentName = object[i].class[0].name;
 
+                    //test if statements
                     if (object[i].package != null) {
-                       console.log("      object[i].package: " + object[i].package);
 
-                       var currentPackage = object[i].package[0].name[0].name;
-                       console.log("      currentPackage: " + currentPackage);
+                       if (object[i].package != undefined) {
+                          var currentPackage = object[i].package;
+                       }
+                       if (object[i].package[0] != undefined) {
+                          var currentPackage = object[i].package[0];
+                       }
+                       if (object[i].package[0].name != undefined) {
+                          var currentPackage = object[i].package[0].name;
+                       }
+                       if (object[i].package[0].name[0].name != undefined) {
+                          var currentPackage = object[i].package[0].name[0].name;
+                       }
 
-                       currentNode.package = currentPackage[currentPackage.length-1].toString();
+                       console.log("         currentPackage: " + currentPackage);
+
+                      //end tests
+
+                        currentNode.package = currentPackage[currentPackage.length-1].toString();
                     }
 
                     currentNode.id = currentName.toString();
@@ -114,7 +138,35 @@ function findDependencies(xml, callback) {
                     if (i == j) {
                         continue;
                     }
-                    var comparePackage = object[j].package[0].name[0].name;
+                    //testing
+                    if (object[j] != undefined) {
+                       var comparePackage = object[j];
+                       console.log("     > in  object[j] <");
+
+                       if (object[j].package != undefined) {
+                             var comparePackage = object[j].package;
+                             console.log("     >> in  object[j].package <");
+
+                          if (object[j].package[0] != undefined) {
+                             var comparePackage = object[j].package[0];
+                             console.log("     >>> in  object[j].package[0] <");
+                          }
+                          if (object[j].package[0].name != undefined) {
+                             var comparePackage = object[j].package[0].name;
+                             console.log("     >>>> in  object[j].package[0].name <");
+                          }
+                          if (object[j].package[0].name[0].name != undefined) {
+                             var comparePackage = object[j].package[0].name[0].name;
+                             console.log("     >>>>> in  object[j].package[0].name[0].name <");
+                          }
+                       }
+                    }
+
+                    console.log("      comparePackage: " + comparePackage);
+
+
+
+                    //end testing
 
                     var pattern = new RegExp('"name":."' + allClasses[j]);
                     var match;

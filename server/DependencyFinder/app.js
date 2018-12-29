@@ -4,8 +4,22 @@ var morgan = require('morgan');
 var path = require('path');
 var cors = require('cors');
 
+var mongoose = require('mongoose');
+
 // Variables
 var port = process.env.PORT || 9000;
+
+var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
+
+// Connect to MongoDB
+mongoose.connect(mongoURI, { useNewUrlParser: true }, function(err) {
+    if (err) {
+        console.error(`Failed to connect to MongoDB with URI: ${mongoURI}`);
+        console.error(err.stack);
+        process.exit(1);
+    }
+    console.log(`Connected to MongoDB with URI: ${mongoURI}`);
+});
 
 // Create Express app
 var app = express();
@@ -37,7 +51,7 @@ app.use(require('./index'));
 // Error handler (must be registered last)
 var env = app.get('env');
 app.use(function(err, req, res, next) {
-    console.error(err.stack); 
+    console.error(err.stack);
     var err_res = {
         "message": err.message,
         "error": {}
