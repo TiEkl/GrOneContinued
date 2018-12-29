@@ -5,7 +5,7 @@ var xml2js = require('xml2js');
 const fs = require('fs');
 const perf = require('execution-time')();
 
-var projectSchema = require('../models/projectNode.js');
+router.use('/api/urls', require('./url_inputs.js'));
 
 router.route('/').get(function (req, res) {
     var relativeAppPath = req.app.get('appPath');
@@ -24,7 +24,6 @@ router.route('/api/dependencies').get(function(req,res) {
         });
 
     })
-
 })
 //Function for finding dependencies with an xml file as input and a callback function
 //that should handle the result from the function
@@ -32,19 +31,12 @@ function findDependencies(xml, callback) {
     var parser = new xml2js.Parser();
 
     perf.start();       //calculate time of excecution until perf.stop()
-
     parser.parseString(xml, function (err, result) {
- 
 
         var object = result.unit.unit;  //each .java file in json
-        var project;
-        //Project name will probably be have to be fetched from the xmlhttprequest once that's implemented
-        if(object[0].$.filename != null) {
-            project = object[0].$.filename.toString().split("\\")[1];
-        }
+
         var graphData = { 
-            "nodes":[], 
-            "links":[] };
+            "nodes":[], "links":[] };
         regexSearch(object);
         
         function regexSearch(object) {
@@ -54,24 +46,16 @@ function findDependencies(xml, callback) {
             //For loop that creates each Node for the graphData, checks for classes and interfaces.
             //Also stringifies each class/interface to prepare for the regex matching.
             for (var i = 0; i < object.length; i++) {
-                var currentNode = {"id": "", "package": "", "count": 0};
+                var currentNode = {"id": "", "group": 1, "count": 0};
                 if (object[i].class != null) {      //check if the java file includes any class
                     var currentName = object[i].class[0].name;
-                    if (object[i].package != null) {
-                        var currentPackage = object[i].package[0].name[0].name;
-                    }
                     currentNode.id = currentName.toString();
-                    currentNode.package = currentPackage[currentPackage.length-1].toString();
                     stringsJson[i] = JSON.stringify(object[i].class); //object[i].class is the current class in java file at [i] .
 
                 }
-                else if (object[i].interface != null) {         //check if the java file inclu  des any interface
+                else if (object[i].interface != null) {         //check if the java file includes any interface
                     var currentName = object[i].interface[0].name;
-                    if (object[i].package != null) {
-                        var currentPackage = object[i].package[0].name[0].name;
-                    }
                     currentNode.id = currentName.toString();
-                    currentNode.package = currentPackage[currentPackage.length-1].toString();
                     stringsJson[i] = JSON.stringify(object[i].interface);
                 }
                 graphData.nodes.push(currentNode);
@@ -86,37 +70,20 @@ function findDependencies(xml, callback) {
                     if (i == j) {   
                         continue;
                     }
-                    var comparePackage = object[j].package[0].name[0].name;
-
                     var pattern = new RegExp('"name":."' + allClasses[j]); 
                     var match;
                     var result = [];
                     if ((match = pattern.exec(stringsJson[i])) != null) {   //compares pattern (reg Expression) with stringsJson
                         result.push(match);
                         countDep++;
-                        var withinPackage = null;
-                        if(graphData.nodes[i].package === comparePackage[comparePackage.length-1].toString()) {
-                            withinPackage = true;
-                        }
-                        else {
-                            withinPackage = false;
-                        }
-                        var link = { "source": allClasses[i].toString(), "target": allClasses[j].toString(), "value": 1, "withinPackage": withinPackage };
-                        graphData.links.push(link);
-                    }  
+                        var links = { "source": allClasses[i].toString(), "target": allClasses[j].toString(), "value": 1 };
+                        graphData.links.push(links);
+                    }
+
+                    
                 }
                 graphData.nodes[i].count = countDep;
             }
-            var projectNode = new projectSchema({
-                projectName: project,
-                classes: graphData,
-            });
-            projectNode.save( function(error) {
-                console.log("project node and its dependencies saved");
-                if (error){
-                    console.error(error);
-                }
-            });
             //Stops execution timing and logs the time to the console
             const results = perf.stop();
             console.log(results.time);

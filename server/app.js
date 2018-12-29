@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var morgan = require('morgan');
 var path = require('path');
 var cors = require('cors');
+var cmd = require('node-cmd');
 const { exec } = require('child_process');
 const fs = require('fs');
 
@@ -109,7 +110,7 @@ app.listen(port, function (err) {
     console.log(`Express server listening on port ${port}, in ${env} mode`);
     console.log(`Backend: http://localhost:${port}/api/`);
     console.log(`Frontend: http://localhost:${port}/`);
-    
+    convertRepo(projectName);
 });
 
 

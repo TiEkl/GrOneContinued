@@ -20,9 +20,8 @@ router.post("/", function(req, res, next) {
 
   //The place to download the repo
   var destination = path.normalize(
-     path.join(__dirname, 'repository', repo));
-
-     console.log("   destination: " + destination);
+     path.join(process.cwd(), 'repository', repo));
+     console.log("destination:           " + destination)
 
     //function to clear destination
     rimraf(destination, function() {
@@ -37,7 +36,6 @@ router.post("/", function(req, res, next) {
       }
 
       filterDir(destination, '.java');
-      convertRepo(repo);
 
    })
    res.status(201).json("Project Downloaded.");
@@ -47,7 +45,7 @@ router.post("/", function(req, res, next) {
 // structured like this '../LiteScript','.html'
 function filterDir(startPath,filter){
 
-    // console.log('Starting from dir '+ startPath +'/');
+    console.log('Starting from dir '+ startPath +'/');
 
     if (!fs.existsSync(startPath)){
         console.log("no dir ",startPath);
@@ -64,11 +62,11 @@ function filterDir(startPath,filter){
             filterDir(filename,filter); //recurse
         }
         else if (filename.indexOf(filter)>=0) {
-            // console.log('-- found: ',filename);
-
+            console.log('-- found: ',filename);
+            
         }
         else if (filename.indexOf(filter) <= 0) {
-           // console.log('-- not Java: ',filename);
+           console.log('-- not Java: ',filename);
 
            // Because fs.unlink does not work on a directory, it is safer.
            // what is not safe is that filename can be a folder.
@@ -78,41 +76,20 @@ function filterDir(startPath,filter){
             });
         };
     };
-
+    
 };
 
 
 function convertRepo(projectName) {
-  var current = __dirname;
-  // __dirname and process.cwd() doesnt seem to work because
-  // the whole destination has spaces, which doesnt work as a command
-  // therefore the path between the root and the destination should not have spaces
-
-   var xmlDestination = path.normalize(
-      path.join(current,'repository','xml')
-   );
-  // The folder to parse/convert to xml
-   var shortDest = path.normalize(
-      path.join('server','RepoHandler','repository', projectName)
-   );
-
-   // The output file
-   var xmlFileDest = path.normalize(
-      path.join('server','RepoHandler','repository','xml','/')) + projectName +'.xml';
-
-   console.log("   Folder to Parse:   " + shortDest);
-   console.log("   Output file:   " + xmlFileDest);
-
-  fs.mkdir(xmlDestination ,{recursive: true}, (err) => {
-
+  var current = process.cwd();
+  fs.mkdir(current + '/repository/xml' ,{recursive: true}, (err) => {
+      
     // Converts project to an XML file.
-      exec('srcml '+ shortDest + ' -o ' + xmlFileDest, (error, stdout, stderr) => {
+      exec('srcml repository/'+projectName+ '-o repository/xml/'+projectName+'.xml', (error, stdout, stderr) => {
           console.log(stdout);
-          console.log("err: --> " + err);
-          console.log("error: --> " + error);
+          console.log(err);
+          console.log(error);
           console.log(stderr);
-
-          console.log("         Repo Converted to XML.");
           }
       );
   })
