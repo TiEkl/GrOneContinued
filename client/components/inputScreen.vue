@@ -105,6 +105,7 @@
 
                         //here we use the response from the previous request in order to
                         //send XML data to the dependency finder
+                        //also send repoName for projectName
                         return axios.post('/api/dependencies',{xml: response.data, repoName: repoName});
                     })
                     .then(
