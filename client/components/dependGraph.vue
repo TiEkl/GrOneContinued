@@ -50,24 +50,23 @@ import * as d3 from 'd3';
     },
     
   methods: {
-      drawChart : function(data, drag) {
+      drawChart : function(data, drag, stringToColour, linkColour) {
         
         const links = data.links.map(d => Object.create(d));
         const nodes = data.nodes.map(d => Object.create(d));
         const simulation = this.forceSimulation(nodes, links).on("tick", ticked);
-        const scale = d3.scaleOrdinal(d3.schemeCategory10);
         
         const svg = d3.select(".frame").append("svg")
             .attr("viewBox", [-this.width / 2, -this.height /2, this.width, this.height]);
 
-   var text = svg.append("g").selectAll("text")
-        .data(nodes)
-        .enter().append("text")
-        .attr("class", "text")
-        .attr("opacity", 0)
-        .attr("x", 20)
-        .attr("y", ".31em")
-        .text(function(d) { return d.id; })
+        var text = svg.append("g").selectAll("text")
+                .data(nodes)
+                .enter().append("text")
+                .attr("class", "text")
+                .attr("opacity", 0)
+                .attr("x", 20)
+                .attr("y", ".31em")
+                .text(function(d) { return d.id; });
         
         const link = svg.append("g")
             .attr("stroke", "#999")
@@ -75,7 +74,9 @@ import * as d3 from 'd3';
           .selectAll("line")
           .data(links)
           .enter().append("line")
-            .attr("stroke-width", d => Math.sqrt(d.value));
+            .attr("stroke-width", d => Math.sqrt(d.value))
+            .attr("stroke", d => linkColour(d.withinPackage));
+            
         const node = svg.append("g")
             .attr("stroke", "#fff")
             .attr("stroke-width", 3)
@@ -85,12 +86,12 @@ import * as d3 from 'd3';
           .attr("class", "circle")
             .attr("r", 5)
 
-            .attr("fill",  d => scale(d.group))
+            .attr("fill",  d => stringToColour(d.package))
             .call(drag(simulation))
             .on("mouseover", mouseOver(.2))
         .on("mouseout", mouseOut)
         
- 
+
         function ticked() {
           link
               .attr("x1", d => d.source.x)
@@ -105,56 +106,57 @@ import * as d3 from 'd3';
         }
 
         function transform(d) {
-  return "translate(" + d.x + "," + d.y + ")";
-}
+            return "translate(" + d.x + "," + d.y + ")";
+        }
 
-    var linkedByIndex = {};
-    links.forEach(function(d) {
-        linkedByIndex[d.source.index + "," + d.target.index] = 1;
-    });
+        var linkedByIndex = {};
+        links.forEach(function(d) {
+            linkedByIndex[d.source.index + "," + d.target.index] = 1;
+        });
         function isConnected(a, b) {
-        return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
-    }
+            return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
+        }
+
     // fade nodes on hover
-    function mouseOver(opacity) {
-        return function(d) {
-            // check all other nodes to see if they're connected
-            // to this one. if so, keep the opacity at 1, otherwise
-            // fade
-            // also style link accordingly
-            node.style("stroke-opacity", function(o) {
+        function mouseOver(opacity) {
+            return function(d) {
+                // check all other nodes to see if they're connected
+                // to this one. if so, keep the opacity at 1, otherwise
+                // fade
+                // also style link accordingly
+                node.style("stroke-opacity", function(o) {
+                    var thisOpacity = isConnected(d, o) ? 1 : opacity;
+                    return thisOpacity;})
+                    .transition().duration(1000);;
+                node.style("fill-opacity", function(o) {
                 var thisOpacity = isConnected(d, o) ? 1 : opacity;
-                return thisOpacity;})
-                .transition().duration(1000);;
-            node.style("fill-opacity", function(o) {
-               var thisOpacity = isConnected(d, o) ? 1 : opacity;
-                return thisOpacity;})
-                .transition().duration(1000);
-            link.style("stroke-opacity", function(o) {
-                return o.source === d || o.target === d ? 1 : opacity;
-            }).transition().duration(1000);
-            link.style("stroke", function(o){
-                return o.source === d || o.target === d ? o.source.colour : "#fff";
-            }).transition().duration(1000);
+                    return thisOpacity;})
+                    .transition().duration(1000);
+                link.style("stroke-opacity", function(o) {
+                    return o.source === d || o.target === d ? 1 : opacity;
+                }).transition().duration(1000);
+                link.style("stroke", function(o){
+                    return o.source === d || o.target === d ? o.source.colour : "#fff";
+                }).transition().duration(1000);
+                
+                text.style("opacity", function(o) {
+                    var thisOpacity = isConnected(d, o) ? 1 : opacity;
+                    return thisOpacity;})
+                    .transition().duration(1000);;
+                text.style("fill-opacity", function(o) {
+                var thisOpacity = isConnected(d, o) ? 1 : opacity;
+                    return thisOpacity;})
+            };
+        }
+        function mouseOut() {
+            node.style("stroke-opacity", 1).transition().duration(1000);
+            node.style("fill-opacity", 1).transition().duration(1000);
+            link.style("stroke-opacity", 0).transition().duration(1000);
+            link.style("stroke", "#ddd").transition().duration(1000);
+            text.style("opacity", 0).transition().duration(1000);
             
-            text.style("opacity", function(o) {
-                var thisOpacity = isConnected(d, o) ? 1 : opacity;
-                return thisOpacity;})
-                .transition().duration(1000);;
-            text.style("fill-opacity", function(o) {
-               var thisOpacity = isConnected(d, o) ? 1 : opacity;
-                return thisOpacity;})
-        };
-    }
-    function mouseOut() {
-        node.style("stroke-opacity", 1).transition().duration(1000);
-        node.style("fill-opacity", 1).transition().duration(1000);
-        link.style("stroke-opacity", 0).transition().duration(1000);
-        link.style("stroke", "#ddd").transition().duration(1000);
-        text.style("opacity", 0).transition().duration(1000);
-        
-        
-    }
+            
+        }
         return svg.node();
       },
       forceSimulation : function(nodes, links) {
@@ -163,13 +165,9 @@ import * as d3 from 'd3';
             .force("charge", d3.forceManyBody())
             .force("collide", d3.forceCollide().radius(25))
             .force("center", d3.forceCenter());
-      },
-      setData : function() {
-        this.data = d3.json("/api/dependencies");        
-      },
+      }
     },
   mounted() {
-    var test = this.setData();
      var drag = simulation => {
       
       function dragstarted(d) {
@@ -193,15 +191,33 @@ import * as d3 from 'd3';
           .on("drag", dragged)
           .on("end", dragended);
     } 
-    var color = d => {
-        const scale = d3.scaleOrdinal(d3.schemeCategory10);
-        return d => scale(d.group);
+    var stringToColour = str => {
+        var hash = 0;
+        for (var i = 0; i < str.length; i++) {
+            hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        }
+        var colour = '#';
+        for (var i = 0; i < 3; i++) {
+            var value = (hash >> (i * 8)) & 0xFF;
+            colour += ('00' + value.toString(16)).substr(-2);
+        }
+        return colour;
+    }    
+    var linkColour = check => {
+
+        if(check === true) {
+            return '#00f904';
+        }
+        else if (check === false) {
+            return '#f90000';
+        }
+
     }
    
   d3.json("/api/dependencies")
     .then( data =>  {
       console.log(JSON.stringify(data));
-      this.drawChart(data, drag, color);
+      this.drawChart(data, drag, stringToColour, linkColour);
     });
     
   },
