@@ -221,9 +221,10 @@ body{
 
         }
         console.log('above D3!!  ');
-        const parameters = this.$route.params.graphid;
+        const parameters = this.$route.params.graphId;
         console.log(parameters);
-        d3.json("/api/dependencies/" + parameters)
+        console.log(this.$route.params);
+        d3.json("/api/dependencies/" + this.$route.params.graphId)
         .then( (data) =>  {
             console.log('in d3');
             console.log('       in d3 params: ' + this.$route.params.graphid);
