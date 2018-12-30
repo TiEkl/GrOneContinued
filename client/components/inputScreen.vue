@@ -45,6 +45,12 @@
                         <div id="progressBar">Error! Please try with another GitHub Project</div>
                     </div>
                 </div>
+                
+                <div v-if="servers_offline===true">
+                    <div id="showProgress">
+                        <div id="progressBar">Error! Servers currently unavailable, please try again shortly!</div>
+                    </div>
+                </div>
 
                 <!-- when loading is complete: replace the view with another component where we show the result -->
 
@@ -70,7 +76,8 @@
                 url_accepted: false,
                 wrong_url: false,
                 error_in_process: false,
-                btn_clicked: false
+                btn_clicked: false,
+                servers_offline: false
             }
         },
         methods:{
@@ -116,8 +123,15 @@
                         router.push({name:'graph'});
                     })
                     .catch(error => {
-                            console.log(error.response);
+                        console.log(error.toString());
+                        var current_err = error.toString();
+                        if(current_err === "Error: Network Error"){
+                           this.servers_offline = true;
+                           console.log('servers offline!');
+                        }
+                        else{
                             this.error_in_process = true;
+                        }  
                     })
                     .then(function () {
 
