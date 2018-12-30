@@ -19,9 +19,23 @@ router.get('/api', function(req, res) {
     res.json({"message": "Welcome to your backend"});
 });
 
-
+/*
 router.route('/api/dependencies').get(function(req,res,next) {
+    console.log('  in first one get');
     projectSchema.find(({}), (err, data)=>{
+        if(err){
+            return next(err)
+        }
+        //console.log('**jsonRES** '+ JSON.stringify(data) + ' end jsonRES***');
+        res.status(200).json({ 'data' : data });
+    });
+});
+*/
+router.route('/api/dependencies/:graphid').get(function(req,res,next){
+    console.log('           id: '+ req.params.graphid);
+    projectSchema.findOne(({
+        graphid: req.params.graphid
+    }), (err, data)=>{
         if(err){
             return next(err)
         }

@@ -220,12 +220,18 @@ body{
         }
 
         }
-   
-        d3.json("/api/dependencies")
+        console.log('above D3!!  ');
+        const parameters = this.$route.params.graphid;
+        console.log(parameters);
+        d3.json("/api/dependencies/" + parameters)
         .then( (data) =>  {
+            console.log('in d3');
+            console.log('       in d3 params: ' + this.$route.params.graphid);
             console.log('classes: '+ JSON.stringify(data.data[0].classes));
             var graphData = data.data[0].classes;
             this.drawChart(graphData, drag, stringToColour,linkColour);
+            console.log('in d3');
+            
         });
     
         }

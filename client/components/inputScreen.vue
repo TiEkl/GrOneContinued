@@ -116,9 +116,10 @@
                         var router = this.$router;
                       
                         console.log(JSON.stringify(response.data));
-                        console.log(JSON.stringify('            '+response.data.graphid));
-                        
-                        router.push({name:'graph'});
+                        console.log(JSON.stringify('    in inputscreen        '+response.data.graphid));
+                        const graph_id = response.data.graphid;
+
+                        router.push({name:'graph', params:{graphid:graph_id}});
                     })
                     .catch(error => {
                             console.log(error.response);
