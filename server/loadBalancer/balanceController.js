@@ -30,33 +30,32 @@ var serverips = [bbServer2withPort,bbServer1withPort];
 var ips = roundround(serverips);
 app.use(cors());
 
-function proxyRequestTo (ip,endpoint){
-    app.use(endpoint, (req,res)=>{   
-        (async ()=>{
-            console.log('   BEGINNING OF method, the initial ip: '+ip+endpoint);
-            if( !await isReachable(bbServer1withPort) && !await isReachable(bbServer2withPort) ){ //these should be if(false and false)
-                //both servers are down, nothing we can do but wait for them to go back up and redo request
-                console.log('ALL SERVERS OFFLINE');
-            }
-            else if(await isReachable(ip)){ //if the server is online we reroute request to it
-                console.log(await isReachable(ip));
-                console.log('The first server tried was online');
-                let url = 'http://'+ip + endpoint;
-                console.log('reroute to: ' + url);
-                req.pipe(request(url)).pipe(res);
-                current = (current+1) % serverips.length;
-                
-            }
-            else{ //if the first server we tried is down we try again.
-                current = (current+1) % serverips.length;
-                console.log(await isReachable(ip));
-                console.log('first server tried was not online, try again with recursive call');
-                ip = serverips[current];
-                console.log(ip); //should be the next ip in the array
-                return proxyRequestTo(ip,endpoint);
-            }
-        })();
-    });
+//here is the working version of balanceLoad, tested and working for all cases (also i removed the function proxyREquestTO becuz we dont need it right?)
+function balanceLoadWorking(req,res){
+    var http = 'http://';
+    var current_ip = ips();
+    console.log('           ***current: '+current_ip);
+    (async ()=>{
+        if( !await isReachable(bbServer1withPort) && !await isReachable(bbServer2withPort) ){ //these should be if(false and false)
+            //both servers are down, nothing we can do but wait for them to go back up and redo request
+            console.log('ALL SERVERS OFFLINE');
+            res.status(500).send({message:'Server offline'}); //should send back error msg to front end so that it can go into the catch brackets
+        }
+        else if(await isReachable(current_ip)){
+            const request_url = http + current_ip + req.url;
+            console.log('The first server tried was online');
+            const request_server = request({ url: request_url}).on('error', (error) => {
+                res.status(500).send(error.message);
+            }); 
+            req.pipe(request_server).pipe(res); 
+            //current = (current+1) % serverips.length;
+        }
+        else{ //if we know 1 BB is online but the first one we tried was not, we try again with the 2nd one using a callback.
+            console.log('The first server tried was NOT online, try NEXT');
+            //current = (current+1) % serverips.length;
+            return balanceLoad(req,res);
+        }
+    })();
 }
 
 //this is very similar to the other function, but for this function the recursive call works 
