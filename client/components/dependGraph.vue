@@ -223,15 +223,23 @@ body{
         console.log('above D3!!  ');
         const parameters = this.$route.params.graphId;
         console.log(parameters);
-        console.log(this.$route.params);
-        d3.json("/api/dependencies/" + this.$route.params.graphId)
+        //console.log(this.$route.params);
+        
+        
+        d3.json("/api/" + parameters)
         .then( (data) =>  {
-            console.log('in d3');
-            console.log('       in d3 params: ' + this.$route.params.graphid);
-            console.log('classes: '+ JSON.stringify(data.data[0].classes));
-            var graphData = data.data[0].classes;
+            if(data.data === null){
+                return setTimeout(()=>{
+                    d3.json("/api/" + parameters)
+                    .then((data)=>{
+                        console.log('in the timeout method!');
+                        var graphData = data.data.classes;
+                        this.drawChart(graphData, drag, stringToColour,linkColour);
+                    });
+                }, 2000)
+            }
+            var graphData = data.data.classes;
             this.drawChart(graphData, drag, stringToColour,linkColour);
-            console.log('in d3');
             
         });
     

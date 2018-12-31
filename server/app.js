@@ -9,6 +9,9 @@ const fs = require('fs');
 
 // =========== "npm run dev" ============//
 
+//I ADDED THIS:
+var projectSchema = require('./models/projectNode.js');
+
 //request module is used to route the reqests
 var request = require('request');
 
@@ -61,8 +64,21 @@ function proxyRequestTo (ip,port,endpoint){
 proxyRequestTo(repo_fetcher, repo_fetcher_port,'/api/gitProjects');
 proxyRequestTo(dependency_finder, dependency_finder_port,'/api/dependencies');
 
-///PROXY REQUESTS END
-
+///PROXY REQUESTS END 
+//ADDED THIS NOW!:
+app.get('/api/:graphid',function(req,res,next){
+    console.log('           id: '+ req.params.graphid);
+    var the_id = req.params.graphid;
+    projectSchema.findOne(({
+        graphid: the_id
+    }), (err, data)=>{
+        if(err){
+            return next(err)
+        }
+        //console.log('**jsonRES** '+ JSON.stringify(data) + ' end jsonRES***');
+        res.status(200).json({ 'data' : data });
+    });
+});
 
 
 app.use(bodyParser.json({limit: '50mb', extended: true}));

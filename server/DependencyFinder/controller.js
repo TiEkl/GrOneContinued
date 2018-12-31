@@ -19,8 +19,8 @@ router.get('/api', function(req, res) {
     res.json({"message": "Welcome to your backend"});
 });
 
-/*
-router.route('/api/dependencies').get(function(req,res,next) {
+
+router.route('/').get(function(req,res,next) {
     console.log('  in first one get');
     projectSchema.find(({}), (err, data)=>{
         if(err){
@@ -30,7 +30,7 @@ router.route('/api/dependencies').get(function(req,res,next) {
         res.status(200).json({ 'data' : data });
     });
 });
-*/
+
 router.route('/:graphid').get(function(req,res,next){
     console.log('           id: '+ req.params.graphid);
     projectSchema.findOne(({
@@ -152,6 +152,7 @@ function findDependencies(xml, callback) {
             var projectNode = new projectSchema({
                 projectName: project,
                 classes: graphData,
+                graphid: generatedID
             });
             projectNode.save( function(error) {
                 console.log("project node and its dependencies saved");
