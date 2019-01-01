@@ -219,13 +219,19 @@ function findDependencies(xml, callback) {
                         var withinPackage = null;
 
                         if (comparePackage != undefined) {
+                           console.log("comparePackage EXISTS");
+
                            if (comparePackage[comparePackage.length-1].toString() != undefined) {
                               if(graphData.nodes[i].package === comparePackage[comparePackage.length-1].toString()) {
                                  console.log ("    Comparepackage.length-1 Name: " + comparePackage[comparePackage.length-1].toString())
                                  // console.log ("    Comparepackage Name: " + comparePackage.toString())
                                   withinPackage = true;
                               }
+                              else {
+                                  withinPackage = false;
+                              }
                            }
+                           
                            if (comparePackage[0] === "unknown") {
                               console.log ("       unknown!!! Comparepackage Name: " + comparePackage[comparePackage.length-1].toString())
                               withinPackage = null;
@@ -233,9 +239,7 @@ function findDependencies(xml, callback) {
                         }
 
 
-                        else {
-                            withinPackage = false;
-                        }
+
                         var link = { "source": allClasses[i].toString(), "target": allClasses[j].toString(), "value": 1, "withinPackage": withinPackage };
                         graphData.links.push(link);
                     }
