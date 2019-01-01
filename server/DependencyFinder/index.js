@@ -106,7 +106,12 @@ function findDependencies(xml, callback) {
 
                      if (object[i].class[0].name[0].name != undefined) {
                         var currentName = object[i].class[0].name[0].name;
-                        console.log("Current Name in class[0].name[0].name");
+                        console.log("Current Name in inception level 1");
+
+                        if (object[i].class[0].name[0].name[0].name != undefined) {
+                           var currentName = object[i].class[0].name[0].name[0].name;
+                           console.log("Current Name in inception level 2");
+                        }
                      }
                   }
                     // var currentName = object[i].class[0].name;
@@ -184,6 +189,7 @@ function findDependencies(xml, callback) {
                        // but the links' color to be always red(outside of package).
                        if (object[j].package == undefined) {
                           console.log(" There is no package defined to compare to. Defaulting to 'unknown'.");
+                          console.log(" Also Tim says Put your files in proper packages or get off my lawn.");
                           comparePackage = ["unknown"];
                        }
                         if (object[j].package != undefined) {
