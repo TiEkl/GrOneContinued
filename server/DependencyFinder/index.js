@@ -63,7 +63,7 @@ function findDependencies(xml, callback) {
             object = result.unit;
 
             if (result.unit.unit != undefined) {
-               console.log("        res.unit.unit: " + result.unit.unit);
+               // console.log("        res.unit.unit: " + result.unit.unit);
                object = result.unit.unit;  //each .java file in json
             }
          }
@@ -213,7 +213,7 @@ function findDependencies(xml, callback) {
                          }
                       }
 
-                    console.log("      comparePackage: " + comparePackage);
+                    // console.log("      comparePackage: " + comparePackage);
 
 
 
@@ -228,11 +228,11 @@ function findDependencies(xml, callback) {
                         var withinPackage = null;
 
                         if (comparePackage != undefined) {
-                           console.log("comparePackage EXISTS");
+                           // console.log("comparePackage EXISTS");
 
                            if (comparePackage[comparePackage.length-1].toString() != undefined) {
                               if(graphData.nodes[i].package === comparePackage[comparePackage.length-1].toString()) {
-                                 console.log ("          Comparepackage.length-1 Name: " + comparePackage[comparePackage.length-1].toString())
+                                 console.log ("        within package!  Comparepackage.length-1 Name: " + comparePackage[comparePackage.length-1].toString())
                                  // console.log ("    Comparepackage Name: " + comparePackage.toString())
                                   withinPackage = true;
                               }

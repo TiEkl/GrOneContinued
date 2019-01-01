@@ -30,11 +30,11 @@ router.post("/", function(req, res, next) {
    })
 
    //this method DOWNLOADS and CONVERTS the repo into XML
-    dlconrepo(res, repo,repoUrl,destination, function (res, repo) {
-      getXMLdata(res,repo);
-   })
+    dlconrepo(res, repo,repoUrl,destination);
 
-    //This method gets xml data and sends it back in a response
+    // getXMLdata(res,repo) is now inside convertrepo as a callback
+
+
 
 
 });
@@ -47,12 +47,20 @@ function dlconrepo(res, repo,repoUrl,destination, callback){
             console.log(err);
         }
 
-        filterDir(destination, '.java');
-        convertRepo(repo);
-     })
-     if (callback) {
-        callback(res, repo);
-     };
+        filterDir(destination, '.java'); // there doesnt seem to be a problem with filter so im leaving it
+        convertRepo(repo, function () {
+
+          //This method gets xml data and sends it back in a response
+          //when converting the repo is done, call(back) getXMLdata
+          getXMLdata(res,repo);
+        });
+
+        if (callback) {
+           callback();
+        };
+     });
+
+
 }
 
 //function for getting xml data
@@ -62,15 +70,21 @@ function getXMLdata(res,repo){
     var pathToXML = path.normalize(
         path.join(__dirname, 'repository', 'xml',repo));
 
-        if(fs.existsSync(pathToXML+'.xml')){
+        // console.log("      pathToXML :  " + pathToXML);
+
+        // if(fs.existsSync(pathToXML + '.xml')){
             res.set('Content-Type', 'text/xml');
             fs.readFile(pathToXML+'.xml',(err,data)=>{
                 if(err) throw err;
                 //console.log('***data here***: '+ data + "**** end data*****");
+
+                // This response is the trigger for the calling POST api/dependencies
                 res.status(201).send(data);
             })
-        }
-        // else{
+        // }
+        // else if (fs.existsSync(pathToXML+'.xml') === false){
+        //    console.log("            xml does not exist yet");
+        //
         //     setTimeout(() => {
         //         getXMLdata(res,repo);
         //     }, 1000);
@@ -116,7 +130,7 @@ function filterDir(startPath,filter){
 };
 
 
-function convertRepo(projectName) {
+function convertRepo(projectName, callback) {
   var current = __dirname;
   // __dirname and process.cwd() doesnt seem to work because
   // the whole destination has spaces, which doesnt work as a command
@@ -147,9 +161,15 @@ function convertRepo(projectName) {
           console.log(stderr);
 
           console.log("         Repo Converted to XML.");
+
+            // This callback is for getXMLdata
+             if (callback) {
+                callback();
+            }
           }
       );
   })
+
 };
 
 module.exports = router;
