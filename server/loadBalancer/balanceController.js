@@ -26,12 +26,12 @@ const bbServer2Port = 10000;
 
 // array of server ip intended to be used in the loadbalancer
 var serverips = [bbServer2withPort,bbServer1withPort];
-// implement a algo to select server 
+// round robin selection of server
 var ips = roundround(serverips);
 app.use(cors());
 
-//here is the working version of balanceLoad, tested and working for all cases (also i removed the function proxyREquestTO becuz we dont need it right?)
-function balanceLoadWorking(req,res){
+//here is the working version of balanceLoad, tested and working for all cases
+function balanceLoad(req,res){
     var http = 'http://';
     var current_ip = ips();
     console.log('           ***current: '+current_ip);
@@ -48,67 +48,59 @@ function balanceLoadWorking(req,res){
                 res.status(500).send(error.message);
             }); 
             req.pipe(request_server).pipe(res); 
-            //current = (current+1) % serverips.length;
+            
         }
         else{ //if we know 1 BB is online but the first one we tried was not, we try again with the 2nd one using a callback.
             console.log('The first server tried was NOT online, try NEXT');
-            //current = (current+1) % serverips.length;
             return balanceLoad(req,res);
         }
     })();
 }
 
-//this is very similar to the other function, but for this function the recursive call works 
-//(which it didnt for the other one since it was set as a middleware)
-//so with this one is a BB is down it will not try to connect to it. and it will use the recursive call to try to find it again
-//for some reason there is still the problem that I think the method is sending the same request twice for some reason
-function balanceLoad(req,res){
+//Method that allows us to use any number of bb's (Not working currently saved bc we might need it later)
+/*function balanceLoad(req,res){
     //console.log('WHERE we SEND the stuff '+serverips[current] + req.url);
     var http = 'http://';
+    var current_ips = ips();
+    console.log('           ***current: '+current_ips);
     (async ()=>{
-        
-        if(checkAvailability() === false){
+        if(!checkAvailability()){
         console.log('All servers down');
          return;
          }
          else{ 
-
-            if(await isReachable(ips())){
-                const request_url = http + ips() + req.url;
+            if(await isReachable(current_ips)){
+                const request_url = http + current_ips + req.url;
                 console.log('The first server tried was online');
                 const request_server = request({ url: request_url}).on('error', (error) => {
                     res.status(500).send(error.message);
                 }); 
                 req.pipe(request_server).pipe(res);
             }
-
             else{
                 console.log('The first server tried was NOT online, try NEXT');
             return balanceLoad(req,res);
-
             }
         }
-    
     })();
 }
-    
-
-
+   */ 
 //Check if the servers are up and runnning before we attempt to connect to them
 //performs a handshake with the server and returns true if the server responded and is up
+/*
 function checkAvailability(){
     (async ()=>{
-        
-            for(let i = 0; i <= serverips.length, i++;){
-                if(await isReachable(serverips[i]) === true){
+        var i;
+            for(i = 0; i <= serverips.length, i++;){
+                if(await isReachable(serverips[i])){
                  return true;
                 } 
             return false;
             }
     })();
 }
+*/
 
-//checkAvailability();
 //proxyRequestTo(serverips[current],'/api/gitProjects'); 
 
 
