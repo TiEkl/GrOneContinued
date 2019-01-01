@@ -66,6 +66,7 @@ proxyRequestTo(dependency_finder, dependency_finder_port,'/api/dependencies');
 
 ///PROXY REQUESTS END 
 //ADDED THIS NOW!:
+/*
 app.get('/api/:graphid',function(req,res,next){
     console.log('           id: '+ req.params.graphid);
     var the_id = req.params.graphid;
@@ -79,7 +80,7 @@ app.get('/api/:graphid',function(req,res,next){
         res.status(200).json({ 'data' : data });
     });
 });
-
+*/
 
 app.use(bodyParser.json({limit: '50mb', extended: true}));
 // HTTP request logger
