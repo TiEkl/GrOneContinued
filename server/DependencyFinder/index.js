@@ -97,22 +97,39 @@ function findDependencies(xml, callback) {
                var currentNode = {"id": "", "package": "", "count": 0};
 
                if (object[i].class != null) {      //check if the java file includes any class
-                    var currentName = object[i].class[0].name;
+                  if (object[i].class[0].name != undefined) {
+                     var currentName = object[i].class[0].name;
+                     console.log("Current Name in class[0].name");
+
+                     if (object[i].class[0].name[0].name != undefined) {
+                        var currentName = object[i].class[0].name[0].name;
+                        console.log("Current Name in class[0].name[0].name");
+                     }
+                  }
+                    // var currentName = object[i].class[0].name;
+                    console.log("Current Name: " + currentName);
 
                     //test if statements
                     if (object[i].package != null) {
 
                        if (object[i].package != undefined) {
                           var currentPackage = object[i].package;
-                       }
-                       if (object[i].package[0] != undefined) {
-                          var currentPackage = object[i].package[0];
-                       }
-                       if (object[i].package[0].name != undefined) {
-                          var currentPackage = object[i].package[0].name;
-                       }
-                       if (object[i].package[0].name[0].name != undefined) {
-                          var currentPackage = object[i].package[0].name[0].name;
+                          console.log("     ~ currently - object[i].package <");
+
+                          if (object[i].package[0] != undefined) {
+                            var currentPackage = object[i].package[0];
+                            console.log("     ~ currently - object[i].package[0] <");
+
+                            if (object[i].package[0].name != undefined) {
+                              var currentPackage = object[i].package[0].name;
+                              console.log("     ~ currently - object[i].package[0].name <");
+
+                              if (object[i].package[0].name[0].name != undefined) {
+                                var currentPackage = object[i].package[0].name[0].name;
+                                console.log("     ~ currently - object[i].package.name[0].name <");
+                             }
+                           }
+                         }
                        }
 
                        console.log("         currentPackage: " + currentPackage);
@@ -153,9 +170,10 @@ function findDependencies(xml, callback) {
                     }
                     //testing
                      if (object[j] != undefined) {
+
                        var comparePackage = object[j];
                        console.log("     > in  object[j] <");
-                       console.log(object[j]);
+                       // console.log(object[j]);
 
                        // So for some stupid reason some projects(especially the ones we have made ourselves)
                        // Do not have a package attribute defined. This makes it so i dont really know how to compare the packages.
@@ -201,12 +219,6 @@ function findDependencies(xml, callback) {
                         var withinPackage = null;
 
                         if (comparePackage != undefined) {
-                           // if(graphData.nodes[i].package === comparePackage) {
-                           //    console.log("current graphdata.node package - " + graphData.nodes[i].package);
-                           //     withinPackage = true;
-                           //     // console.log ("    Comparepackage.length-1 Name: " + comparePackage[comparePackage.length-1].toString())
-                           //     console.log ("    Comparepackage Name: " + comparePackage)
-                           // }
                            if (comparePackage[comparePackage.length-1].toString() != undefined) {
                               if(graphData.nodes[i].package === comparePackage[comparePackage.length-1].toString()) {
                                  console.log ("    Comparepackage.length-1 Name: " + comparePackage[comparePackage.length-1].toString())
