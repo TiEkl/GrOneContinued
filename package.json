@@ -55,6 +55,7 @@
     "babel-preset-es2015": "^6.24.1",
     "newman": "^4.2.2",
     "nodemon": "^1.18.4",
-    "vueify": "^9.4.1"
+    "vueify": "^9.4.1",
+    "vue-template-compiler": "^2.5.21"
   }
 }

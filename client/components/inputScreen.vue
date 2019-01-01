@@ -116,13 +116,10 @@
                         console.log("post request to dependencies Success: " + response.status);
                         var router = this.$router;
 
-                        console.log(JSON.stringify(response.data));
-                        console.log(JSON.stringify('    in inputscreen        '+response.data.graphid));
                         const graph_id = response.data.graphid;
-                        console.log("graphid: " + graph_id);
-                        console.log("before: " + this.$route.path);
+                        
                         router.push({path: `graph/${graph_id}` });
-                        //router.push( { name : 'graph', params : { graphid : graph_id}});
+                        
                         console.log("after: " + this.$route.path);
                     })
                     .catch(error => {
