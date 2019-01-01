@@ -30,29 +30,30 @@ router.post("/", function(req, res, next) {
    })
 
    //this method DOWNLOADS and CONVERTS the repo into XML
-    dlconrepo(repo,repoUrl,destination)
- 
+    dlconrepo(res, repo,repoUrl,destination, function (res, repo) {
+      getXMLdata(res,repo);
+   })
+
     //This method gets xml data and sends it back in a response
-     getXMLdata(res,repo);
+
 
 });
 
-function dlconrepo(repo,repoUrl,destination, callback){
+function dlconrepo(res, repo,repoUrl,destination, callback){
 
     downloadRepo(repoUrl, destination, function (err) {
         console.log(err ? 'Error, dl repo unsuccessful': 'Successfully downloaded repository.')
         if (err) {
             console.log(err);
         }
-        
+
         filterDir(destination, '.java');
         convertRepo(repo);
-  
-        if(callback){
-            callback();
-        } 
      })
-}    
+     if (callback) {
+        callback(res, repo);
+     };
+}
 
 //function for getting xml data
 //if the date exists we get it
@@ -66,19 +67,18 @@ function getXMLdata(res,repo){
             fs.readFile(pathToXML+'.xml',(err,data)=>{
                 if(err) throw err;
                 //console.log('***data here***: '+ data + "**** end data*****");
-                res.status(201).send(
-                    data
-                );
+                res.status(201).send(data);
             })
         }
-        else{
-            setTimeout(() => { 
-                getXMLdata(res,repo);
-            }, 1000);
-        }      
+        // else{
+        //     setTimeout(() => {
+        //         getXMLdata(res,repo);
+        //     }, 1000);
+        // }
 }
 
 // structured like this '../LiteScript','.html'
+// this is a recursive function
 function filterDir(startPath,filter){
 
     // console.log('Starting from dir '+ startPath +'/');
