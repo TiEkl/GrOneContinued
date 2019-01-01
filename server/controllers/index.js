@@ -8,6 +8,8 @@ router.get('/api', function(req, res) {
     res.json({"message": "Welcome to your DIT341 backend project!"});
 });
 
+
+//Get request to get graph data for a specific project based on ID
 router.get('/api/:graphid',function(req,res,next){
     console.log('        index   id: '+ req.params.graphid);
     var the_id = req.params.graphid;

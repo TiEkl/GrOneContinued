@@ -31,19 +31,6 @@ router.route('/').get(function(req,res,next) {
     });
 });
 
-router.route('/:graphid').get(function(req,res,next){
-    console.log('           id: '+ req.params.graphid);
-    projectSchema.findOne(({
-        graphid: req.params.graphid
-    }), (err, data)=>{
-        if(err){
-            return next(err)
-        }
-        //console.log('**jsonRES** '+ JSON.stringify(data) + ' end jsonRES***');
-        res.status(200).json({ 'data' : data });
-    });
-});
-
 //Post request, uncomment the fs.readfile stuff and comment our var xml if you want
 //to run this with an XML file from the file system.
 router.route('/').post(function(req,res) { 
