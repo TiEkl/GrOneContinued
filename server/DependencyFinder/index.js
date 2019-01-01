@@ -68,10 +68,13 @@ function findDependencies(xml, callback) {
             }
          }
       }
+      else {
+         console.log("Result is undefined! Error incoming!");
+      }
 
       // end
 
-        var object = result.unit.unit;  //each .java file in json
+        // var object = result.unit.unit;  //each .java file in json
         // // if (result != undefined) {
         //    throw Error("error! result undefined");
         // }
@@ -99,7 +102,7 @@ function findDependencies(xml, callback) {
                if (object[i].class != null) {      //check if the java file includes any class
                   if (object[i].class[0].name != undefined) {
                      var currentName = object[i].class[0].name;
-                     console.log("Current Name in class[0].name");
+                     // console.log("Current Name in class[0].name");
 
                      if (object[i].class[0].name[0].name != undefined) {
                         var currentName = object[i].class[0].name[0].name;
@@ -114,15 +117,15 @@ function findDependencies(xml, callback) {
 
                        if (object[i].package != undefined) {
                           var currentPackage = object[i].package;
-                          console.log("     ~ currently - object[i].package <");
+                          // console.log("     ~ currently - object[i].package <");
 
                           if (object[i].package[0] != undefined) {
                             var currentPackage = object[i].package[0];
-                            console.log("     ~ currently - object[i].package[0] <");
+                            // console.log("     ~ currently - object[i].package[0] <");
 
                             if (object[i].package[0].name != undefined) {
                               var currentPackage = object[i].package[0].name;
-                              console.log("     ~ currently - object[i].package[0].name <");
+                              // console.log("     ~ currently - object[i].package[0].name <");
 
                               if (object[i].package[0].name[0].name != undefined) {
                                 var currentPackage = object[i].package[0].name[0].name;
@@ -132,7 +135,7 @@ function findDependencies(xml, callback) {
                          }
                        }
 
-                       console.log("         currentPackage: " + currentPackage);
+                       console.log("   currentPackage: " + currentPackage);
 
                       //end tests
 
@@ -172,7 +175,7 @@ function findDependencies(xml, callback) {
                      if (object[j] != undefined) {
 
                        var comparePackage = object[j];
-                       console.log("     > in  object[j] <");
+                       // console.log("     > in  object[j] <");
                        // console.log(object[j]);
 
                        // So for some stupid reason some projects(especially the ones we have made ourselves)
@@ -185,19 +188,19 @@ function findDependencies(xml, callback) {
                        }
                         if (object[j].package != undefined) {
                              comparePackage = object[j].package;
-                             console.log("     >> in  object[j].package <");
+                             // console.log("     >> in  object[j].package <");
 
                              if (object[j].package[0] != undefined) {
                                 comparePackage = object[j].package[0];
-                                console.log("     >>> in  object[j].package[0] <");
+                                // console.log("     >>> in  object[j].package[0] <");
 
                                 if (object[j].package[0].name != undefined) {
                                   comparePackage = object[j].package[0].name;
-                                  console.log("     >>>> in  object[j].package[0].name <");
+                                  // console.log("     >>>> in  object[j].package[0].name <");
 
                                   if (object[j].package[0].name[0].name != undefined) {
                                      comparePackage = object[j].package[0].name[0].name;
-                                     console.log("     >>>>> in  object[j].package[0].name[0].name <");
+                                     // console.log("     >>>>> in  object[j].package[0].name[0].name <");
                                   }
                                }
                             }
@@ -223,7 +226,7 @@ function findDependencies(xml, callback) {
 
                            if (comparePackage[comparePackage.length-1].toString() != undefined) {
                               if(graphData.nodes[i].package === comparePackage[comparePackage.length-1].toString()) {
-                                 console.log ("    Comparepackage.length-1 Name: " + comparePackage[comparePackage.length-1].toString())
+                                 console.log ("          Comparepackage.length-1 Name: " + comparePackage[comparePackage.length-1].toString())
                                  // console.log ("    Comparepackage Name: " + comparePackage.toString())
                                   withinPackage = true;
                               }
@@ -231,7 +234,7 @@ function findDependencies(xml, callback) {
                                   withinPackage = false;
                               }
                            }
-                           
+
                            if (comparePackage[0] === "unknown") {
                               console.log ("       unknown!!! Comparepackage Name: " + comparePackage[comparePackage.length-1].toString())
                               withinPackage = null;
