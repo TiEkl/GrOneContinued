@@ -211,6 +211,8 @@
                     .append("div")
                     .attr("class", "checkbox-container")
                     .append("label")
+                    .style("color", d => stringToColour(d))
+                    .style("font-weight", "bold")
                     .each(function(d) {
                 // create checkbox for each data
                     d3.select(this)
@@ -219,7 +221,7 @@
                     .attr("id", function(d) {
                     return "chk_" + d;
                     })
-                    
+
                     .attr("checked", true)
                     .on("click", function(d, i) {
                     // register on click event
@@ -330,8 +332,8 @@
         d3.json("/api/dependencies")
         .then( (data) =>  {
             //console.log('classes: '+ JSON.stringify(data.data[0].classes));
-            var graphData = data.data[0].classes;
-            this.drawChart(graphData, drag, stringToColour,linkColour);
+            //var graphData = data;
+            this.drawChart(data, drag, stringToColour,linkColour);
         });
     
         }

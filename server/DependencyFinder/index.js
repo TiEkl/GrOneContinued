@@ -19,7 +19,7 @@ router.get('/api', function(req, res) {
 });
 
 
-router.route('/api/dependencies').get(function(req,res,next) {
+/*router.route('/api/dependencies').get(function(req,res,next) {
     projectSchema.find(({}), (err, data)=>{
         if(err){
             return next(err)
@@ -27,13 +27,13 @@ router.route('/api/dependencies').get(function(req,res,next) {
         //console.log('**jsonRES** '+ JSON.stringify(data) + ' end jsonRES***');
         res.status(200).json({ 'data' : data });
     });
-});
+});*/
 
 //Post request, uncomment the fs.readfile stuff and comment our var xml if you want
 //to run this with an XML file from the file system.
-router.route('/api/dependencies').post(function(req,res) { 
+router.route('/api/dependencies').get(function(req,res) { 
     //var xml = req.body.xml;  
-    fs.readFile('./omni.xml', function(err, xml) {
+    fs.readFile('./server/DependencyFinder/omni.xml', function(err, xml) {
         findDependencies(xml, function(result) {
             //console.log('**postREQjsonRES** '+ JSON.stringify(result) + ' end jsonRES***');
             res.status(201).json(result);
