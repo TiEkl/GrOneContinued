@@ -52,16 +52,29 @@ function findDependencies(xml, callback) {
     parseString(xml, function (err, result) {
 
       // testing stuff
+      var object;
+
       if (result != undefined) {
-         throw Error("error! result undefined");
+         console.log("  result:" + result);
+         object = result;
+
+         if (result.unit != undefined) {
+            console.log("     result.unit: " + result.unit);
+            object = result.unit;
+
+            if (result.unit.unit != undefined) {
+               console.log("        res.unit.unit: " + result.unit.unit);
+               object = result.unit.unit;  //each .java file in json
+            }
+         }
       }
-      console.log(result);
-      console.log(result.unit);
-      console.log(result.unit.unit);
+
       // end
 
         var object = result.unit.unit;  //each .java file in json
-
+        // // if (result != undefined) {
+        //    throw Error("error! result undefined");
+        // }
 
         var project;
         //Project name will probably be have to be fetched from the xmlhttprequest once that's implemented
@@ -139,28 +152,39 @@ function findDependencies(xml, callback) {
                         continue;
                     }
                     //testing
-                    if (object[j] != undefined) {
+                     if (object[j] != undefined) {
                        var comparePackage = object[j];
                        console.log("     > in  object[j] <");
+                       console.log(object[j]);
 
-                       if (object[j].package != undefined) {
-                             var comparePackage = object[j].package;
+                       // So for some stupid reason some projects(especially the ones we have made ourselves)
+                       // Do not have a package attribute defined. This makes it so i dont really know how to compare the packages.
+                       // As a temp fix i have set it to an empty string, allowing the visualization to work,
+                       // but the links' color to be always red(outside of package).
+                       if (object[j].package == undefined) {
+                          console.log(" There is no package defined to compare to. Defaulting to 'unknown'.");
+                          comparePackage = ["unknown"];
+                       }
+                        if (object[j].package != undefined) {
+                             comparePackage = object[j].package;
                              console.log("     >> in  object[j].package <");
 
-                          if (object[j].package[0] != undefined) {
-                             var comparePackage = object[j].package[0];
-                             console.log("     >>> in  object[j].package[0] <");
-                          }
-                          if (object[j].package[0].name != undefined) {
-                             var comparePackage = object[j].package[0].name;
-                             console.log("     >>>> in  object[j].package[0].name <");
-                          }
-                          if (object[j].package[0].name[0].name != undefined) {
-                             var comparePackage = object[j].package[0].name[0].name;
-                             console.log("     >>>>> in  object[j].package[0].name[0].name <");
-                          }
-                       }
-                    }
+                             if (object[j].package[0] != undefined) {
+                                comparePackage = object[j].package[0];
+                                console.log("     >>> in  object[j].package[0] <");
+
+                                if (object[j].package[0].name != undefined) {
+                                  comparePackage = object[j].package[0].name;
+                                  console.log("     >>>> in  object[j].package[0].name <");
+
+                                  if (object[j].package[0].name[0].name != undefined) {
+                                     comparePackage = object[j].package[0].name[0].name;
+                                     console.log("     >>>>> in  object[j].package[0].name[0].name <");
+                                  }
+                               }
+                            }
+                         }
+                      }
 
                     console.log("      comparePackage: " + comparePackage);
 
@@ -175,9 +199,28 @@ function findDependencies(xml, callback) {
                         result.push(match);
                         countDep++;
                         var withinPackage = null;
-                        if(graphData.nodes[i].package === comparePackage[comparePackage.length-1].toString()) {
-                            withinPackage = true;
+
+                        if (comparePackage != undefined) {
+                           // if(graphData.nodes[i].package === comparePackage) {
+                           //    console.log("current graphdata.node package - " + graphData.nodes[i].package);
+                           //     withinPackage = true;
+                           //     // console.log ("    Comparepackage.length-1 Name: " + comparePackage[comparePackage.length-1].toString())
+                           //     console.log ("    Comparepackage Name: " + comparePackage)
+                           // }
+                           if (comparePackage[comparePackage.length-1].toString() != undefined) {
+                              if(graphData.nodes[i].package === comparePackage[comparePackage.length-1].toString()) {
+                                 console.log ("    Comparepackage.length-1 Name: " + comparePackage[comparePackage.length-1].toString())
+                                 // console.log ("    Comparepackage Name: " + comparePackage.toString())
+                                  withinPackage = true;
+                              }
+                           }
+                           if (comparePackage[0] === "unknown") {
+                              console.log ("       unknown!!! Comparepackage Name: " + comparePackage[comparePackage.length-1].toString())
+                              withinPackage = null;
+                           }
                         }
+
+
                         else {
                             withinPackage = false;
                         }
