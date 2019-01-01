@@ -72,14 +72,25 @@ function balanceLoad(req,res){
          return;
          }
          else{ 
-            const request_server = request({ url: http + ips() + req.url}).on('error', (error) => {
-                return balanceLoad(req,res);
-            }); 
-            req.pipe(request_server).pipe(res);
-            
+
+            if(await isReachable(ips())){
+                const request_url = http + ips() + req.url;
+                console.log('The first server tried was online');
+                const request_server = request({ url: request_url}).on('error', (error) => {
+                    res.status(500).send(error.message);
+                }); 
+                req.pipe(request_server).pipe(res);
+            }
+
+            else{
+                console.log('The first server tried was NOT online, try NEXT');
+            return balanceLoad(req,res);
+
+            }
         }
     
-    })}
+    })();
+}
     
 
 
@@ -87,12 +98,13 @@ function balanceLoad(req,res){
 //performs a handshake with the server and returns true if the server responded and is up
 function checkAvailability(){
     (async ()=>{
-        var i;
-            for(i = 0; i <= serverips.length, i++;){
-                if(await isReachable(serverips[i] === true)){
+        
+            for(let i = 0; i <= serverips.length, i++;){
+                if(await isReachable(serverips[i]) === true){
                  return true;
-                }}
-        return false;
+                } 
+            return false;
+            }
     })();
 }
 
