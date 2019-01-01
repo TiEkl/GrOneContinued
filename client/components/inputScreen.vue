@@ -77,20 +77,20 @@
             // method to process the URL input
             // will make a post request and subsequent requests if a proper URL has been provided
             postProject: function(){
-                
+
                 var pattern = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
-                
+
                 if(pattern.test(this.Url_Input.url)){
                     this.wrong_url = false;
-                    
+
                     console.log('Provided URL: '+this.Url_Input.url);
-                    
+
                     var url_string = new URL(this.Url_Input.url);
                     var path_string = url_string.pathname;
                     var path = path_string.split("/");          //splits string according to '/', creates array
                     var ownerName = path[1];
                     var repoName = path[2];
-                    
+
                     // *****sending owner,repo to backend
                     // this is a chain of several requests to the backend
                     // if all requests go as planned we will be redirected to the graph page
@@ -102,10 +102,11 @@
                         this.Url_Input.url = "";
                         this.url_accepted = true;
                         this.wrong_url = false;
-                        
+
                         //here we use the response from the previous request in order to
                         //send XML data to the dependency finder
-                        return axios.post('/api/dependencies',{xml: response.data});
+                        //also send repoName for projectName
+                        return axios.post('/api/dependencies',{xml: response.data, repoName: repoName});
                     })
                     .then(
                     (response) => {
@@ -114,7 +115,7 @@
                         console.log('in the last response!');
                         console.log("post request to dependencies Success: " + response.status);
                         var router = this.$router;
-                      
+
                         console.log(JSON.stringify(response.data));
                         console.log(JSON.stringify('    in inputscreen        '+response.data.graphid));
                         const graph_id = response.data.graphid;
@@ -137,7 +138,7 @@
                 }
             }
         },
-        
+
         mounted(){
 
         }
