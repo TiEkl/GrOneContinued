@@ -238,43 +238,37 @@
                     $("#sidebar").show(); // show sidebar
                 }
                 function filterGraph(aType, aVisibility) {
-                    // change the visibility of the connection path
                     console.log(aType +" space " +  aVisibility);
                     
+                    //Checks if the checkbox for the node's package is checked or not
+                    //if un-checked, hide the node
                     node.style("visibility", function(o) {
                         var lOriginalVisibility = $(this).css("visibility");
                         return o.package === aType ? aVisibility : lOriginalVisibility;
                     });
+                    //Checks if the checkbox for the text's (which is tied to a node) 
+                    //package is checked or not
+                    //if un-checked, hide the text
                     text.style("visibility", function(o) {
                         var lOriginalVisibility = $(this).css("visibility");
                         return o.package === aType ? aVisibility : lOriginalVisibility;
                     });
-                    // change the visibility of the node
-                    // if all the links with that node are invisibile, the node should also be invisible
-                    // otherwise if any link related to that node is visibile, the node should be visible
+                    
+
+                    //Hide the links. Checks the checkbox for the srcPkg
+                    //and targetPkg, if either of them is un-checked, hide the link
                     link.style("visibility", function(o, i) {
-                       // var lOriginalVisibility = $(this).css("visibility");
+
                         var sourceOriVis = $("#chk_" + o.srcPkg).prop('checked')
                         var targetOriVis = $("#chk_" + o.targetPkg).prop('checked')
+                        if (sourceOriVis == false || targetOriVis == false) {
+                            return 'hidden';
+                        }
+                        else if (sourceOriVis == true && targetOriVis == true) {
+                            return 'visible';
+                        }
 
-                        //console.log(sourceOriVis)
-                        //console.log(targetOriVis)
-
-
-                        //if(o.srcPkg === aType || o.targetPkg === aType) {
-                            if (sourceOriVis == false || targetOriVis == false) {
-                                return 'hidden';
-                            }
-                            else if (sourceOriVis == true && targetOriVis == true) {
-                                return 'visible';
-                            }
-                        //}
-                        //else {
-                       //     return lOriginalVisibility;
-                       // }
-
-                        //return o.srcPkg === aType || o.targetPkg === aType ? aVisibility : lOriginalVisibility;
-                        });
+                    });
                 };
         return svg.node();
       },
