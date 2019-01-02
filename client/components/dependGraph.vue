@@ -245,7 +245,10 @@
                         var lOriginalVisibility = $(this).css("visibility");
                         return o.package === aType ? aVisibility : lOriginalVisibility;
                     });
-
+                    text.style("visibility", function(o) {
+                        var lOriginalVisibility = $(this).css("visibility");
+                        return o.package === aType ? aVisibility : lOriginalVisibility;
+                    });
                     // change the visibility of the node
                     // if all the links with that node are invisibile, the node should also be invisible
                     // otherwise if any link related to that node is visibile, the node should be visible
