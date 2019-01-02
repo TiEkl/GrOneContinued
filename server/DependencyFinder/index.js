@@ -102,26 +102,24 @@ function findDependencies(xml, callback) {
 
                if (object[i].class != null) {      //check if the java file includes any class
                   var currentName = object[i].class;
+                  // console.log("Current Name in real world level 0");
 
                   if (object[i].class[0] != undefined) {
                      currentName = object[i].class[0];
-                     console.log("Current Name in name inception level 1");
+                     // console.log("Current Name in name inception level 1");
 
                      if (object[i].class[0].name != undefined) {
                         currentName = object[i].class[0].name;
-                        console.log("Current Name in name inception level 2");
-                        // console.log("Current Name in real world level 0");
+                        // console.log("Current Name in name inception level 2");
 
                         if (object[i].class[0].name[0] != undefined) {
                            currentName = object[i].class[0].name[0];
-                           console.log("Current Name in name inception level 3");
-
+                           // console.log("Current Name in name inception level 3");
 
                            if (object[i].class[0].name[0].name != undefined) {
                               currentName = object[i].class[0].name[0].name;
-                              console.log("Current Name in name inception level 4");
-                              console.log(currentName.toString());
-
+                              // console.log("Current Name in name inception level 4");
+                              // console.log(currentName.toString());
                            }
                         }
                      }
@@ -129,7 +127,7 @@ function findDependencies(xml, callback) {
 
 
                     // var currentName = object[i].class[0].name;
-                    console.log("Current Name: " + currentName);
+                    // console.log("Current Name: " + currentName);
 
                     //test if statements
                     if (object[i].package != null) {
@@ -256,7 +254,7 @@ function findDependencies(xml, callback) {
                            }
 
                            if (comparePackage[0] === "unknown") {
-                              console.log ("       unknown!!! Comparepackage Name: " + comparePackage[comparePackage.length-1].toString())
+                              console.log ("       Comparepackage Name is unknown!!! : " + comparePackage[comparePackage.length-1].toString())
                               withinPackage = null;
                            }
                         }
