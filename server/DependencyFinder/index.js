@@ -33,8 +33,13 @@ router.route('/api/dependencies').get(function(req,res,next) {
 //to run this with an XML file from the file system.
 router.route('/api/dependencies').post(function(req,res) {
     var xml = req.body.xml;
+
+    var repoName = req.body.repoName;
+
     //fs.readFile('./GarageIOTest.xml', function(err, xml) {
-        findDependencies(xml, function(result) {
+
+    // repoName is used to obtain the correct projectName
+        findDependencies(repoName, xml, function(result) {
             //console.log('**postREQjsonRES** '+ JSON.stringify(result) + ' end jsonRES***');
             res.status(201).json(result);
         });
@@ -45,11 +50,12 @@ router.route('/api/dependencies').post(function(req,res) {
 
 //Function for finding dependencies with an xml file as input and a callback function
 //that should handle the result from the function
-function findDependencies(xml, callback) {
+function findDependencies(repoName, xml, callback) {
 
     perf.start();       //calculate time of excecution until perf.stop()
 
     parseString(xml, function (err, result) {
+
 
       // testing stuff
       var object;
@@ -79,10 +85,12 @@ function findDependencies(xml, callback) {
         //    throw Error("error! result undefined");
         // }
 
+
         var project;
         //Project name will probably be have to be fetched from the xmlhttprequest once that's implemented
         if(object[0].$.filename != null) {
-            project = object[0].$.filename.toString().split("\\")[1];
+            // project = object[0].$.filename.toString().split("\\")[1];
+            project = repoName;
         }
         var graphData = {
             "nodes":[],
@@ -97,6 +105,7 @@ function findDependencies(xml, callback) {
             //Also stringifies each class/interface to prepare for the regex matching.
             console.log("object.length : " + object.length);
             for (var i = 0; i < object.length; i++) {
+
                console.log("              Current object iteration: >>  " + i);
                var currentNode = {"id": "", "package": "", "count": 0};
 
@@ -130,6 +139,7 @@ function findDependencies(xml, callback) {
                     // console.log("Current Name: " + currentName);
 
                     //test if statements
+
                     if (object[i].package != null) {
 
                        if (object[i].package != undefined) {
@@ -225,10 +235,8 @@ function findDependencies(xml, callback) {
                          }
                       }
 
+
                     // console.log("      comparePackage: " + comparePackage);
-
-
-
                     //end testing
 
                     var pattern = new RegExp('"name":."' + allClasses[j]);
