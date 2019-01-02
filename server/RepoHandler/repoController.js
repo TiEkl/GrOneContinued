@@ -29,11 +29,8 @@ router.post("/", function(req, res, next) {
       console.log("destination directory cleared.")
    })
 
-   //this method DOWNLOADS and CONVERTS the repo into XML
-    /*downloadRepo(repo,repoUrl,destination, function(res2, repo2) {
-        getXMLdata(res2, repo2);
-    })*/
-
+   //this method DOWNLOADS a repo and has callbacks for filtering
+   //out non-java files, converting the repo, and sending the XML as a response
     downloadRepo(repoUrl, destination, function (err) {
         console.log(err ? 'Error, dl repo unsuccessful': 'Successfully downloaded repository.')
         if (err) {
@@ -46,33 +43,8 @@ router.post("/", function(req, res, next) {
                 })
             })
         }
- 
-    //This method gets xml data and sends it back in a response
-     //getXMLdata(res,repo);
-
     });
 });
-
-
-
-
-function dlconrepo(repo,repoUrl,destination, callback){
-
-    downloadRepo(repoUrl, destination, function (err) {
-        console.log(err ? 'Error, dl repo unsuccessful': 'Successfully downloaded repository.')
-        if (err) {
-            console.log(err);
-        }
-        
-        filterDir(destination, '.java');
-        convertRepo(repo);
-  
-        if(callback){
-            callback();
-        } 
-     })
-}    
-
 //function for getting xml data
 //if the date exists we get it
 //if not we try again later (using timeout)
@@ -92,9 +64,6 @@ function getXMLdata(res,repo){
         }
         else{
             console.log("Could not get XML");x
-            /*setTimeout(() => { 
-                getXMLdata(res,repo);
-            }, 1000);*/
         }      
 }
 
