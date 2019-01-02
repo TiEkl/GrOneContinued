@@ -63,7 +63,7 @@ function findDependencies(xml, callback) {
             object = result.unit;
 
             if (result.unit.unit != undefined) {
-               console.log("        res.unit.unit: " + result.unit.unit);
+               // console.log("        res.unit.unit: " + result.unit.unit);
                object = result.unit.unit;  //each .java file in json
             }
          }
@@ -95,25 +95,39 @@ function findDependencies(xml, callback) {
 
             //For loop that creates each Node for the graphData, checks for classes and interfaces.
             //Also stringifies each class/interface to prepare for the regex matching.
+            console.log("object.length : " + object.length);
             for (var i = 0; i < object.length; i++) {
-               console.log("              Current object length: >>  " + i);
+               console.log("              Current object iteration: >>  " + i);
                var currentNode = {"id": "", "package": "", "count": 0};
 
                if (object[i].class != null) {      //check if the java file includes any class
-                  if (object[i].class[0].name != undefined) {
-                     var currentName = object[i].class[0].name;
-                     // console.log("Current Name in class[0].name");
+                  var currentName = object[i].class;
 
-                     if (object[i].class[0].name[0].name != undefined) {
-                        var currentName = object[i].class[0].name[0].name;
-                        console.log("Current Name in inception level 1");
+                  if (object[i].class[0] != undefined) {
+                     currentName = object[i].class[0];
+                     console.log("Current Name in name inception level 1");
 
-                        if (object[i].class[0].name[0].name[0].name != undefined) {
-                           var currentName = object[i].class[0].name[0].name[0].name;
-                           console.log("Current Name in inception level 2");
+                     if (object[i].class[0].name != undefined) {
+                        currentName = object[i].class[0].name;
+                        console.log("Current Name in name inception level 2");
+                        // console.log("Current Name in real world level 0");
+
+                        if (object[i].class[0].name[0] != undefined) {
+                           currentName = object[i].class[0].name[0];
+                           console.log("Current Name in name inception level 3");
+
+
+                           if (object[i].class[0].name[0].name != undefined) {
+                              currentName = object[i].class[0].name[0].name;
+                              console.log("Current Name in name inception level 4");
+                              console.log(currentName.toString());
+
+                           }
                         }
                      }
                   }
+
+
                     // var currentName = object[i].class[0].name;
                     console.log("Current Name: " + currentName);
 
@@ -134,13 +148,13 @@ function findDependencies(xml, callback) {
 
                               if (object[i].package[0].name[0].name != undefined) {
                                 var currentPackage = object[i].package[0].name[0].name;
-                                console.log("     ~ currently - object[i].package.name[0].name <");
+                                // console.log("     ~ currently - object[i].package.name[0].name <");
                              }
                            }
                          }
                        }
 
-                       console.log("   currentPackage: " + currentPackage);
+                       // console.log("   currentPackage: " + currentPackage);
 
                       //end tests
 
@@ -213,7 +227,7 @@ function findDependencies(xml, callback) {
                          }
                       }
 
-                    console.log("      comparePackage: " + comparePackage);
+                    // console.log("      comparePackage: " + comparePackage);
 
 
 
@@ -228,11 +242,11 @@ function findDependencies(xml, callback) {
                         var withinPackage = null;
 
                         if (comparePackage != undefined) {
-                           console.log("comparePackage EXISTS");
+                           // console.log("comparePackage EXISTS");
 
                            if (comparePackage[comparePackage.length-1].toString() != undefined) {
                               if(graphData.nodes[i].package === comparePackage[comparePackage.length-1].toString()) {
-                                 console.log ("          Comparepackage.length-1 Name: " + comparePackage[comparePackage.length-1].toString())
+                                 // console.log ("          Comparepackage.length-1 Name: " + comparePackage[comparePackage.length-1].toString())
                                  // console.log ("    Comparepackage Name: " + comparePackage.toString())
                                   withinPackage = true;
                               }
