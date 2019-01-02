@@ -253,16 +253,27 @@
                     // if all the links with that node are invisibile, the node should also be invisible
                     // otherwise if any link related to that node is visibile, the node should be visible
                     link.style("visibility", function(o, i) {
-                        var lOriginalVisibility = $(this).css("visibility");
-                       /* if(o.srcPkg === aType || o.targetPkg === aType) {
-                            if (aVisibility === 'hidden') {
+                       // var lOriginalVisibility = $(this).css("visibility");
+                        var sourceOriVis = $("#chk_" + o.srcPkg).prop('checked')
+                        var targetOriVis = $("#chk_" + o.targetPkg).prop('checked')
+
+                        //console.log(sourceOriVis)
+                        //console.log(targetOriVis)
+
+
+                        //if(o.srcPkg === aType || o.targetPkg === aType) {
+                            if (sourceOriVis == false || targetOriVis == false) {
                                 return 'hidden';
                             }
-                        }
-                        else {
-                            return lOriginalVisibility;
-                        }*/
-                        return o.srcPkg === aType || o.targetPkg === aType ? aVisibility : lOriginalVisibility;
+                            else if (sourceOriVis == true && targetOriVis == true) {
+                                return 'visible';
+                            }
+                        //}
+                        //else {
+                       //     return lOriginalVisibility;
+                       // }
+
+                        //return o.srcPkg === aType || o.targetPkg === aType ? aVisibility : lOriginalVisibility;
                         });
                 };
         return svg.node();
