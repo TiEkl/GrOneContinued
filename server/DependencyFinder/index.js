@@ -123,7 +123,8 @@ function findDependencies(xml, callback) {
                         else {
                             withinPackage = false;
                         }
-                        var link = { "source": allClasses[i].toString(), "target": allClasses[j].toString(), "value": 1, "withinPackage": withinPackage };
+                        var link = { "source": allClasses[i].toString(), "target": allClasses[j].toString(), 
+                                    "value": 1, "withinPackage": withinPackage, "srcPkg": graphData.nodes[i].package, "targetPkg": comparePackage[comparePackage.length-1] };
                         graphData.links.push(link);
                     }  
                 }

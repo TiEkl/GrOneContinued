@@ -249,27 +249,19 @@
                     // change the visibility of the node
                     // if all the links with that node are invisibile, the node should also be invisible
                     // otherwise if any link related to that node is visibile, the node should be visible
-                    node.style("visibility", function(o, i) {
-                        var lHideNode = true;
-                        node.each(function(d, i) {
-                        if (d.package === o.package) {
-                            if ($(this).css("visibility") === "visible") {
-                            lHideNode = false;
-                            // we need show the text for this circle
-                            d3.select(d3.selectAll(".circle")[i]).style("visibility", "visible");
-                            return "visible";
+                    link.style("visibility", function(o, i) {
+                        var lOriginalVisibility = $(this).css("visibility");
+                       /* if(o.srcPkg === aType || o.targetPkg === aType) {
+                            if (aVisibility === 'hidden') {
+                                return 'hidden';
                             }
                         }
+                        else {
+                            return lOriginalVisibility;
+                        }*/
+                        return o.srcPkg === aType || o.targetPkg === aType ? aVisibility : lOriginalVisibility;
                         });
-                                    if (lHideNode) {
-                // we need hide the text for this circle 
-                d3.select(d3.selectAll(".circle")[i]).style("visibility", "hidden");
-                return "hidden";
-            }
-        
-                        
-                    });
-                }
+                };
         return svg.node();
       },
 
