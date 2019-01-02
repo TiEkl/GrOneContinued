@@ -221,7 +221,7 @@ body{
 
         }
    
-        d3.json("/api/dependencies")
+        d3.json("http://127.0.0.1:8002/api/dependencies")
         .then( (data) =>  {
             console.log('classes: '+ JSON.stringify(data.data[0].classes));
             var graphData = data.data[0].classes;

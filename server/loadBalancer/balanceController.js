@@ -4,7 +4,6 @@ var cors = require('cors');
 var request = require('request');
 var app = express().post('*', balanceLoad).get('*', balanceLoad);
 var roundround = require('roundround');
-//var router = express.Router();
 
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
@@ -17,12 +16,8 @@ const isReachable = require('is-reachable');
 const load_balancer_port = 8002;
 
 //I removed http:// from all these since is-reachable would say some of them are offline if i included it 
-const bbServer1 = '127.0.0.1';
-const bbServer2 = '127.0.0.1'; //set to 8002 for now but that will change
-const bbServer1withPort = '127.0.0.1:8000';
-const bbServer2withPort = '127.0.0.1:8005'; //set to 10.000 for now but that will change
-const bbServer1Port = 8000;
-const bbServer2Port = 10000; 
+const bbServer1withPort = '127.0.0.1:8010';
+const bbServer2withPort = '127.0.0.1:8005'; 
 
 // array of server ip intended to be used in the loadbalancer
 var serverips = [bbServer2withPort,bbServer1withPort];
@@ -30,7 +25,9 @@ var serverips = [bbServer2withPort,bbServer1withPort];
 var ips = roundround(serverips);
 app.use(cors());
 
-//here is the working version of balanceLoad, tested and working for all cases
+//LoadBalancer for requests, if all servers are down we send error back
+//if at least 1 server is down we try one, and if its online we route the request to it
+//of it was offline we try again with the next server in the list using a recursive call
 function balanceLoad(req,res){
     var http = 'http://';
     var current_ip = ips();
@@ -57,54 +54,9 @@ function balanceLoad(req,res){
     })();
 }
 
-//Method that allows us to use any number of bb's (Not working currently saved bc we might need it later)
-/*function balanceLoad(req,res){
-    //console.log('WHERE we SEND the stuff '+serverips[current] + req.url);
-    var http = 'http://';
-    var current_ips = ips();
-    console.log('           ***current: '+current_ips);
-    (async ()=>{
-        if(!checkAvailability()){
-        console.log('All servers down');
-         return;
-         }
-         else{ 
-            if(await isReachable(current_ips)){
-                const request_url = http + current_ips + req.url;
-                console.log('The first server tried was online');
-                const request_server = request({ url: request_url}).on('error', (error) => {
-                    res.status(500).send(error.message);
-                }); 
-                req.pipe(request_server).pipe(res);
-            }
-            else{
-                console.log('The first server tried was NOT online, try NEXT');
-            return balanceLoad(req,res);
-            }
-        }
-    })();
-}
-   */ 
-//Check if the servers are up and runnning before we attempt to connect to them
-//performs a handshake with the server and returns true if the server responded and is up
-/*
-function checkAvailability(){
-    (async ()=>{
-        var i;
-            for(i = 0; i <= serverips.length, i++;){
-                if(await isReachable(serverips[i])){
-                 return true;
-                } 
-            return false;
-            }
-    })();
-}
-*/
-
-//proxyRequestTo(serverips[current],'/api/gitProjects'); 
 
 
-
+///***************************************************************/
 ///All the stuff an app.js needs. (Not sure if we need all of them).
 //Now we can run balanceController.js on port 8002 so that we can make a request from the front end to port 8002
 //and the balancer will reroute it
@@ -144,4 +96,3 @@ app.use(function(err, req, res, next) {
 });
 
 module.exports = app;
-//module.exports = router;
