@@ -30,38 +30,48 @@ router.post("/", function(req, res, next) {
    })
 
    //this method DOWNLOADS and CONVERTS the repo into XML
-    dlconrepo(res, repo,repoUrl,destination);
-
-    // getXMLdata(res,repo) is now inside convertrepo as a callback
-
-
-
-
-});
-
-function dlconrepo(res, repo,repoUrl,destination, callback){
+    /*downloadRepo(repo,repoUrl,destination, function(res2, repo2) {
+        getXMLdata(res2, repo2);
+    })*/
 
     downloadRepo(repoUrl, destination, function (err) {
         console.log(err ? 'Error, dl repo unsuccessful': 'Successfully downloaded repository.')
         if (err) {
             console.log(err);
         }
+        else {
+            filterDir(destination, '.java', res, repo, function(res, repo) {
+                convertRepo(repo, res, function(res, repo) {
+                    getXMLdata(res, repo);
+                })
+            })
+        }
+ 
+    //This method gets xml data and sends it back in a response
+     //getXMLdata(res,repo);
 
-        filterDir(destination, '.java'); // there doesnt seem to be a problem with filter so im leaving it
-        convertRepo(repo, function () {
-
-          //This method gets xml data and sends it back in a response
-          //when converting the repo is done, call(back) getXMLdata
-          getXMLdata(res,repo);
-        });
-
-        if (callback) {
-           callback();
-        };
-     });
+    });
+});
 
 
-}
+
+
+function dlconrepo(repo,repoUrl,destination, callback){
+
+    downloadRepo(repoUrl, destination, function (err) {
+        console.log(err ? 'Error, dl repo unsuccessful': 'Successfully downloaded repository.')
+        if (err) {
+            console.log(err);
+        }
+        
+        filterDir(destination, '.java');
+        convertRepo(repo);
+  
+        if(callback){
+            callback();
+        } 
+     })
+}    
 
 //function for getting xml data
 //if the date exists we get it
@@ -70,30 +80,26 @@ function getXMLdata(res,repo){
     var pathToXML = path.normalize(
         path.join(__dirname, 'repository', 'xml',repo));
 
-        // console.log("      pathToXML :  " + pathToXML);
-
-        // if(fs.existsSync(pathToXML + '.xml')){
+        if(fs.existsSync(pathToXML+'.xml')){
             res.set('Content-Type', 'text/xml');
             fs.readFile(pathToXML+'.xml',(err,data)=>{
                 if(err) throw err;
                 //console.log('***data here***: '+ data + "**** end data*****");
-
-                // This response is the trigger for the calling POST api/dependencies
-                res.status(201).send(data);
+                res.status(201).send(
+                    data
+                );
             })
-        // }
-        // else if (fs.existsSync(pathToXML+'.xml') === false){
-        //    console.log("            xml does not exist yet");
-        //
-        //     setTimeout(() => {
-        //         getXMLdata(res,repo);
-        //     }, 1000);
-        // }
+        }
+        else{
+            console.log("Could not get XML");x
+            /*setTimeout(() => { 
+                getXMLdata(res,repo);
+            }, 1000);*/
+        }      
 }
 
 // structured like this '../LiteScript','.html'
-// this is a recursive function
-function filterDir(startPath,filter){
+function filterDir(startPath,filter, res, repo, convertCallback){
 
     // console.log('Starting from dir '+ startPath +'/');
 
@@ -126,11 +132,13 @@ function filterDir(startPath,filter){
             });
         };
     };
-
+    if(convertCallback) {
+        convertCallback(res, repo);
+    }
 };
 
 
-function convertRepo(projectName, callback) {
+function convertRepo(projectName, res, xmlCallback) {
   var current = __dirname;
   // __dirname and process.cwd() doesnt seem to work because
   // the whole destination has spaces, which doesnt work as a command
@@ -159,17 +167,13 @@ function convertRepo(projectName, callback) {
           console.log("err: --> " + err);
           console.log("error: --> " + error);
           console.log(stderr);
-
           console.log("         Repo Converted to XML.");
-
-            // This callback is for getXMLdata
-             if (callback) {
-                callback();
+            if(xmlCallback){
+            xmlCallback(res, projectName);
             }
           }
       );
-  })
-
+  });
 };
 
 module.exports = router;
