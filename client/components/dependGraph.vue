@@ -335,7 +335,7 @@
         //console.log(this.$route.params);
         
         
-        d3.json("http://127.0.0.1:8002/api/dependencies" + parameters)
+        d3.json("/api/dependencies" + parameters)
 
         .then( (data) =>  {
 
