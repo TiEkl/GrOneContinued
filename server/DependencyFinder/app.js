@@ -5,9 +5,13 @@ var morgan = require('morgan');
 var path = require('path');
 var cors = require('cors');
 
+var mongoose = require('mongoose');
+
 // Variables
 var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
 var port = process.env.PORT || 9000;
+
+var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
 
 // Connect to MongoDB
 mongoose.connect(mongoURI, { useNewUrlParser: true }, function(err) {
@@ -49,7 +53,7 @@ app.use(require('./index'));
 // Error handler (must be registered last)
 var env = app.get('env');
 app.use(function(err, req, res, next) {
-    console.error(err.stack); 
+    console.error(err.stack);
     var err_res = {
         "message": err.message,
         "error": {}
