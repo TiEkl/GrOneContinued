@@ -29,32 +29,23 @@ router.post("/", function(req, res, next) {
       console.log("destination directory cleared.")
    })
 
-   //this method DOWNLOADS and CONVERTS the repo into XML
-    dlconrepo(res, repo,repoUrl,destination);
-
-    //This method gets xml data and sends it back in a response
-
-
-});
-
-function dlconrepo(res, repo,repoUrl,destination, callback){
+   //this method DOWNLOADS a repo and has callbacks for filtering
+   //out non-java files, converting the repo, and sending the XML as a response
 
     downloadRepo(repoUrl, destination, function (err) {
         console.log(err ? 'Error, dl repo unsuccessful': 'Successfully downloaded repository.')
         if (err) {
             console.log(err);
         }
-
-        filterDir(destination, '.java');
-        convertRepo(repo, function () {
-           getXMLdata(res,repo);
-        });
-
-        if(callback){
-            callback();
+        else {
+            filterDir(destination, '.java', res, repo, function(res, repo) {
+                convertRepo(repo, res, function(res, repo) {
+                    getXMLdata(res, repo);
+                })
+            })
         }
-     })
-}
+    });
+});
 
 //function for getting xml data
 //if the date exists we get it
@@ -63,7 +54,7 @@ function getXMLdata(res,repo){
     var pathToXML = path.normalize(
         path.join(__dirname, 'repository', 'xml',repo));
 
-        // if(fs.existsSync(pathToXML+'.xml')){
+        if(fs.existsSync(pathToXML+'.xml')){
             res.set('Content-Type', 'text/xml');
             fs.readFile(pathToXML+'.xml',(err,data)=>{
                 if(err) throw err;
@@ -72,11 +63,16 @@ function getXMLdata(res,repo){
                     data
                 );
             })
-        }      
+        }
+        else{
+            console.log("Could not get XML");
+
+        } 
+    }     
 
 
 // structured like this '../LiteScript','.html'
-function filterDir(startPath,filter){
+function filterDir(startPath,filter, res, repo, convertCallback){
 
     // console.log('Starting from dir '+ startPath +'/');
 
@@ -109,11 +105,15 @@ function filterDir(startPath,filter){
             });
         };
     };
-
+    if(convertCallback) {
+        convertCallback(res, repo);
+    }
 };
 
 
-function convertRepo(projectName, callback) {
+
+function convertRepo(projectName, res, xmlCallback) {
+
   var current = __dirname;
   // __dirname and process.cwd() doesnt seem to work because
   // the whole destination has spaces, which doesnt work as a command
@@ -142,15 +142,13 @@ function convertRepo(projectName, callback) {
           console.log("err: --> " + err);
           console.log("error: --> " + error);
           console.log(stderr);
-
           console.log("         Repo Converted to XML.");
-          
-          if (callback) {
-            callback();
-          }
-       }
-      );
-  })
+            if(xmlCallback){
+            xmlCallback(res, projectName);
+            }
+
+          })
+       });
 };
 
 module.exports = router;

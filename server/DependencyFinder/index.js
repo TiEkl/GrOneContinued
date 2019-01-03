@@ -241,7 +241,6 @@ function findDependencies(repoName, xml, callback) {
                          }
                       }
 
-
                     // console.log("      comparePackage: " + comparePackage);
                     //end testing
 
@@ -258,7 +257,6 @@ function findDependencies(repoName, xml, callback) {
 
                            if (comparePackage[comparePackage.length-1].toString() != undefined) {
                               if(graphData.nodes[i].package === comparePackage[comparePackage.length-1].toString()) {
-                                 // console.log ("          Comparepackage.length-1 Name: " + comparePackage[comparePackage.length-1].toString())
                                  // console.log ("    Comparepackage Name: " + comparePackage.toString())
                                   withinPackage = true;
                               }
@@ -268,6 +266,7 @@ function findDependencies(repoName, xml, callback) {
                            }
 
                            if (comparePackage[0] === "unknown") {
+
                               console.log ("       Comparepackage Name is unknown!!! : " + comparePackage[comparePackage.length-1].toString())
                               withinPackage = null;
                            }
