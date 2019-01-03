@@ -34,8 +34,6 @@ router.route('/api/dependencies').post(function(req,res) {
 
     })
 
-});
-
 //Function for finding dependencies with an xml file as input and a callback function
 //that should handle the result from the function
 function findDependencies(repoName, xml, callback) {
