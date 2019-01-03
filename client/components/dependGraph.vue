@@ -328,13 +328,15 @@
         }
 
         }
+
         console.log('above D3!!  ');
         const parameters = this.$route.params.graphId;
         console.log(parameters);
         //console.log(this.$route.params);
         
         
-        d3.json("/api/" + parameters)
+        d3.json("/api/dependencies" + parameters)
+
         .then( (data) =>  {
 
             if(data.data === null){

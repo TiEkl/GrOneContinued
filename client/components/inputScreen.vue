@@ -45,6 +45,12 @@
                         <div id="progressBar">Error! Please try with another GitHub Project</div>
                     </div>
                 </div>
+                
+                <div v-if="servers_offline===true">
+                    <div id="showProgress">
+                        <div id="progressBar">Error! Servers currently unavailable, please try again shortly!</div>
+                    </div>
+                </div>
 
                 <!-- when loading is complete: replace the view with another component where we show the result -->
 
@@ -70,7 +76,8 @@
                 url_accepted: false,
                 wrong_url: false,
                 error_in_process: false,
-                btn_clicked: false
+                btn_clicked: false,
+                servers_offline: false
             }
         },
         methods:{
@@ -95,7 +102,7 @@
                     // this is a chain of several requests to the backend
                     // if all requests go as planned we will be redirected to the graph page
                     // and the graph for our inputted project will be displayed*****
-                    axios.post('/api/gitProjects', {owner: ownerName,repo:  repoName})
+                    axios.post('http://127.0.0.1:8002/api/gitProjects', {owner: ownerName,repo:  repoName})
                     .then((response)=>{
                         console.log("get xml Success: " + response.status);
                         //console.log('***xml from backend*** '+ response.data + ' ***');
@@ -105,8 +112,7 @@
 
                         //here we use the response from the previous request in order to
                         //send XML data to the dependency finder
-                        //also send repoName for projectName
-                        return axios.post('/api/dependencies',{xml: response.data, repoName: repoName});
+                        return axios.post('http://127.0.0.1:8002/api/dependencies',{xml: response.data, repoName: repoName});
                     })
                     .then(
                     (response) => {
@@ -123,8 +129,15 @@
                         console.log("after: " + this.$route.path);
                     })
                     .catch(error => {
-                            console.log(error.response);
+                        console.log(error.toString());
+                        var current_err = error.toString();
+                        if(current_err === "Error: Network Error"){
+                           this.servers_offline = true;
+                           console.log('servers offline!');
+                        }
+                        else{
                             this.error_in_process = true;
+                        }  
                     })
                     .then(function () {
 
@@ -139,7 +152,7 @@
         mounted(){
 
         }
-    };
+    }
 </script>
 
 
