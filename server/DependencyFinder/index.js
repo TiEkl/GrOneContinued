@@ -34,7 +34,9 @@ router.route('/api/dependencies').get(function(req,res,next) {
 //to run this with an XML file from the file system.
 router.route('/api/dependencies').post(function(req,res) {
     var xml = req.body.xml;
+
     var repoName = req.body.repoName;
+
     //fs.readFile('./GarageIOTest.xml', function(err, xml) {
 
     // repoName is used to obtain the correct projectName
@@ -55,7 +57,35 @@ function findDependencies(repoName, xml, callback) {
 
     parseString(xml, function (err, result) {
 
-        var object = result.unit.unit;  //each .java file in json
+
+      // testing stuff
+      var object;
+
+      if (result != undefined) {
+         console.log("  result:" + result);
+         object = result;
+
+         if (result.unit != undefined) {
+            console.log("     result.unit: " + result.unit);
+            object = result.unit;
+
+            if (result.unit.unit != undefined) {
+               // console.log("        res.unit.unit: " + result.unit.unit);
+               object = result.unit.unit;  //each .java file in json
+            }
+         }
+      }
+      else {
+         console.log("Result is undefined! Error incoming!");
+      }
+
+      // end
+
+        // var object = result.unit.unit;  //each .java file in json
+        // // if (result != undefined) {
+        //    throw Error("error! result undefined");
+        // }
+
 
         var project;
         //Project name will probably be have to be fetched from the xmlhttprequest once that's implemented
@@ -79,13 +109,69 @@ function findDependencies(repoName, xml, callback) {
 
             //For loop that creates each Node for the graphData, checks for classes and interfaces.
             //Also stringifies each class/interface to prepare for the regex matching.
+            console.log("object.length : " + object.length);
             for (var i = 0; i < object.length; i++) {
-                var currentNode = {"id": "", "package": "", "count": 0};
-                if (object[i].class != null) {      //check if the java file includes any class
-                    var currentName = object[i].class[0].name;
+
+               console.log("              Current object iteration: >>  " + i);
+               var currentNode = {"id": "", "package": "", "count": 0};
+
+               if (object[i].class != null) {      //check if the java file includes any class
+                  var currentName = object[i].class;
+                  // console.log("Current Name in real world level 0");
+
+                  if (object[i].class[0] != undefined) {
+                     currentName = object[i].class[0];
+                     // console.log("Current Name in name inception level 1");
+
+                     if (object[i].class[0].name != undefined) {
+                        currentName = object[i].class[0].name;
+                        // console.log("Current Name in name inception level 2");
+
+                        if (object[i].class[0].name[0] != undefined) {
+                           currentName = object[i].class[0].name[0];
+                           // console.log("Current Name in name inception level 3");
+
+                           if (object[i].class[0].name[0].name != undefined) {
+                              currentName = object[i].class[0].name[0].name;
+                              // console.log("Current Name in name inception level 4");
+                              // console.log(currentName.toString());
+                           }
+                        }
+                     }
+                  }
+
+
+                    // var currentName = object[i].class[0].name;
+                    // console.log("Current Name: " + currentName);
+
+                    //test if statements
 
                     if (object[i].package != null) {
-                        var currentPackage = object[i].package[0].name[0].name;
+
+                       if (object[i].package != undefined) {
+                          var currentPackage = object[i].package;
+                          // console.log("     ~ currently - object[i].package <");
+
+                          if (object[i].package[0] != undefined) {
+                            var currentPackage = object[i].package[0];
+                            // console.log("     ~ currently - object[i].package[0] <");
+
+                            if (object[i].package[0].name != undefined) {
+                              var currentPackage = object[i].package[0].name;
+                              // console.log("     ~ currently - object[i].package[0].name <");
+
+                              if (object[i].package[0].name[0].name != undefined) {
+                                var currentPackage = object[i].package[0].name[0].name;
+                                // console.log("     ~ currently - object[i].package.name[0].name <");
+                             }
+                           }
+                         }
+                       }
+
+                       // console.log("   currentPackage: " + currentPackage);
+
+                      //end tests
+
                         currentNode.package = currentPackage[currentPackage.length-1].toString();
                     }
 
@@ -118,7 +204,46 @@ function findDependencies(repoName, xml, callback) {
                     if (i == j) {
                         continue;
                     }
-                    var comparePackage = object[j].package[0].name[0].name;
+                    //testing
+                     if (object[j] != undefined) {
+
+                       var comparePackage = object[j];
+                       // console.log("     > in  object[j] <");
+                       // console.log(object[j]);
+
+                       // So for some stupid reason some projects(especially the ones we have made ourselves)
+                       // Do not have a package attribute defined. This makes it so i dont really know how to compare the packages.
+                       // As a temp fix i have set it to an empty string, allowing the visualization to work,
+                       // but the links' color to be always red(outside of package).
+                       if (object[j].package == undefined) {
+                          console.log(" There is no package defined to compare to. Defaulting to 'unknown'.");
+                          console.log(" Also Tim says Put your files in proper packages or get off my lawn.");
+                          comparePackage = ["unknown"];
+                       }
+                        if (object[j].package != undefined) {
+                             comparePackage = object[j].package;
+                             // console.log("     >> in  object[j].package <");
+
+                             if (object[j].package[0] != undefined) {
+                                comparePackage = object[j].package[0];
+                                // console.log("     >>> in  object[j].package[0] <");
+
+                                if (object[j].package[0].name != undefined) {
+                                  comparePackage = object[j].package[0].name;
+                                  // console.log("     >>>> in  object[j].package[0].name <");
+
+                                  if (object[j].package[0].name[0].name != undefined) {
+                                     comparePackage = object[j].package[0].name[0].name;
+                                     // console.log("     >>>>> in  object[j].package[0].name[0].name <");
+                                  }
+                               }
+                            }
+                         }
+                      }
+
+
+                    // console.log("      comparePackage: " + comparePackage);
+                    //end testing
 
                     var pattern = new RegExp('"name":."' + allClasses[j]);
                     var match;
@@ -127,12 +252,29 @@ function findDependencies(repoName, xml, callback) {
                         result.push(match);
                         countDep++;
                         var withinPackage = null;
-                        if(graphData.nodes[i].package === comparePackage[comparePackage.length-1].toString()) {
-                            withinPackage = true;
+
+                        if (comparePackage != undefined) {
+                           // console.log("comparePackage EXISTS");
+
+                           if (comparePackage[comparePackage.length-1].toString() != undefined) {
+                              if(graphData.nodes[i].package === comparePackage[comparePackage.length-1].toString()) {
+                                 // console.log ("          Comparepackage.length-1 Name: " + comparePackage[comparePackage.length-1].toString())
+                                 // console.log ("    Comparepackage Name: " + comparePackage.toString())
+                                  withinPackage = true;
+                              }
+                              else {
+                                  withinPackage = false;
+                              }
+                           }
+
+                           if (comparePackage[0] === "unknown") {
+                              console.log ("       Comparepackage Name is unknown!!! : " + comparePackage[comparePackage.length-1].toString())
+                              withinPackage = null;
+                           }
                         }
-                        else {
-                            withinPackage = false;
-                        }
+
+
+
                         var link = { "source": allClasses[i].toString(), "target": allClasses[j].toString(), "value": 1, "withinPackage": withinPackage };
                         graphData.links.push(link);
                     }

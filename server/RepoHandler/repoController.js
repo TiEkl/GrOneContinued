@@ -30,29 +30,31 @@ router.post("/", function(req, res, next) {
    })
 
    //this method DOWNLOADS and CONVERTS the repo into XML
-    dlconrepo(repo,repoUrl,destination)
- 
+    dlconrepo(res, repo,repoUrl,destination);
+
     //This method gets xml data and sends it back in a response
-     getXMLdata(res,repo);
+
 
 });
 
-function dlconrepo(repo,repoUrl,destination, callback){
+function dlconrepo(res, repo,repoUrl,destination, callback){
 
     downloadRepo(repoUrl, destination, function (err) {
         console.log(err ? 'Error, dl repo unsuccessful': 'Successfully downloaded repository.')
         if (err) {
             console.log(err);
         }
-        
+
         filterDir(destination, '.java');
-        convertRepo(repo);
-  
+        convertRepo(repo, function () {
+           getXMLdata(res,repo);
+        });
+
         if(callback){
             callback();
-        } 
+        }
      })
-}    
+}
 
 //function for getting xml data
 //if the date exists we get it
@@ -61,7 +63,7 @@ function getXMLdata(res,repo){
     var pathToXML = path.normalize(
         path.join(__dirname, 'repository', 'xml',repo));
 
-        if(fs.existsSync(pathToXML+'.xml')){
+        // if(fs.existsSync(pathToXML+'.xml')){
             res.set('Content-Type', 'text/xml');
             fs.readFile(pathToXML+'.xml',(err,data)=>{
                 if(err) throw err;
@@ -70,13 +72,8 @@ function getXMLdata(res,repo){
                     data
                 );
             })
-        }
-        else{
-            setTimeout(() => { 
-                getXMLdata(res,repo);
-            }, 5000);
         }      
-}
+
 
 // structured like this '../LiteScript','.html'
 function filterDir(startPath,filter){
@@ -116,7 +113,7 @@ function filterDir(startPath,filter){
 };
 
 
-function convertRepo(projectName) {
+function convertRepo(projectName, callback) {
   var current = __dirname;
   // __dirname and process.cwd() doesnt seem to work because
   // the whole destination has spaces, which doesnt work as a command
@@ -147,7 +144,11 @@ function convertRepo(projectName) {
           console.log(stderr);
 
           console.log("         Repo Converted to XML.");
+          
+          if (callback) {
+            callback();
           }
+       }
       );
   })
 };
