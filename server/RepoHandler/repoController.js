@@ -31,6 +31,7 @@ router.post("/", function(req, res, next) {
 
    //this method DOWNLOADS a repo and has callbacks for filtering
    //out non-java files, converting the repo, and sending the XML as a response
+
     downloadRepo(repoUrl, destination, function (err) {
         console.log(err ? 'Error, dl repo unsuccessful': 'Successfully downloaded repository.')
         if (err) {
@@ -45,6 +46,7 @@ router.post("/", function(req, res, next) {
         }
     });
 });
+
 //function for getting xml data
 //if the date exists we get it
 //if not we try again later (using timeout)
@@ -52,7 +54,7 @@ function getXMLdata(res,repo){
     var pathToXML = path.normalize(
         path.join(__dirname, 'repository', 'xml',repo));
 
-        if(fs.existsSync(pathToXML+'.xml')){
+        // if(fs.existsSync(pathToXML+'.xml')){
             res.set('Content-Type', 'text/xml');
             fs.readFile(pathToXML+'.xml',(err,data)=>{
                 if(err) throw err;
@@ -61,11 +63,13 @@ function getXMLdata(res,repo){
                     data
                 );
             })
+
         }
         else{
             console.log("Could not get XML");x
+
         }      
-}
+
 
 // structured like this '../LiteScript','.html'
 function filterDir(startPath,filter, res, repo, convertCallback){
@@ -107,7 +111,9 @@ function filterDir(startPath,filter, res, repo, convertCallback){
 };
 
 
+
 function convertRepo(projectName, res, xmlCallback) {
+
   var current = __dirname;
   // __dirname and process.cwd() doesnt seem to work because
   // the whole destination has spaces, which doesnt work as a command
@@ -140,7 +146,9 @@ function convertRepo(projectName, res, xmlCallback) {
             if(xmlCallback){
             xmlCallback(res, projectName);
             }
+
           }
+       }
       );
   });
 };

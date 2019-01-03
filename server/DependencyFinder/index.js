@@ -5,6 +5,7 @@ var xml2js = require('xml2js');
 var parseString = require('xml2js').parseString;
 const fs = require('fs');
 const perf = require('execution-time')();
+var uniqid = require('uniqid');
 
 var projectSchema = require('../models/projectNode.js');
 
@@ -33,8 +34,13 @@ router.route('/api/dependencies').get(function(req,res,next) {
 //to run this with an XML file from the file system.
 router.route('/api/dependencies').post(function(req,res) {
     var xml = req.body.xml;
+
+    var repoName = req.body.repoName;
+
     //fs.readFile('./GarageIOTest.xml', function(err, xml) {
-        findDependencies(xml, function(result) {
+
+    // repoName is used to obtain the correct projectName
+        findDependencies(repoName, xml, function(result) {
             //console.log('**postREQjsonRES** '+ JSON.stringify(result) + ' end jsonRES***');
             res.status(201).json(result);
         });
@@ -45,11 +51,12 @@ router.route('/api/dependencies').post(function(req,res) {
 
 //Function for finding dependencies with an xml file as input and a callback function
 //that should handle the result from the function
-function findDependencies(xml, callback) {
+function findDependencies(repoName, xml, callback) {
 
     perf.start();       //calculate time of excecution until perf.stop()
 
     parseString(xml, function (err, result) {
+
 
       // testing stuff
       var object;
@@ -79,14 +86,21 @@ function findDependencies(xml, callback) {
         //    throw Error("error! result undefined");
         // }
 
+
         var project;
         //Project name will probably be have to be fetched from the xmlhttprequest once that's implemented
         if(object[0].$.filename != null) {
-            project = object[0].$.filename.toString().split("\\")[1];
+            // project = object[0].$.filename.toString().split("\\")[1];
+            project = repoName;
         }
+
+        var generatedID = uniqid();
+
         var graphData = {
             "nodes":[],
-            "links":[] };
+            "links":[],
+            "graphid": generatedID
+        };
         regexSearch(object);
 
         function regexSearch(object) {
@@ -95,29 +109,43 @@ function findDependencies(xml, callback) {
 
             //For loop that creates each Node for the graphData, checks for classes and interfaces.
             //Also stringifies each class/interface to prepare for the regex matching.
+            console.log("object.length : " + object.length);
             for (var i = 0; i < object.length; i++) {
-               console.log("              Current object length: >>  " + i);
+
+               console.log("              Current object iteration: >>  " + i);
                var currentNode = {"id": "", "package": "", "count": 0};
 
                if (object[i].class != null) {      //check if the java file includes any class
-                  if (object[i].class[0].name != undefined) {
-                     var currentName = object[i].class[0].name;
-                     // console.log("Current Name in class[0].name");
+                  var currentName = object[i].class;
+                  // console.log("Current Name in real world level 0");
 
-                     if (object[i].class[0].name[0].name != undefined) {
-                        var currentName = object[i].class[0].name[0].name;
-                        console.log("Current Name in inception level 1");
+                  if (object[i].class[0] != undefined) {
+                     currentName = object[i].class[0];
+                     // console.log("Current Name in name inception level 1");
 
-                        if (object[i].class[0].name[0].name[0].name != undefined) {
-                           var currentName = object[i].class[0].name[0].name[0].name;
-                           console.log("Current Name in inception level 2");
+                     if (object[i].class[0].name != undefined) {
+                        currentName = object[i].class[0].name;
+                        // console.log("Current Name in name inception level 2");
+
+                        if (object[i].class[0].name[0] != undefined) {
+                           currentName = object[i].class[0].name[0];
+                           // console.log("Current Name in name inception level 3");
+
+                           if (object[i].class[0].name[0].name != undefined) {
+                              currentName = object[i].class[0].name[0].name;
+                              // console.log("Current Name in name inception level 4");
+                              // console.log(currentName.toString());
+                           }
                         }
                      }
                   }
+
+
                     // var currentName = object[i].class[0].name;
-                    console.log("Current Name: " + currentName);
+                    // console.log("Current Name: " + currentName);
 
                     //test if statements
+
                     if (object[i].package != null) {
 
                        if (object[i].package != undefined) {
@@ -134,13 +162,13 @@ function findDependencies(xml, callback) {
 
                               if (object[i].package[0].name[0].name != undefined) {
                                 var currentPackage = object[i].package[0].name[0].name;
-                                console.log("     ~ currently - object[i].package.name[0].name <");
+                                // console.log("     ~ currently - object[i].package.name[0].name <");
                              }
                            }
                          }
                        }
 
-                       console.log("   currentPackage: " + currentPackage);
+                       // console.log("   currentPackage: " + currentPackage);
 
                       //end tests
 
@@ -214,9 +242,6 @@ function findDependencies(xml, callback) {
                       }
 
                     // console.log("      comparePackage: " + comparePackage);
-
-
-
                     //end testing
 
                     var pattern = new RegExp('"name":."' + allClasses[j]);
@@ -232,7 +257,6 @@ function findDependencies(xml, callback) {
 
                            if (comparePackage[comparePackage.length-1].toString() != undefined) {
                               if(graphData.nodes[i].package === comparePackage[comparePackage.length-1].toString()) {
-                                 //console.log ("        within package!  Comparepackage.length-1 Name: " + comparePackage[comparePackage.length-1])
                                  // console.log ("    Comparepackage Name: " + comparePackage.toString())
                                   withinPackage = true;
                               }
@@ -242,7 +266,8 @@ function findDependencies(xml, callback) {
                            }
 
                            if (comparePackage[0] === "unknown") {
-                              //console.log ("       unknown!!! Comparepackage Name: " + comparePackage[comparePackage.length-1])
+
+                              console.log ("       Comparepackage Name is unknown!!! : " + comparePackage[comparePackage.length-1].toString())
                               withinPackage = null;
                            }
                         }
@@ -258,6 +283,7 @@ function findDependencies(xml, callback) {
             var projectNode = new projectSchema({
                 projectName: project,
                 classes: graphData,
+                graphid: generatedID
             });
             projectNode.save( function(error) {
                 console.log("project node and its dependencies saved");
@@ -271,13 +297,8 @@ function findDependencies(xml, callback) {
 
             //Call callback function with the resulting graphData
             callback(graphData);
-
-
-
         }
-
     });
 }
-
 
 module.exports = router;

@@ -1,5 +1,6 @@
 var express = require('express');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
 var morgan = require('morgan');
 var path = require('path');
 var cors = require('cors');
@@ -7,6 +8,7 @@ var cors = require('cors');
 var mongoose = require('mongoose');
 
 // Variables
+var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
 var port = process.env.PORT || 9000;
 
 var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
