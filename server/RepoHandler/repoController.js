@@ -29,30 +29,23 @@ router.post("/", function(req, res, next) {
       console.log("destination directory cleared.")
    })
 
-   //this method DOWNLOADS and CONVERTS the repo into XML
-    dlconrepo(repo,repoUrl,destination)
- 
-    //This method gets xml data and sends it back in a response
-     getXMLdata(res,repo);
-
-});
-
-function dlconrepo(repo,repoUrl,destination, callback){
+   //this method DOWNLOADS a repo and has callbacks for filtering
+   //out non-java files, converting the repo, and sending the XML as a response
 
     downloadRepo(repoUrl, destination, function (err) {
         console.log(err ? 'Error, dl repo unsuccessful': 'Successfully downloaded repository.')
         if (err) {
             console.log(err);
         }
-        
-        filterDir(destination, '.java');
-        convertRepo(repo);
-  
-        if(callback){
-            callback();
-        } 
-     })
-}    
+        else {
+            filterDir(destination, '.java', res, repo, function(res, repo) {
+                convertRepo(repo, res, function(res, repo) {
+                    getXMLdata(res, repo);
+                })
+            })
+        }
+    });
+});
 
 //function for getting xml data
 //if the date exists we get it
@@ -72,14 +65,14 @@ function getXMLdata(res,repo){
             })
         }
         else{
-            setTimeout(() => { 
-                getXMLdata(res,repo);
-            }, 1000);
-        }      
-}
+            console.log("Could not get XML");
+
+        } 
+    }     
+
 
 // structured like this '../LiteScript','.html'
-function filterDir(startPath,filter){
+function filterDir(startPath,filter, res, repo, convertCallback){
 
     // console.log('Starting from dir '+ startPath +'/');
 
@@ -112,11 +105,15 @@ function filterDir(startPath,filter){
             });
         };
     };
-
+    if(convertCallback) {
+        convertCallback(res, repo);
+    }
 };
 
 
-function convertRepo(projectName) {
+
+function convertRepo(projectName, res, xmlCallback) {
+
   var current = __dirname;
   // __dirname and process.cwd() doesnt seem to work because
   // the whole destination has spaces, which doesnt work as a command
@@ -145,11 +142,13 @@ function convertRepo(projectName) {
           console.log("err: --> " + err);
           console.log("error: --> " + error);
           console.log(stderr);
-
           console.log("         Repo Converted to XML.");
-          }
-      );
-  })
+            if(xmlCallback){
+            xmlCallback(res, projectName);
+            }
+
+          })
+       });
 };
 
 module.exports = router;

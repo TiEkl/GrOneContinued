@@ -2,8 +2,26 @@ var path = require('path');
 var express = require('express');
 var router = express.Router()
 
+var projectSchema = require('../models/projectNode.js');
+
 router.get('/api', function(req, res) {
     res.json({"message": "Welcome to your DIT341 backend project!"});
+});
+
+
+//Get request to get graph data for a specific project based on ID
+router.get('/api/:graphid',function(req,res,next){
+    console.log('        index   id: '+ req.params.graphid);
+    var the_id = req.params.graphid;
+    projectSchema.findOne(({
+        graphid: the_id
+    }), (err, data)=>{
+        if(err){
+            return next(err)
+        }
+        //console.log('**jsonRES** '+ JSON.stringify(data) + ' end jsonRES***');
+        res.status(200).json({ 'data' : data });
+    });
 });
 
 /***********PROXY SERVER**************************/

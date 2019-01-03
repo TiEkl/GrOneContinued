@@ -5,6 +5,7 @@ var xml2js = require('xml2js');
 var parseString = require('xml2js').parseString;
 const fs = require('fs');
 const perf = require('execution-time')();
+var uniqid = require('uniqid');
 
 var projectSchema = require('../models/projectNode.js');
 
@@ -17,24 +18,16 @@ router.route('/').get(function (req, res) {
 router.get('/api', function(req, res) {
     res.json({"message": "Welcome to your backend"});
 });
-
-
-/*router.route('/api/dependencies').get(function(req,res,next) {
-    projectSchema.find(({}), (err, data)=>{
-        if(err){
-            return next(err)
-        }
-        //console.log('**jsonRES** '+ JSON.stringify(data) + ' end jsonRES***');
-        res.status(200).json({ 'data' : data });
-    });
-});*/
-
 //Post request, uncomment the fs.readfile stuff and comment our var xml if you want
 //to run this with an XML file from the file system.
-router.route('/api/dependencies').get(function(req,res) { 
-    //var xml = req.body.xml;  
-    fs.readFile('./server/DependencyFinder/omni.xml', function(err, xml) {
-        findDependencies(xml, function(result) {
+router.route('/api/dependencies').post(function(req,res) {
+    var xml = req.body.xml;
+
+    var repoName = req.body.repoName;
+
+
+    // repoName is used to obtain the correct projectName
+        findDependencies(repoName, xml, function(result) {
             //console.log('**postREQjsonRES** '+ JSON.stringify(result) + ' end jsonRES***');
             res.status(201).json(result);
         });
@@ -45,53 +38,143 @@ router.route('/api/dependencies').get(function(req,res) {
 
 //Function for finding dependencies with an xml file as input and a callback function
 //that should handle the result from the function
-function findDependencies(xml, callback) {
+function findDependencies(repoName, xml, callback) {
 
     perf.start();       //calculate time of excecution until perf.stop()
 
     parseString(xml, function (err, result) {
- 
-        var object = result.unit.unit;  //each .java file in json
- 
+
+
+      // testing stuff
+      var object;
+
+      if (result != undefined) {
+         console.log("  result:" + result);
+         object = result;
+
+         if (result.unit != undefined) {
+            console.log("     result.unit: " + result.unit);
+            object = result.unit;
+
+            if (result.unit.unit != undefined) {
+               // console.log("        res.unit.unit: " + result.unit.unit);
+               object = result.unit.unit;  //each .java file in json
+            }
+         }
+      }
+      else {
+         console.log("Result is undefined! Error incoming!");
+      }
+
+      // end
+
+        // var object = result.unit.unit;  //each .java file in json
+        // // if (result != undefined) {
+        //    throw Error("error! result undefined");
+        // }
+
+
         var project;
         //Project name will probably be have to be fetched from the xmlhttprequest once that's implemented
         if(object[0].$.filename != null) {
-            project = object[0].$.filename.toString().split("\\")[1];
+            // project = object[0].$.filename.toString().split("\\")[1];
+            project = repoName;
         }
-        var graphData = { 
-            "nodes":[], 
-            "links":[] };
+
+        var generatedID = uniqid();
+
+        var graphData = {
+            "nodes":[],
+            "links":[],
+            "graphid": generatedID
+        };
         regexSearch(object);
-        
+
         function regexSearch(object) {
             var allClasses = []; //Will contain all classnames
             var stringsJson = []; //Will contain all json representations of classes, stringified
 
             //For loop that creates each Node for the graphData, checks for classes and interfaces.
             //Also stringifies each class/interface to prepare for the regex matching.
+            console.log("object.length : " + object.length);
             for (var i = 0; i < object.length; i++) {
-                var currentNode = {"id": "", "package": "", "count": 0};
-                if (object[i].class != null) {      //check if the java file includes any class
-                    var currentName = object[i].class[0].name;
-            
+
+               console.log("              Current object iteration: >>  " + i);
+               var currentNode = {"id": "", "package": "", "count": 0};
+
+               if (object[i].class != null) {      //check if the java file includes any class
+                  var currentName = object[i].class;
+                  // console.log("Current Name in real world level 0");
+
+                  if (object[i].class[0] != undefined) {
+                     currentName = object[i].class[0];
+                     // console.log("Current Name in name inception level 1");
+
+                     if (object[i].class[0].name != undefined) {
+                        currentName = object[i].class[0].name;
+                        // console.log("Current Name in name inception level 2");
+
+                        if (object[i].class[0].name[0] != undefined) {
+                           currentName = object[i].class[0].name[0];
+                           // console.log("Current Name in name inception level 3");
+
+                           if (object[i].class[0].name[0].name != undefined) {
+                              currentName = object[i].class[0].name[0].name;
+                              // console.log("Current Name in name inception level 4");
+                              // console.log(currentName.toString());
+                           }
+                        }
+                     }
+                  }
+
+
+                    // var currentName = object[i].class[0].name;
+                    // console.log("Current Name: " + currentName);
+
+                    //test if statements
+
                     if (object[i].package != null) {
-                        var currentPackage = object[i].package[0].name[0].name;
+
+                       if (object[i].package != undefined) {
+                          var currentPackage = object[i].package;
+                          // console.log("     ~ currently - object[i].package <");
+
+                          if (object[i].package[0] != undefined) {
+                            var currentPackage = object[i].package[0];
+                            // console.log("     ~ currently - object[i].package[0] <");
+
+                            if (object[i].package[0].name != undefined) {
+                              var currentPackage = object[i].package[0].name;
+                              // console.log("     ~ currently - object[i].package[0].name <");
+
+                              if (object[i].package[0].name[0].name != undefined) {
+                                var currentPackage = object[i].package[0].name[0].name;
+                                // console.log("     ~ currently - object[i].package.name[0].name <");
+                             }
+                           }
+                         }
+                       }
+
+                       // console.log("   currentPackage: " + currentPackage);
+
+                      //end tests
+
                         currentNode.package = currentPackage[currentPackage.length-1].toString();
                     }
-                    
+
                     currentNode.id = currentName.toString();
-                    
+
                     stringsJson[i] = JSON.stringify(object[i].class); //object[i].class is the current class in java file at [i] .
 
                 }
                 else if (object[i].interface != null) {         //check if the java file includes any interface
                     var currentName = object[i].interface[0].name;
-  
+
                     if (object[i].package != null) {
                         var currentPackage = object[i].package[0].name[0].name;
                         currentNode.package = currentPackage[currentPackage.length-1].toString();
                     }
-                    
+
                     currentNode.id = currentName.toString();
                     stringsJson[i] = JSON.stringify(object[i].interface);
                 }
@@ -105,34 +188,88 @@ function findDependencies(xml, callback) {
                 //Loop that searches for each class name [j] inside the stringsJson[i]
                 for (var j = 0; j < allClasses.length; j++) {
 
-                    if (i == j) {   
+                    if (i == j) {
                         continue;
                     }
-                    var comparePackage = object[j].package[0].name[0].name;
+                    //testing
+                     if (object[j] != undefined) {
 
-                    var pattern = new RegExp('"name":."' + allClasses[j]); 
+                       var comparePackage = object[j];
+                       // console.log("     > in  object[j] <");
+                       // console.log(object[j]);
+
+                       // So for some stupid reason some projects(especially the ones we have made ourselves)
+                       // Do not have a package attribute defined. This makes it so i dont really know how to compare the packages.
+                       // As a temp fix i have set it to an empty string, allowing the visualization to work,
+                       // but the links' color to be always red(outside of package).
+                       if (object[j].package == undefined) {
+                          console.log(" There is no package defined to compare to. Defaulting to 'unknown'.");
+                          console.log(" Also Tim says Put your files in proper packages or get off my lawn.");
+                          comparePackage = ["unknown"];
+                       }
+                        if (object[j].package != undefined) {
+                             comparePackage = object[j].package;
+                             // console.log("     >> in  object[j].package <");
+
+                             if (object[j].package[0] != undefined) {
+                                comparePackage = object[j].package[0];
+                                // console.log("     >>> in  object[j].package[0] <");
+
+                                if (object[j].package[0].name != undefined) {
+                                  comparePackage = object[j].package[0].name;
+                                  // console.log("     >>>> in  object[j].package[0].name <");
+
+                                  if (object[j].package[0].name[0].name != undefined) {
+                                     comparePackage = object[j].package[0].name[0].name;
+                                     // console.log("     >>>>> in  object[j].package[0].name[0].name <");
+                                  }
+                               }
+                            }
+                         }
+                      }
+
+                    // console.log("      comparePackage: " + comparePackage);
+                    //end testing
+
+                    var pattern = new RegExp('"name":."' + allClasses[j]);
                     var match;
                     var result = [];
                     if ((match = pattern.exec(stringsJson[i])) != null) {   //compares pattern (reg Expression) with stringsJson
                         result.push(match);
                         countDep++;
                         var withinPackage = null;
-                        if(graphData.nodes[i].package === comparePackage[comparePackage.length-1].toString()) {
-                            withinPackage = true;
-                        }
-                        else {
-                            withinPackage = false;
+
+                        if (comparePackage != undefined) {
+                           // console.log("comparePackage EXISTS");
+
+                           if (comparePackage[comparePackage.length-1].toString() != undefined) {
+                              if(graphData.nodes[i].package === comparePackage[comparePackage.length-1].toString()) {
+                                 // console.log ("    Comparepackage Name: " + comparePackage.toString())
+                                  withinPackage = true;
+                              }
+                              else {
+                                  withinPackage = false;
+                              }
+                           }
+
+                           if (comparePackage[0] === "unknown") {
+
+                              console.log ("       Comparepackage Name is unknown!!! : " + comparePackage[comparePackage.length-1].toString())
+                              withinPackage = null;
+                           }
                         }
                         var link = { "source": allClasses[i].toString(), "target": allClasses[j].toString(), 
                                     "value": 1, "withinPackage": withinPackage, "srcPkg": graphData.nodes[i].package, "targetPkg": comparePackage[comparePackage.length-1] };
+
                         graphData.links.push(link);
-                    }  
+                    }
                 }
                 graphData.nodes[i].count = countDep;
             }
             var projectNode = new projectSchema({
                 projectName: project,
                 classes: graphData,
+                graphid: generatedID
             });
             projectNode.save( function(error) {
                 console.log("project node and its dependencies saved");
@@ -146,13 +283,8 @@ function findDependencies(xml, callback) {
 
             //Call callback function with the resulting graphData
             callback(graphData);
-
-
-
         }
-
     });
 }
-
 
 module.exports = router;

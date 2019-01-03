@@ -328,12 +328,27 @@
         }
 
         }
-   
-        d3.json("/api/dependencies")
+        console.log('above D3!!  ');
+        const parameters = this.$route.params.graphId;
+        console.log(parameters);
+        //console.log(this.$route.params);
+        
+        
+        d3.json("/api/" + parameters)
         .then( (data) =>  {
-            //console.log('classes: '+ JSON.stringify(data.data[0].classes));
-            //var graphData = data;
-            this.drawChart(data, drag, stringToColour,linkColour);
+
+            if(data.data === null){
+                return setTimeout(()=>{
+                    d3.json("/api/" + parameters)
+                    .then((data)=>{
+                        console.log('in the timeout method!');
+                        var graphData = data.data.classes;
+                        this.drawChart(graphData, drag, stringToColour,linkColour);
+                    });
+                }, 2000)
+            }
+            var graphData = data.data.classes;
+            this.drawChart(graphData, drag, stringToColour,linkColour);
         });
     
         }
