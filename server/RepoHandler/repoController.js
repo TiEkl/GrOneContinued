@@ -72,12 +72,7 @@ function getXMLdata(res,repo){
                     data
                 );
             })
-        // }
-        // else{
-        //     setTimeout(() => {
-        //         getXMLdata(res,repo);
-        //     }, 1000);
-        // }
+        }      
 }
 
 // structured like this '../LiteScript','.html'
