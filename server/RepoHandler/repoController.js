@@ -54,7 +54,7 @@ function getXMLdata(res,repo){
     var pathToXML = path.normalize(
         path.join(__dirname, 'repository', 'xml',repo));
 
-        // if(fs.existsSync(pathToXML+'.xml')){
+        if(fs.existsSync(pathToXML+'.xml')){
             res.set('Content-Type', 'text/xml');
             fs.readFile(pathToXML+'.xml',(err,data)=>{
                 if(err) throw err;
@@ -63,12 +63,12 @@ function getXMLdata(res,repo){
                     data
                 );
             })
-
         }
         else{
-            console.log("Could not get XML");x
+            console.log("Could not get XML");
 
-        }      
+        } 
+    }     
 
 
 // structured like this '../LiteScript','.html'
@@ -147,10 +147,8 @@ function convertRepo(projectName, res, xmlCallback) {
             xmlCallback(res, projectName);
             }
 
-          }
-       }
-      );
-  });
+          })
+       });
 };
 
 module.exports = router;
