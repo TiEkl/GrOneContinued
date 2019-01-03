@@ -11,11 +11,18 @@ router.get('/', function ( req, res ) {
     });
 });
 
-router.get('/:id', function(req, res, next) {
-	projectSchema.findById(req.params.id, function (err, projectSchema) {
-		if (err) { return next(err); }
-		res.status(200).json({"projectSchema" : projectSchema});
-	});
+router.get('/:graphid', function(req, res, next) {
+  console.log('        index   id: '+ req.params.graphid);
+  var the_id = req.params.graphid;
+  projectSchema.findOne(({
+      graphid: the_id
+  }), (err, data)=>{
+      if(err){
+          return next(err)
+      }
+      //console.log('**jsonRES** '+ JSON.stringify(data) + ' end jsonRES***');
+      res.status(200).json({ 'data' : data });
+  });
 });
 
 router.post('/', function (req, res) {
