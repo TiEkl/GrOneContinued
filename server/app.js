@@ -7,6 +7,7 @@ var cors = require('cors');
 const { exec } = require('child_process');
 const fs = require('fs');
 var ip = require('ip');
+const portscanner = require('portscanner');
 
 // =========== "npm run dev" ============//
 
@@ -57,7 +58,7 @@ app.use('/api/bb', require('./controllers/bbMiddleware'));
 // LOCAL TESTING - POINTS TO SELF RIGHT NOW
 // FOR LOCAL TESTING
 const main_server = '192.168.1.104';
-const repo_fetcher = '192.168.1.101';   //want to replace this later with a constant from the constants file
+const repo_fetcher = '192.168.1.92';   //want to replace this later with a constant from the constants file
 var remoteIp = ip.address() === main_server ? repo_fetcher : main_server;
 var localIp =  ip.address() === main_server ? ip.address() : repo_fetcher;
 
