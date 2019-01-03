@@ -57,8 +57,8 @@ app.use('/api/bb', require('./controllers/bbMiddleware'));
 ///PROXY REQUESTS START
 
 // FOR syncing
-const main_server = '192.168.1.104';
-const repo_fetcher = '192.168.1.92';   //want to replace this later with a constant from the constants file
+const main_server = '192.168.43.171';
+const repo_fetcher = '192.168.43.168';   //want to replace this later with a constant from the constants file
 var remoteIp = ip.address() === main_server ? repo_fetcher : main_server;
 var localIp =  ip.address() === main_server ? ip.address() : repo_fetcher;
 
@@ -89,19 +89,19 @@ function syncDb() {
              var localData = JSON.parse(body);
              // console.log("    Local JSON Data: " + JSON.stringify(localData.projectSchemas));
              console.log("       Local data length: " + localData.projectSchemas.length);
- 
+
              // GET remote server's projects
              request(remoteURL, function (error, response2, resRemoteBody) { //remotebody has remote objects
                  if(typeof resRemoteBody != undefined) {
                      var remoteData = JSON.parse(resRemoteBody);
                      // console.log("    Remote JSON Data: " + JSON.stringify(remoteData.projectSchemas));
                      console.log("       Remote data length: " + remoteData.projectSchemas.length);
- 
+
                      //Iterate through all local projects
                      for(var i = 0 ; i < localData.projectSchemas.length; i++) {
                          // do get request of remoteDB to check if all ids present in remote
                          // if not add object of that id
- 
+
                          // First check if remote server is empty > if empty put everything
                          if (remoteData.projectSchemas.length <= 0) {
                             var options = {
@@ -120,7 +120,7 @@ function syncDb() {
                                 }
                             });
                          }
- 
+
                          // if remote has projects compare each local project's id to remote's
                          else if (remoteData.projectSchemas.length > 0) {
                              var hasProject = false;
@@ -157,7 +157,7 @@ function syncDb() {
          }
      });
  }
- 
+
  // Basic version of syncing db every 5 seconds.
  setInterval(function () {
     //portscanner checks if remote is dead. Only begin sync if not ded.
@@ -208,7 +208,7 @@ var arrayOfClass = [];
     console.log(`Express server listening on port ${port}, in ${env} mode`);
     console.log(`Backend: http://localhost:${port}/api/`);
     console.log(`Frontend: http://localhost:${port}/`);
-    
+
 });*/
 
 
