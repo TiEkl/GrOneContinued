@@ -57,7 +57,7 @@ app.use('/api/bb', require('./controllers/bbMiddleware'));
 ///PROXY REQUESTS START
 
 // FOR syncing
-const main_server = '192.168.43.171';
+const main_server = '192.168.43.26';
 const repo_fetcher = '192.168.43.168';   //want to replace this later with a constant from the constants file
 var remoteIp = ip.address() === main_server ? repo_fetcher : main_server;
 var localIp =  ip.address() === main_server ? ip.address() : repo_fetcher;
@@ -82,7 +82,7 @@ console.log("     REMOTE IP: " + remoteIp);
 console.log("     LOCAL IP: " + localIp);
 
 function syncDb() {
-
+    console.log(ip.address())
     // GET Local server's projects
      request(localURL, function (err, response, body) { //body has local objects
          if(typeof body != undefined){
@@ -114,9 +114,9 @@ function syncDb() {
                                 }
                             };
                             request(options, function(err,res,body){
-                                console.log("res: " + JSON.stringify(res));
+                               // console.log("res: " + JSON.stringify(res));
                                 if(!err && res.statusCode == 201) {
-                                    console.log("body: " + body);
+                                   // console.log("body: " + body);
                                 }
                             });
                          }
