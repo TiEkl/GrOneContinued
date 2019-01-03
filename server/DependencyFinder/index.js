@@ -18,18 +18,6 @@ router.route('/').get(function (req, res) {
 router.get('/api', function(req, res) {
     res.json({"message": "Welcome to your backend"});
 });
-
-
-router.route('/api/dependencies').get(function(req,res,next) {
-    projectSchema.find(({}), (err, data)=>{
-        if(err){
-            return next(err)
-        }
-        //console.log('**jsonRES** '+ JSON.stringify(data) + ' end jsonRES***');
-        res.status(200).json({ 'data' : data });
-    });
-});
-
 //Post request, uncomment the fs.readfile stuff and comment our var xml if you want
 //to run this with an XML file from the file system.
 router.route('/api/dependencies').post(function(req,res) {
@@ -37,7 +25,6 @@ router.route('/api/dependencies').post(function(req,res) {
 
     var repoName = req.body.repoName;
 
-    //fs.readFile('./GarageIOTest.xml', function(err, xml) {
 
     // repoName is used to obtain the correct projectName
         findDependencies(repoName, xml, function(result) {
@@ -45,9 +32,7 @@ router.route('/api/dependencies').post(function(req,res) {
             res.status(201).json(result);
         });
 
-    //})
-
-});
+    })
 
 //Function for finding dependencies with an xml file as input and a callback function
 //that should handle the result from the function
@@ -189,12 +174,12 @@ function findDependencies(repoName, xml, callback) {
                     }
 
                     currentNode.id = currentName.toString();
-
                     stringsJson[i] = JSON.stringify(object[i].interface);
                 }
                 graphData.nodes.push(currentNode);
                 allClasses.push(currentName);
             }
+
             //Outter loop is the current class we're searching through
             for (var i = 0; i < allClasses.length; i++) {
                 var countDep = 0;       //total amount of dependencies for current class for class [i].
@@ -271,10 +256,9 @@ function findDependencies(repoName, xml, callback) {
                               withinPackage = null;
                            }
                         }
+                        var link = { "source": allClasses[i].toString(), "target": allClasses[j].toString(), 
+                                    "value": 1, "withinPackage": withinPackage, "srcPkg": graphData.nodes[i].package, "targetPkg": comparePackage[comparePackage.length-1] };
 
-
-
-                        var link = { "source": allClasses[i].toString(), "target": allClasses[j].toString(), "value": 1, "withinPackage": withinPackage };
                         graphData.links.push(link);
                     }
                 }
