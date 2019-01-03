@@ -29,20 +29,54 @@ router.post("/", function(req, res, next) {
       console.log("destination directory cleared.")
    })
 
-   //Actual method that downloads the files taking as input: owner/repo,directory.
-   downloadRepo(repoUrl, destination, function (err) {
-      console.log(err ? 'Error': 'Successfully downloaded repository.')
-      if (err) {
-        return next(err);
-      }
-
-      filterDir(destination, '.java');
-      convertRepo(repo);
-
-   })
-   res.status(201).json("Project Downloaded.");
+   //this method DOWNLOADS and CONVERTS the repo into XML
+    dlconrepo(repo,repoUrl,destination)
+ 
+    //This method gets xml data and sends it back in a response
+     getXMLdata(res,repo);
 
 });
+
+function dlconrepo(repo,repoUrl,destination, callback){
+
+    downloadRepo(repoUrl, destination, function (err) {
+        console.log(err ? 'Error, dl repo unsuccessful': 'Successfully downloaded repository.')
+        if (err) {
+            console.log(err);
+        }
+        
+        filterDir(destination, '.java');
+        convertRepo(repo);
+  
+        if(callback){
+            callback();
+        } 
+     })
+}    
+
+//function for getting xml data
+//if the date exists we get it
+//if not we try again later (using timeout)
+function getXMLdata(res,repo){
+    var pathToXML = path.normalize(
+        path.join(__dirname, 'repository', 'xml',repo));
+
+        if(fs.existsSync(pathToXML+'.xml')){
+            res.set('Content-Type', 'text/xml');
+            fs.readFile(pathToXML+'.xml',(err,data)=>{
+                if(err) throw err;
+                //console.log('***data here***: '+ data + "**** end data*****");
+                res.status(201).send(
+                    data
+                );
+            })
+        }
+        else{
+            setTimeout(() => { 
+                getXMLdata(res,repo);
+            }, 1000);
+        }      
+}
 
 // structured like this '../LiteScript','.html'
 function filterDir(startPath,filter){

@@ -22,6 +22,7 @@ var port = process.env.PORT || 8000;
 //var localSyncTestPort = process.env.PORT || 7999;
 // This variable is here for the proxy request.
 var repo_fetcher_port = process.env.PORT || 8001;
+var dependency_finder_port = process.env.PORT || 9000;
 
 // Connect to MongoDB
 mongoose.connect(mongoURI, { useNewUrlParser: true }, function (err) {
@@ -55,8 +56,7 @@ app.use('/api/bb', require('./controllers/bbMiddleware'));
 
 ///PROXY REQUESTS START
 
-// LOCAL TESTING - POINTS TO SELF RIGHT NOW
-// FOR LOCAL TESTING
+// FOR syncing
 const main_server = '192.168.1.104';
 const repo_fetcher = '192.168.1.92';   //want to replace this later with a constant from the constants file
 var remoteIp = ip.address() === main_server ? repo_fetcher : main_server;
@@ -173,11 +173,7 @@ function syncDb() {
 // to the other computer (different ip) on another port
 //proxyRequestTo(repo_fetcher,'8001','/api/repo_fetcher');
 
-
 ///PROXY REQUESTS END
-
-
-
 /**********MAIN SERVER listening to 8001 for repo_fetcher**************/
 //repo_fetcher is running on port 8001 so main server listens there
 // proxy server sends request to this port
