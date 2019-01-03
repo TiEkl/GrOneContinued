@@ -73,7 +73,7 @@ function getXMLdata(res,repo){
                 );
             })
         }      
-}
+
 
 // structured like this '../LiteScript','.html'
 function filterDir(startPath,filter){
