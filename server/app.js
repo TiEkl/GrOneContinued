@@ -24,6 +24,9 @@ var port = process.env.PORT || 8000;
 var repo_fetcher_port = process.env.PORT || 8001;
 var dependency_finder_port = process.env.PORT || 9000;
 
+var repo_fetcher = '127.0.0.1';
+var dependency_finder = '127.0.0.1';
+
 // Connect to MongoDB
 mongoose.connect(mongoURI, { useNewUrlParser: true }, function (err) {
     if (err) {
@@ -40,7 +43,10 @@ var app = express();
 app.use(cors());
 
 
-app.use(bodyParser.json());
+proxyRequestTo(repo_fetcher,repo_fetcher_port,'/api/gitProjects');
+proxyRequestTo(dependency_finder,'9000','/api/dependencies');
+
+app.use(bodyParser.json({limit: '50mb', extended: true}));
 app.use(bodyParser.urlencoded({extended: true}));
 // HTTP request logger
 app.use(morgan('dev'));
@@ -51,14 +57,14 @@ app.set('appPath', 'client');
 
 
 // Import routes
-//app.use(require('./controllers/index'));
+app.use(require('./controllers/index'));
 app.use('/api/bb', require('./controllers/bbMiddleware'));
 
 ///PROXY REQUESTS START
 
 // FOR syncing
 const main_server = '192.168.43.26';
-const repo_fetcher = '192.168.43.168';   //want to replace this later with a constant from the constants file
+const remote_server = '192.168.43.168';   //want to replace this later with a constant from the constants file
 var remoteIp = ip.address() === main_server ? repo_fetcher : main_server;
 var localIp =  ip.address() === main_server ? ip.address() : repo_fetcher;
 
@@ -85,15 +91,19 @@ function syncDb() {
     console.log(ip.address())
     // GET Local server's projects
      request(localURL, function (err, response, body) { //body has local objects
-         if(typeof body != undefined){
-             var localData = JSON.parse(body);
+        var localData = JSON.parse(body);
+        if(localData != undefined) { 
+        //if(typeof body != undefined){
+
              // console.log("    Local JSON Data: " + JSON.stringify(localData.projectSchemas));
              console.log("       Local data length: " + localData.projectSchemas.length);
 
              // GET remote server's projects
              request(remoteURL, function (error, response2, resRemoteBody) { //remotebody has remote objects
-                 if(typeof resRemoteBody != undefined) {
-                     var remoteData = JSON.parse(resRemoteBody);
+                var remoteData = JSON.parse(resRemoteBody);                 
+                if(remoteData != undefined) {
+                //if(typeof resRemoteBody != undefined) {
+
                      // console.log("    Remote JSON Data: " + JSON.stringify(remoteData.projectSchemas));
                      console.log("       Remote data length: " + remoteData.projectSchemas.length);
 
@@ -159,7 +169,7 @@ function syncDb() {
  }
 
  // Basic version of syncing db every 5 seconds.
- setInterval(function () {
+ /*setInterval(function () {
     //portscanner checks if remote is dead. Only begin sync if not ded.
     portscanner.checkPortStatus(port, remoteIp, function(error, status) {
       // Status is 'open' if currently in use or 'closed' if available
@@ -167,13 +177,14 @@ function syncDb() {
        if (status === "open") {syncDb();}
        if (status === "closed") {console.log("remote server ded")}
     })
- }, 5000)
+ }, 5000)*/
 
 // here we are telling the program to reroute all requests to /api/repo_fetch
 // to the other computer (different ip) on another port
-//proxyRequestTo(repo_fetcher,'8001','/api/repo_fetcher');
 
-///PROXY REQUESTS END
+
+//app.use(bodyParser.json({limit: '50mb', extended: true}));
+
 /**********MAIN SERVER listening to 8001 for repo_fetcher**************/
 //repo_fetcher is running on port 8001 so main server listens there
 // proxy server sends request to this port
@@ -182,7 +193,7 @@ function syncDb() {
 
 
 
-app.listen(port, localIp);
+//app.listen(port, localIp);
 
 /**************************************/
 
@@ -203,13 +214,13 @@ app.use(function (err, req, res, next) {
 //var port = 3000;
 var arrayOfClass = [];
 
-/*app.listen(port, function (err) {
+app.listen(port, function (err) {
     if (err) throw err;
     console.log(`Express server listening on port ${port}, in ${env} mode`);
     console.log(`Backend: http://localhost:${port}/api/`);
     console.log(`Frontend: http://localhost:${port}/`);
 
-});*/
+});
 
 
 

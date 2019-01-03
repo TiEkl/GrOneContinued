@@ -5,6 +5,7 @@ var xml2js = require('xml2js');
 var parseString = require('xml2js').parseString;
 const fs = require('fs');
 const perf = require('execution-time')();
+var uniqid = require('uniqid');
 
 var projectSchema = require('../models/projectNode.js');
 
@@ -62,9 +63,14 @@ function findDependencies(repoName, xml, callback) {
             // project = object[0].$.filename.toString().split("\\")[1];
             project = repoName;
         }
+
+        var generatedID = uniqid();
+
         var graphData = {
             "nodes":[],
-            "links":[] };
+            "links":[],
+            "graphid": generatedID
+        };
         regexSearch(object);
 
         function regexSearch(object) {
@@ -136,6 +142,7 @@ function findDependencies(repoName, xml, callback) {
             var projectNode = new projectSchema({
                 projectName: project,
                 classes: graphData,
+                graphid: generatedID
             });
             projectNode.save( function(error) {
                 console.log("project node and its dependencies saved");
@@ -149,13 +156,8 @@ function findDependencies(repoName, xml, callback) {
 
             //Call callback function with the resulting graphData
             callback(graphData);
-
-
-
         }
-
     });
 }
-
 
 module.exports = router;

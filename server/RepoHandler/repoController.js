@@ -74,7 +74,7 @@ function getXMLdata(res,repo){
         else{
             setTimeout(() => { 
                 getXMLdata(res,repo);
-            }, 1000);
+            }, 5000);
         }      
 }
 
