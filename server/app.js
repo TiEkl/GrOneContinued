@@ -44,7 +44,7 @@ app.use(cors());
 
 
 proxyRequestTo(repo_fetcher,repo_fetcher_port,'/api/gitProjects');
-proxyRequestTo(dependency_finder,'9000','/api/dependencies');
+proxyRequestTo(dependency_finder,dependency_finder_port,'/api/dependencies');
 
 app.use(bodyParser.json({limit: '50mb', extended: true}));
 app.use(bodyParser.urlencoded({extended: true}));
@@ -76,11 +76,16 @@ var localIp =  ip.address() === main_server ? ip.address() : remote_server;
 function proxyRequestTo (ip,port,endpoint){
     console.log("ip: " + ip);
     app.use(endpoint, (req,res)=>{
-        let url = 'http://'+ ip + ':' + port + endpoint;
-        console.log('reroute to: ' + url);
-        req.pipe(request(url)).pipe(res);
+        let request_url = 'http://'+ ip + ':' + port + endpoint;
+        console.log('reroute to: ' + request_url);
+
+        const request_server = request({url: request_url}).on('error', (error) => {
+            res.status(500).send(error.message);
+        });
+        req.pipe(request(request_server)).pipe(res);
     });
 }
+
 var localURL = 'http://'+ localIp + ':' + port + '/api/bb';
 var remoteURL = 'http://'+ remoteIp + ':' + port + '/api/bb';
 
