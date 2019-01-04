@@ -84,7 +84,7 @@ function findDependencies(repoName, xml, callback) {
         var graphData = {
             "nodes":[],
             "links":[],
-            "graphid": generatedID
+            "graphid": project
         };
         regexSearch(object);
 
@@ -267,7 +267,7 @@ function findDependencies(repoName, xml, callback) {
             var projectNode = new projectSchema({
                 projectName: project,
                 classes: graphData,
-                graphid: generatedID
+                graphid: project
             });
             projectNode.save( function(error) {
                 console.log("project node and its dependencies saved");
