@@ -63,7 +63,7 @@ app.use('/api/bb', require('./controllers/bbMiddleware'));
 ///PROXY REQUESTS START
 
 // FOR syncing
-const main_server = '192.168.43.56';
+const main_server = '127.0.0.1';
 const remote_server = '192.168.43.168';   //want to replace this later with a constant from the constants file
 var remoteIp = ip.address() === main_server ? remote_server : main_server;
 var localIp =  ip.address() === main_server ? ip.address() : remote_server;
@@ -174,7 +174,7 @@ function syncDb() {
     portscanner.checkPortStatus(port, remoteIp, function(error, status) {
       // Status is 'open' if currently in use or 'closed' if available
        console.log("remote server status: " + status);
-       if (status === "open") {syncDb();}
+       //if (status === "open") {syncDb();}  //had to comment this out in order to test the program
        if (status === "closed") {console.log("remote server ded")}
     })
  }, 5000)
