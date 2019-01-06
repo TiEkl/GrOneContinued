@@ -45,10 +45,10 @@ router.all("/app1/*", function ( req, res ) {
 });*/
 
 // All other routes redirect to the index.html
-router.route('/*').get(function (req, res) {
+/*router.route('/*').get(function (req, res) {
     var relativeAppPath = req.app.get('appPath');
     var absoluteAppPath = path.resolve(relativeAppPath);
     res.sendFile(absoluteAppPath + '/index.html');
-});
+});*/
 
 module.exports = router;

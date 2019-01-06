@@ -2,7 +2,9 @@
   <div>
      <div id="sidebar" style="display: none;">
     <div class="item-group">
-        <label class="item-label">Filter</label>  
+        <label class="item-label">Filter</label> 
+        <input id="checkAll" type="checkbox" />
+        <label for="checkAll"> Check / uncheck all</label> 
             <div id="filterContainer" class="filterContainer checkbox-interaction-group"></div>
     </div>
 </div>
@@ -85,7 +87,8 @@
         data() {
             return {
             height : 1000,
-            width : 1000
+            width : 1000,
+
             }
         },
     
@@ -334,9 +337,14 @@
         console.log(parameters);
         //console.log(this.$route.params);
         
+        $(document).ready(function() {
+            $('#checkAll').click(function() {
+                var checked = $(this).prop('checked');
+                $('#filterContainer').find('input:checkbox').prop('checked', checked);
+            })
+        })
         
         d3.json("/api/bb/" + parameters)
-
         .then( (data) =>  {
 
             if(data.data === null){
