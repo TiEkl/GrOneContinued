@@ -3,7 +3,7 @@
      <div id="sidebar" style="display: none;">
     <div class="item-group">
         <label class="item-label">Filter</label> 
-        <input id="checkAll" type="checkbox" />
+        <input id="checkAll" type="checkbox" checked/>
         <label for="checkAll"> Check / uncheck all</label> 
             <div id="filterContainer" class="filterContainer checkbox-interaction-group"></div>
     </div>
@@ -340,7 +340,8 @@
         $(document).ready(function() {
             $('#checkAll').click(function() {
                 var checked = $(this).prop('checked');
-                $('#filterContainer').find('input:checkbox').prop('checked', checked);
+                $('#filterContainer').find('input:checkbox').prop('checked', !checked);
+                $('#filterContainer').find('input:checkbox').click();
             })
         })
         
