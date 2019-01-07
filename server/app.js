@@ -44,7 +44,7 @@ app.use(cors());
 
 
 proxyRequestTo(repo_fetcher,repo_fetcher_port,'/api/gitProjects');
-proxyRequestTo(dependency_finder,'9000','/api/dependencies');
+proxyRequestTo(dependency_finder,dependency_finder_port,'/api/dependencies');
 
 app.use(bodyParser.json({limit: '50mb', extended: true}));
 app.use(bodyParser.urlencoded({extended: true}));
@@ -57,7 +57,7 @@ app.set('appPath', 'client');
 
 
 // Import routes
-app.use(require('./controllers/index'));
+//app.use(require('./controllers/index'));
 app.use('/api/bb', require('./controllers/bbMiddleware'));
 
 ///PROXY REQUESTS START
@@ -76,11 +76,16 @@ var localIp =  ip.address() === main_server ? ip.address() : remote_server;
 function proxyRequestTo (ip,port,endpoint){
     console.log("ip: " + ip);
     app.use(endpoint, (req,res)=>{
-        let url = 'http://'+ ip + ':' + port + endpoint;
-        console.log('reroute to: ' + url);
-        req.pipe(request(url)).pipe(res);
+        let request_url = 'http://'+ ip + ':' + port + endpoint;
+        console.log('reroute to: ' + request_url);
+
+        const request_server = request({url: request_url}).on('error', (error) => {
+            res.status(500).send(error.message);
+        });
+        req.pipe(request(request_server)).pipe(res);
     });
 }
+
 var localURL = 'http://'+ localIp + ':' + port + '/api/bb';
 var remoteURL = 'http://'+ remoteIp + ':' + port + '/api/bb';
 
@@ -169,7 +174,7 @@ function syncDb() {
  }
 
  // Basic version of syncing db every 5 seconds.
- setInterval(function () {
+ /*setInterval(function () {
     //portscanner checks if remote is dead. Only begin sync if not ded.
     portscanner.checkPortStatus(port, remoteIp, function(error, status) {
       // Status is 'open' if currently in use or 'closed' if available
@@ -177,7 +182,7 @@ function syncDb() {
        if (status === "open") {syncDb();}
        if (status === "closed") {console.log("remote server ded")}
     })
- }, 5000)
+ }, 5000)*/
 
 /**********MAIN SERVER listening to 8001 for repo_fetcher**************/
 //repo_fetcher is running on port 8001 so main server listens there

@@ -98,36 +98,50 @@
                     var ownerName = path[1];
                     var repoName = path[2];
 
-                    // *****sending owner,repo to backend
-                    // this is a chain of several requests to the backend
-                    // if all requests go as planned we will be redirected to the graph page
-                    // and the graph for our inputted project will be displayed*****
-                    axios.post('/api/gitProjects', {owner: ownerName,repo:  repoName})
-                    .then((response)=>{
-                        console.log("get xml Success: " + response.status);
-                        //console.log('***xml from backend*** '+ response.data + ' ***');
-                        this.Url_Input.url = "";
-                        this.url_accepted = true;
-                        this.wrong_url = false;
+                    axios.get('/api/bb/' + repoName + ownerName)
+                    .then((response) => {
+                        console.log(response.data.data);
+                        if(response.data.data !== null){
+                            console.log("   ****PROJECT FOUND****   ");
+                            var router = this.$router;
+                            const graph_id = response.data.data.graphid;
+                            console.log(graph_id);
+                            router.push({path: `graph/${graph_id}` });
+                        } else {
 
-                        //here we use the response from the previous request in order to
-                        //send XML data to the dependency finder
-                        return axios.post('/api/dependencies',{xml: response.data, repoName: repoName});
-                    })
-                    .then(
-                    (response) => {
-                        //Here we have successfully found dependencies and saved them in the DB
-                        //so now we get redirected to the GRAPH page which will display the data
-                        console.log('in the last response!');
-                        console.log("post request to dependencies Success: " + response.status);
-                        var router = this.$router;
+                            // *****sending owner,repo to backend
+                            // this is a chain of several requests to the backend
+                            // if all requests go as planned we will be redirected to the graph page
+                            // and the graph for our inputted project will be displayed*****
+                            axios.post('/api/gitProjects', {owner: ownerName,repo:  repoName})
+                            .then((response)=>{
+                                console.log("get xml Success: " + response.status);
+                                //console.log('***xml from backend*** '+ response.data + ' ***');
+                                this.Url_Input.url = "";
+                                this.url_accepted = true;
+                                this.wrong_url = false;
 
-                        const graph_id = response.data.graphid;
-                        
-                        router.push({path: `graph/${graph_id}` });
-                        
-                        console.log("after: " + this.$route.path);
+                                //here we use the response from the previous request in order to
+                                //send XML data to the dependency finder
+                                return axios.post('/api/dependencies',{xml: response.data, repoName: repoName, owner : ownerName});
+                            })
+                            .then(
+                            (response) => {
+                                //Here we have successfully found dependencies and saved them in the DB
+                                //so now we get redirected to the GRAPH page which will display the data
+                                console.log('in the last response!');
+                                console.log("post request to dependencies Success: " + response.status);
+                                var router = this.$router;
+
+                                const graph_id = response.data.graphid;
+                                
+                                router.push({path: `graph/${graph_id}` });
+                                
+                                console.log("after: " + this.$route.path);
+                            })
+                        }
                     })
+
                     .catch(error => {
                         console.log(error.toString());
                         var current_err = error.toString();
