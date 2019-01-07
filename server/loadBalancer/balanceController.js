@@ -17,7 +17,7 @@ const load_balancer_port = 8002;
 
 //I removed http:// from all these since is-reachable would say some of them are offline if i included it 
 const bbServer1withPort = '127.0.0.1:8000';
-const bbServer2withPort = '127.0.0.1:8010'; 
+const bbServer2withPort = '127.0.0.1:8000'; 
 
 // array of server ip intended to be used in the loadbalancer
 var serverips = [bbServer2withPort,bbServer1withPort];
