@@ -57,7 +57,7 @@ app.set('appPath', 'client');
 
 
 // Import routes
-app.use(require('./controllers/index'));
+//app.use(require('./controllers/index'));
 app.use('/api/bb', require('./controllers/bbMiddleware'));
 
 ///PROXY REQUESTS START
@@ -174,7 +174,7 @@ function syncDb() {
  }
 
  // Basic version of syncing db every 5 seconds.
- setInterval(function () {
+ /*setInterval(function () {
     //portscanner checks if remote is dead. Only begin sync if not ded.
     portscanner.checkPortStatus(port, remoteIp, function(error, status) {
       // Status is 'open' if currently in use or 'closed' if available
@@ -182,7 +182,7 @@ function syncDb() {
        if (status === "open") {syncDb();}
        if (status === "closed") {console.log("remote server ded")}
     })
- }, 5000)
+ }, 5000)*/
 
 /**********MAIN SERVER listening to 8001 for repo_fetcher**************/
 //repo_fetcher is running on port 8001 so main server listens there
