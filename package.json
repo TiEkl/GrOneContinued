@@ -14,7 +14,7 @@
     "test": "newman run ./tests/api-tests.postman.json",
     "dev": "nodemon ./server/app.js",
     "repohandler": "nodemon ./server/RepoHandler/app.js",
-    "loadBalancer": "nodemon ./server/loadBalancer/balanceController.js",
+    "loadbalancer": "nodemon ./server/loadBalancer/balanceController.js",
     "build": "browserify -t vueify -e client/main.js -o client/build/mainBuild.js"
   },
   "repository": {
@@ -37,11 +37,13 @@
     "express-xml-bodyparser": "^0.3.0",
     "github-download": "^0.5.0",
     "http-proxy": "^1.17.0",
-    "is-reachable": "^3.0.0",
     "ip": "^1.1.5",
+    "is-github-url": "^1.2.2",
+    "is-reachable": "^3.0.0",
     "jquery": "^3.3.1",
     "mongoose": "^5.2.12",
     "morgan": "^1.9.1",
+    "portscanner": "^2.2.0",
     "request": "^2.88.0",
     "roundround": "^0.2.0",
     "svg": "^0.1.0",
@@ -51,7 +53,6 @@
     "vue": "^2.5.17",
     "vue-router": "^3.0.1",
     "xml2js": "^0.4.19",
-    "portscanner": "^2.2.0",
     "xmlhttprequest": "^1.8.0"
   },
   "devDependencies": {

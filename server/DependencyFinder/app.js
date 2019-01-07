@@ -50,6 +50,14 @@ app.use(require('./index'));
 });*/
 /**************************************/
 
+let dependency_finder = '127.0.0.1';
+
+
+app.listen(port, dependency_finder, function(err) {
+    if ( err ) throw err;
+    console.log("repo_fetcher listening on port " + port);
+});
+
 // Error handler (must be registered last)
 var env = app.get('env');
 app.use(function(err, req, res, next) {
@@ -64,11 +72,12 @@ app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.json(err_res);
 });
+/*
 app.listen(port, function(err) {
     if (err) throw err;
     console.log(`Express server listening on port ${port}, in ${env} mode`);
     console.log(`Backend: http://localhost:${port}/api/`);
     console.log(`Frontend: http://localhost:${port}/`);
 });
-
+*/
 module.exports = app;

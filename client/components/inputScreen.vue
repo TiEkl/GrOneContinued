@@ -6,9 +6,9 @@
        <div class="row">
            <div class="col-sm-12">
                 <h1>GrOne Visualization Software</h1>
-                <p>See how good your code is by checking its dependencies, all with one single click of a button!</p>
-                <p>Classes will be represented by nodes that are colored by package.</p>
-                <p>Dependencies for a class will be shown as lines to other nodes when you hover over a node.</p>
+                <p class="information">See how good your code is by checking its dependencies, all with one single click of a button!</p>
+                <p class="information">Classes will be represented by nodes that are colored by package.</p>
+                <p class="information">Dependencies for a class will be shown as lines to other nodes when you hover over a node.</p>
            </div>
        </div>
 
@@ -19,46 +19,53 @@
                 <!-- input field and button (is hidden after user presses submit button for a valid url) -->
                 <div v-if="url_accepted===false" text-center mx-auto>
                     <form>
-                        <label for="url_input_form">Please enter a valid GitHub project url</label>
-                        <input id="url_input_form" class="form-control" type ="url" v-model="Url_Input.url" required pattern="https?://.+">
+                        <label for="url_input_form">Please enter a valid GitHub project url (if the url entered resembles a valid GitHub url but isn't, the program will get stuck)</label>
+                        <input id="url_input_form" class="form-control" type ="url" v-model="Url_Input.url" required pattern="https?://.+" placeholder="Example: https://github.com/hanien/GarageIOTest">
                         <button class="btn btn-info" type="button" @click="postProject(), btn_clicked=true">Create visualization</button>
                         <div v-if="wrong_url===true">
                             <p>This is not a valid url</p>
                         </div>
-                         <div v-if="wrong_url===false && btn_clicked===true">
-                            <p>Attempting to process repository</p>
-                        </div>
                     </form>
                 </div>
-
-                <!-- hidden loading screen that only shows up
-                when the user has submitted valid url by pressing the btn -->
+       
+                <!--  Text to show more information about what's going on in the process  -->
                 <div v-if="url_accepted===true && error_in_process===false">
-                    <div id="showProgress">
-                        <div id="progressBar">Now loading visualization!</div>
+                    <div>
+                        <div>{{infoText}}</div>
+                    </div>    
+                </div>
+
+                <!--  Progress bar showing the progress for the first axios call (to repohandler)  -->
+                <div v-if="rh_finished===false && wrong_url===false && btn_clicked===true && error_in_process===false && servers_offline === false">
+                    <div id="progress">
+                        <div class="stripes animated" id="bar" v-bind:style="{width: completed_amount + '%'}">RepoHandler Processing</div>
+                    </div>
+                </div>
+                
+                <!--  Progress bar showing the progress for the 2nd axios call (to dependencyfinder)  -->
+                <div v-if="rh_finished===true && error_in_process===false">
+                    <div id="progress2">
+                        <div class="stripes animated" id="bar2" v-bind:style="{width: completed_amount + '%'}">DependencyFinder Processing</div>
                     </div>
                 </div>
 
                 <!-- Error message that is displayed if the processing of a project failed -->
                 <div v-if="error_in_process===true">
-                    <div id="showProgress">
-                        <div id="progressBar">Error! Please try with another GitHub Project</div>
+                    <div>
+                        <div>Error! Please try with another GitHub Project</div>
                     </div>
                 </div>
                 
+                <!-- Error message that is displayed if the proxyservers are offline -->
                 <div v-if="servers_offline===true">
-                    <div id="showProgress">
-                        <div id="progressBar">Error! Servers currently unavailable, please try again shortly!</div>
+                    <div>
+                        <div>Error! Servers currently unavailable, please try again shortly!</div>
                     </div>
                 </div>
-
-                <!-- when loading is complete: replace the view with another component where we show the result -->
 
             </div>
             <div class="col-sm-3"></div>
        </div>
-
-
 
     </div>
 </template>
@@ -66,6 +73,7 @@
 
 <script>
     var axios = require('axios');
+    var isGithubUrl = require('is-github-url');
     module.exports = {
         name:"InputScreen",
         data(){
@@ -77,17 +85,17 @@
                 wrong_url: false,
                 error_in_process: false,
                 btn_clicked: false,
-                servers_offline: false
+                servers_offline: false,
+                completed_amount: 1,
+                rh_finished: false,
+                infoText: 'Attempting to process repository',
             }
         },
         methods:{
             // method to process the URL input
             // will make a post request and subsequent requests if a proper URL has been provided
             postProject: function(){
-
-                var pattern = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
-
-                if(pattern.test(this.Url_Input.url)){
+                if(isGithubUrl(this.Url_Input.url, { repository: true })){
                     this.wrong_url = false;
 
                     console.log('Provided URL: '+this.Url_Input.url);
@@ -98,21 +106,33 @@
                     var ownerName = path[1];
                     var repoName = path[2];
 
+                    let config = {                              //configuration to give data to progress bar
+                        onUploadProgress: (progressBar) =>{
+                             this.completed_amount = Math.floor((progressBar.loaded*100)/progressBar.total);
+                        }
+                    }
+
+                    this.url_accepted = true;
                     // *****sending owner,repo to backend
                     // this is a chain of several requests to the backend
                     // if all requests go as planned we will be redirected to the graph page
                     // and the graph for our inputted project will be displayed*****
-                    axios.post('http://127.0.0.1:8002/api/gitProjects', {owner: ownerName,repo:  repoName})
+                    axios.post('http://127.0.0.1:8002/api/gitProjects', {owner: ownerName,repo:  repoName}, config)
                     .then((response)=>{
+                        this.infoText = 'Now loading visualization';
                         console.log("get xml Success: " + response.status);
                         //console.log('***xml from backend*** '+ response.data + ' ***');
                         this.Url_Input.url = "";
-                        this.url_accepted = true;
+                        
                         this.wrong_url = false;
+
+                        this.rh_finished = true;
+
+                        this.completed_amount = 1;
 
                         //here we use the response from the previous request in order to
                         //send XML data to the dependency finder
-                        return axios.post('http://127.0.0.1:8002/api/dependencies',{xml: response.data, repoName: repoName});
+                        return axios.post('http://127.0.0.1:8002/api/dependencies',{xml: response.data, repoName: repoName}, config);
                     })
                     .then(
                     (response) => {
@@ -167,7 +187,66 @@
     }
 
     .middle_div{
-        padding-top: 7%;
+        padding-top: 4%;
+    }
+
+    #progress{
+        width: 100%;
+        background-color: lightgray;
+        border-radius: 20px;
+    }
+    #bar{
+        height: 30px;
+        background-color: green;
+        color: white;
+        border-radius: 20px;
+    }
+    #progress2{
+        width: 100%;
+        background-color: lightgray;
+        border-radius: 20px;
+    }
+    #bar2{
+        height: 30px;
+        background-color: blue;
+        color: white;
+        border-radius: 20px;
+    }
+
+    @keyframes animate-stripes {
+        0% {
+       background-position: 0 0;
+        }
+
+        100% {
+       background-position: 60px 0;
+        }
+    }
+    .stripes{
+        background-size: 30px 30px;
+        background-image: linear-gradient(
+       135deg,
+       rgba(255, 255, 255, .15) 25%,
+       transparent 25%,
+       transparent 50%,
+       rgba(255, 255, 255, .15) 50%,
+       rgba(255, 255, 255, .15) 75%,
+       transparent 75%,
+       transparent
+        );
+    }
+    .stripes.animated {
+         animation: animate-stripes 0.6s linear infinite;
+         animation-duration: 1.75s;
+    }
+
+    ::placeholder{
+        color: lightblue;
+        opacity: 1;
+    }
+
+    .information{
+        font-size: 0.7em;
     }
 
 </style>
