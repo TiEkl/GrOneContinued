@@ -98,7 +98,7 @@
                     var ownerName = path[1];
                     var repoName = path[2];
 
-                    axios.get('http://127.0.0.1:8000/api/bb/' + repoName + ownerName)
+                    axios.get('/api/bb/' + repoName + ownerName)
                     .then((response) => {
                         console.log(response.data.data);
                         if(response.data.data !== null){
@@ -113,7 +113,7 @@
                             // this is a chain of several requests to the backend
                             // if all requests go as planned we will be redirected to the graph page
                             // and the graph for our inputted project will be displayed*****
-                            axios.post('http://127.0.0.1:8000/api/gitProjects', {owner: ownerName,repo:  repoName})
+                            axios.post('/api/gitProjects', {owner: ownerName,repo:  repoName})
                             .then((response)=>{
                                 console.log("get xml Success: " + response.status);
                                 //console.log('***xml from backend*** '+ response.data + ' ***');
@@ -123,7 +123,7 @@
 
                                 //here we use the response from the previous request in order to
                                 //send XML data to the dependency finder
-                                return axios.post('http://127.0.0.1:8000/api/dependencies',{xml: response.data, repoName: repoName, owner : ownerName});
+                                return axios.post('/api/dependencies',{xml: response.data, repoName: repoName, owner : ownerName});
                             })
                             .then(
                             (response) => {
