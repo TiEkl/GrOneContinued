@@ -24,10 +24,11 @@ router.route('/api/dependencies').post(function(req,res) {
     var xml = req.body.xml;
 
     var repoName = req.body.repoName;
+    var ownerName = req.body.owner;
 
 
     // repoName is used to obtain the correct projectName
-        findDependencies(repoName, xml, function(result) {
+        findDependencies(repoName, ownerName, xml, function(result) {
             //console.log('**postREQjsonRES** '+ JSON.stringify(result) + ' end jsonRES***');
             res.status(201).json(result);
         });
@@ -36,7 +37,7 @@ router.route('/api/dependencies').post(function(req,res) {
 
 //Function for finding dependencies with an xml file as input and a callback function
 //that should handle the result from the function
-function findDependencies(repoName, xml, callback) {
+function findDependencies(repoName, owner, xml, callback) {
 
     perf.start();       //calculate time of excecution until perf.stop()
 
@@ -84,7 +85,7 @@ function findDependencies(repoName, xml, callback) {
         var graphData = {
             "nodes":[],
             "links":[],
-            "graphid": project
+            "graphid": project + owner
         };
         regexSearch(object);
 
@@ -265,9 +266,8 @@ function findDependencies(repoName, xml, callback) {
                 graphData.nodes[i].count = countDep;
             }
             var projectNode = new projectSchema({
-                projectName: project,
                 classes: graphData,
-                graphid: project
+                graphid: project + owner
             });
             projectNode.save( function(error) {
                 console.log("project node and its dependencies saved");
