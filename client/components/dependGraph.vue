@@ -335,13 +335,13 @@
         //console.log(this.$route.params);
         
         
-        d3.json("/api/" + parameters)
+        d3.json("/api/bb/" + parameters)
 
         .then( (data) =>  {
 
             if(data.data === null){
                 return setTimeout(()=>{
-                    d3.json("/api/" + parameters) //should be "/api/bb/" + parameters ??
+                    d3.json("/api/bb/" + parameters)
                     .then((data)=>{
                         console.log('in the timeout method!');
                         var graphData = data.data.classes;
