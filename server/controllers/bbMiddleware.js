@@ -4,6 +4,10 @@ var axios = require('axios');
 
 var projectSchema = require('../models/projectNode.js');
 
+// These variables should change to whichever computer carries the individual components
+var repoHandler = '127.0.0.1:8001';
+var dependencyFinder = '127.0.0.1:9000';
+
 router.get('/', function ( req, res ) {
     console.log("in get all depe");
     projectSchema.find(function(err,projectSchema){
@@ -31,13 +35,13 @@ router.post('/', function (req, res) {
     var ownerName = req.body.owner;
     var repoName = req.body.repo;
 
-    axios.post('http://127.0.0.1:8001/api/gitProjects', {owner: ownerName,repo:  repoName})
+    axios.post('http://' + repoHandler + '/api/gitProjects', {owner: ownerName,repo:  repoName})
     .then((response)=>{
         console.log("get xml Success: " + response.status);
         //console.log('***xml from backend*** '+ response.data + ' ***');
         //here we use the response from the previous request in order to
-        //send XML data to the dependency finder
-        return axios.post('http://127.0.0.1:9000/api/dependencies',{xml: response.data, repoName: repoName, owner : ownerName});
+        //send XML data to the dependency finder        
+        return axios.post('http://' + dependencyFinder +'/api/dependencies',{xml: response.data, repoName: repoName, owner : ownerName});
     }).then((response2) => {
         console.log(response2.data);
         var projectNode = new projectSchema({

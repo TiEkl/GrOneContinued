@@ -10,12 +10,13 @@
   "scripts": {
     "postinstall": "browserify -t vueify -e client/main.js -o client/build/mainBuild.js",
     "start": "node ./server/app.js",
-    "dependencyfinder": "nodemon ./server/DependencyFinder/app.js",
+    "df": "nodemon ./server/DependencyFinder/app.js",
     "test": "newman run ./tests/api-tests.postman.json",
     "dev": "nodemon ./server/app.js",
-    "repohandler": "nodemon ./server/RepoHandler/app.js",
-    "loadBalancer": "nodemon ./server/loadBalancer/balanceController.js",
-    "build": "browserify -t vueify -e client/main.js -o client/build/mainBuild.js"
+    "rh": "nodemon ./server/RepoHandler/app.js",
+    "lb": "nodemon ./server/loadBalancer/balanceController.js",
+    "build": "browserify -t vueify -e client/main.js -o client/build/mainBuild.js",
+    "local": "concurrently --kill-others \"npm run df\" \"npm run dev\" \"npm run rh\" \"npm run lb\""
   },
   "repository": {
     "type": "git",
@@ -58,6 +59,7 @@
     "babel-core": "^6.26.3",
     "babel-plugin-transform-runtime": "^6.23.0",
     "babel-preset-es2015": "^6.24.1",
+    "concurrently": "^4.1.0",
     "newman": "^4.2.2",
     "nodemon": "^1.18.4",
     "vueify": "^9.4.1",

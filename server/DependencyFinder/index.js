@@ -5,7 +5,6 @@ var xml2js = require('xml2js');
 var parseString = require('xml2js').parseString;
 const fs = require('fs');
 const perf = require('execution-time')();
-var uniqid = require('uniqid');
 
 var projectSchema = require('../models/projectNode.js');
 
