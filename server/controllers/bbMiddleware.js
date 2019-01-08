@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var axios = require('axios');
+var ip = require('ip');
 
 var projectSchema = require('../models/projectNode.js');
 
@@ -23,8 +24,12 @@ router.get('/:ownerName/:repoName', function (req, res, next) {
     var the_id = ownerName + repoName;
     projectSchema.findOne(({
         graphid: the_id
-    }), (err, data) => {
-        if (data !== null) {
+    }), (err, project) => {
+        if (project !== null) {
+            var data = {
+                projectNode: project,
+                ip: ip.address()
+            };
             res.status(200).json(data);
         } else {
             axios.post('http://' + repoHandler + '/api/gitProjects', { owner: ownerName, repo: repoName })
@@ -43,15 +48,17 @@ router.get('/:ownerName/:repoName', function (req, res, next) {
                             console.log("error");
                             return next(err);
                         }
-                        res.status(201).json(projectNode);
+                    var data = {
+                        projectNode: projectNode,
+                        ip: ip.address()
+                    };
+                    res.status(201).json(data);
                     })
                 })
         }
         if (err) {
             return next(err)
         }
-        //console.log('**jsonRES** '+ JSON.stringify(data) + ' end jsonRES***');
-
     });
 });
 

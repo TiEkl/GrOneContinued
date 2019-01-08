@@ -1,5 +1,6 @@
 <template>
   <div>
+      <h3 v-bind='bbResponder'>Request handled by {{bbResponder.ip}}</h3> 
      <div id="sidebar" style="display: none;">
     <div class="item-group">
         <label class="item-label">Filter</label> 
@@ -88,6 +89,7 @@
             return {
             height : 1000,
             width : 1000,
+            bbResponder: {ip: null},
 
             }
         },
@@ -349,6 +351,8 @@
         d3.json(`/api/bb/${ownerName}/${repoName}` )
         .then( (data) =>  {
             console.log(data);
+            this.bbResponder.ip = data.ip;
+            console.log(this.bbResponder.ip);
             if(data === null){
                 return setTimeout(()=>{
                     d3.json(`/api/bb/${ownerName}/${repoName}`)
