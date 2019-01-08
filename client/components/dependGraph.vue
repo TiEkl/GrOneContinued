@@ -333,7 +333,9 @@
         }
 
         console.log('above D3!!  ');
-        const parameters = this.$route.params.graphId;
+        const ownerName = this.$route.params.ownerName;
+        const repoName = this.$route.params.repoName;
+        
         console.log(this.$route.params);
         
         $(document).ready(function() {
@@ -344,12 +346,12 @@
             })
         })
         
-        d3.json("/api/bb/" + parameters)
+        d3.json(`/api/bb/${ownerName}/${repoName}` )
         .then( (data) =>  {
             console.log(data);
             if(data === null){
                 return setTimeout(()=>{
-                    d3.json("/api/bb/" + parameters)
+                    d3.json(`/api/bb/${ownerName}/${repoName}`)
                     .then((data)=>{
                         console.log('in the timeout method!');
                         var graphData = data.classes;

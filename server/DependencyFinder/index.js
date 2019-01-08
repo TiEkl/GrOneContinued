@@ -51,7 +51,6 @@ function findDependencies(repoName, owner, xml, callback) {
             object = result.unit;
 
             if (result.unit.unit != undefined) {
-               // console.log("        res.unit.unit: " + result.unit.unit);
                object = result.unit.unit;  //each .java file in json
             }
          }

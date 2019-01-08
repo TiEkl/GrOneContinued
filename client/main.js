@@ -10,7 +10,7 @@ var router = new VueRouter({
         name: 'url_input',
         component: require("./components/inputScreen.vue")
       },
-      { path: '/graph/:graphId',
+      { path: '/graph/:ownerName/:repoName',
         name: 'graph',
         component: require("./components/dependGraph.vue") }
     ]
