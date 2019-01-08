@@ -334,8 +334,7 @@
 
         console.log('above D3!!  ');
         const parameters = this.$route.params.graphId;
-        console.log(parameters);
-        //console.log(this.$route.params);
+        console.log(this.$route.params);
         
         $(document).ready(function() {
             $('#checkAll').click(function() {
@@ -347,18 +346,18 @@
         
         d3.json("/api/bb/" + parameters)
         .then( (data) =>  {
-
-            if(data.data === null){
+            console.log(data);
+            if(data === null){
                 return setTimeout(()=>{
                     d3.json("/api/bb/" + parameters)
                     .then((data)=>{
                         console.log('in the timeout method!');
-                        var graphData = data.data.classes;
+                        var graphData = data.classes;
                         this.drawChart(graphData, drag, stringToColour,linkColour);
                     });
                 }, 2000)
             }
-            var graphData = data.data.classes;
+            var graphData = data.classes;
             this.drawChart(graphData, drag, stringToColour,linkColour);
         });
     

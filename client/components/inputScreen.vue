@@ -100,20 +100,31 @@
 
                     axios.get('/api/bb/' + repoName + ownerName)
                     .then((response) => {
-                        console.log(response.data.data);
-                        if(response.data.data !== null){
+                        console.log(response.data);
+                        if(response.data !== null){
                             console.log("   ****PROJECT FOUND****   ");
                             var router = this.$router;
-                            const graph_id = response.data.data.graphid;
+                            const graph_id = response.data.graphid;
                             console.log(graph_id);
                             router.push({path: `graph/${graph_id}` });
                         } else {
+                            axios.post('/api/bb', {owner: ownerName, repo: repoName})
+                            .then((response) => { 
+                                console.log(JSON.stringify(response.data))
+                                // response would contain the data of project that was just posted
+                                // so that would contain the id of the project. not sure where though and how many datas at this point.
+                                var router = this.$router;
+                                const graph_id = response.data.graphid;
+                                router.push({path: `graph/${graph_id}` });
+                                console.log("after: " + this.$route.path);
+                            });
+
 
                             // *****sending owner,repo to backend
                             // this is a chain of several requests to the backend
                             // if all requests go as planned we will be redirected to the graph page
                             // and the graph for our inputted project will be displayed*****
-                            axios.post('/api/gitProjects', {owner: ownerName,repo:  repoName})
+                            /*axios.post('/api/gitProjects', {owner: ownerName,repo:  repoName})
                             .then((response)=>{
                                 console.log("get xml Success: " + response.status);
                                 //console.log('***xml from backend*** '+ response.data + ' ***');
@@ -138,7 +149,7 @@
                                 router.push({path: `graph/${graph_id}` });
                                 
                                 console.log("after: " + this.$route.path);
-                            })
+                            })*/
                         }
                     })
 
