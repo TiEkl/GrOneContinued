@@ -6,8 +6,8 @@ var ip = require('ip');
 var projectSchema = require('../models/projectNode.js');
 
 // These variables should change to whichever computer carries the individual components
-var repoHandler = '127.0.0.1:8001';
-var dependencyFinder = '127.0.0.1:9000';
+var repoHandler = '192.168.1.2:8001';
+var dependencyFinder = '192.168.1.2:9000';
 
 router.get('/', function (req, res) {
     console.log("in get all depe");
@@ -26,6 +26,7 @@ router.get('/:ownerName/:repoName', function (req, res, next) {
         graphid: the_id
     }), (err, project) => {
         if (project !== null) {
+            console.log("project in db");
             var data = {
                 projectNode: project,
                 ip: ip.address()

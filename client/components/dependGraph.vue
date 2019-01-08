@@ -350,9 +350,7 @@
         
         d3.json(`/api/bb/${ownerName}/${repoName}` )
         .then( (data) =>  {
-            console.log(data);
             this.bbResponder.ip = data.ip;
-            console.log(this.bbResponder.ip);
             if(data === null){
                 return setTimeout(()=>{
                     d3.json(`/api/bb/${ownerName}/${repoName}`)

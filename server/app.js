@@ -207,7 +207,7 @@ app.use(function (err, req, res, next) {
 //var port = 3000;
 var arrayOfClass = [];
 
-app.listen(port, function (err) {
+app.listen(port, '192.168.1.2', function (err) {
     if (err) throw err;
     console.log(`Express server listening on port ${port}, in ${env} mode`);
     console.log(`Backend: http://localhost:${port}/api/`);

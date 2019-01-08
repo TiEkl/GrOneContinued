@@ -99,6 +99,8 @@
                     var repoName = path[2];
 
                     var router = this.$router;
+                    var testPath = `graph/${ownerName}/${repoName}`;
+                    console.log(testPath);
                     router.push({path: `graph/${ownerName}/${repoName}`});
                 }
                 else{
