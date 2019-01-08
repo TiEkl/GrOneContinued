@@ -54,7 +54,7 @@ app.use(require('./index'));
 let repo_fetcher = '127.0.0.1';
 
 
-app.listen(repo_fetcher_port, repo_fetcher, function(err) {
+app.listen(repo_fetcher_port, function(err) {
     if ( err ) throw err;
     console.log("repo_fetcher listening on port " + repo_fetcher_port);
 });
