@@ -350,18 +350,19 @@
         
         d3.json(`/api/bb/${ownerName}/${repoName}` )
         .then( (data) =>  {
+            console.log(data);
             this.bbResponder.ip = data.ip;
             if(data === null){
                 return setTimeout(()=>{
                     d3.json(`/api/bb/${ownerName}/${repoName}`)
                     .then((data)=>{
                         console.log('in the timeout method!');
-                        var graphData = data.classes;
+                        var graphData = data.projectNode.classes;
                         this.drawChart(graphData, drag, stringToColour,linkColour);
                     });
                 }, 2000)
             }
-            var graphData = data.classes;
+            var graphData = data.projectNode.classes;
             this.drawChart(graphData, drag, stringToColour,linkColour);
         });
     
