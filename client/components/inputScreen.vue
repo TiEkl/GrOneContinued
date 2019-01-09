@@ -20,7 +20,7 @@
                 <div v-if="url_accepted===false" text-center mx-auto>
                     <form>
                         <label for="url_input_form">Please enter a valid GitHub project url</label>
-                        <input id="url_input_form" class="form-control" type ="url" v-model="Url_Input.url" required pattern="https?://.+">
+                        <input id="url_input_form" class="form-control" type ="url" v-model="Url_Input.url" required pattern="https?://.+" placeholder="Example: https://github.com/hanien/GarageIOTest">
                         <button class="btn btn-info" type="button" @click="postProject(), btn_clicked=true">Create visualization</button>
                         <div v-if="wrong_url===true">
                             <p>This is not a valid url</p>

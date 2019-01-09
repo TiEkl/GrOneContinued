@@ -1,17 +1,27 @@
 <template>
   <div>
-      <h3 v-bind='bbResponder'>Request handled by {{bbResponder.ip}}</h3> 
-     <div id="sidebar" style="display: none;">
-    <div class="item-group">
-        <label class="item-label">Filter</label> 
-        <input id="checkAll" type="checkbox" checked/>
-        <label for="checkAll"> Check / uncheck all</label> 
-            <div id="filterContainer" class="filterContainer checkbox-interaction-group"></div>
-    </div>
-</div>
-  <div class="frame">
       
-  </div>
+    <h3 v-if="bbResponder.ip!=null" v-bind='bbResponder'>Request handled by {{bbResponder.ip}}</h3> 
+
+    <div v-if="graphLoaded === false" class="loadingBar">
+        <div id="progress">
+            <div class="stripes animated" id="bar">{{processMsg}}</div>
+        </div>
+    </div>
+
+    <div id="sidebar" style="display: none;">
+        <div class="item-group">
+            <label class="item-label">Filter</label> 
+            <input id="checkAll" type="checkbox" checked/>
+            <label for="checkAll"> Check / uncheck all</label> 
+            <div id="filterContainer" class="filterContainer checkbox-interaction-group"></div>
+        </div>
+    </div>
+    
+    <div class="frame">
+      
+    </div>
+
 </div>
 </template>
 
@@ -77,6 +87,48 @@
          .text:hover{
              fill:black;
          }   
+
+    .loadingBar{
+        padding: 0 30% 0 30%;
+    }
+   #progress{
+        width: 100%;
+        background-color: lightgray;
+        border-radius: 20px;
+    }
+    #bar{
+        height: 30px;
+        background-color: green;
+        color: white;
+        border-radius: 20px;
+    }
+       @keyframes animate-stripes {
+        0% {
+       background-position: 0 0;
+        }
+
+        100% {
+       background-position: 60px 0;
+        }
+    }
+    .stripes{
+        background-size: 30px 30px;
+        background-image: linear-gradient(
+       135deg,
+       rgba(255, 255, 255, .15) 25%,
+       transparent 25%,
+       transparent 50%,
+       rgba(255, 255, 255, .15) 50%,
+       rgba(255, 255, 255, .15) 75%,
+       transparent 75%,
+       transparent
+        );
+    }
+    .stripes.animated {
+         animation: animate-stripes 0.6s linear infinite;
+         animation-duration: 1.75s;
+    }
+
 </style>
 
 
@@ -90,11 +142,30 @@
             height : 1000,
             width : 1000,
             bbResponder: {ip: null},
-
+            graphLoaded: false,
+            processMsg: 'Processing request!',
+            counter: 0
             }
         },
     
         methods: {
+            barProgression: function () {
+                
+                var width = 1;
+                var loadingbar = document.getElementById("bar");
+                var currentLoad = setInterval(frame, 10);
+                if(width>=50){
+                    this.processMsg = 'Loading visualization';
+                }
+                function frame() {
+                    if (width >= 100) {
+                        clearInterval(currentLoad);
+                    } else {
+                        width++;
+                        loadingbar.style.width = width + '%';
+                    }
+                }
+            },
             drawChart : function(data, drag, stringToColour, linkColour) {
                 var packageSet = new Set();
                 const links = data.links.map(d => Object.create(d));
@@ -286,7 +357,8 @@
             .force("center", d3.forceCenter());
       }
     },
-    mounted() {       
+    mounted() {
+        this.barProgression();     
         var drag = simulation => {
         
         function dragstarted(d) {
@@ -363,6 +435,7 @@
                 }, 2000)
             }
             var graphData = data.projectNode.classes;
+            this.graphLoaded = true;
             this.drawChart(graphData, drag, stringToColour,linkColour);
         });
     
