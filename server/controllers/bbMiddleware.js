@@ -3,6 +3,10 @@ var router = express.Router();
 var axios = require('axios');
 var ip = require('ip');
 
+const followRedirects = require('follow-redirects');
+followRedirects.maxRedirects = 10;
+followRedirects.maxBodyLength = 500 * 1024 * 1024 * 1024;
+
 var projectSchema = require('../models/projectNode.js');
 
 // These variables should change to whichever computer carries the individual components
@@ -33,10 +37,10 @@ router.get('/:ownerName/:repoName', function (req, res, next) {
             };
             res.status(200).json(data);
         } else {
-            axios.post('http://' + repoHandler + '/api/gitProjects', { owner: ownerName, repo: repoName })
+            axios.post( 'http://' + repoHandler + '/api/gitProjects', { owner: ownerName, repo: repoName })
                 .then((response) => {
                     console.log("get xml Success: " + response.status);
-                    //send XML data to the dependency finder        
+                    //send XML data to the dependency finder
                     return axios.post('http://' + dependencyFinder + '/api/dependencies', { xml: response.data, repoName: repoName, owner: ownerName });
                 }).then((response2) => {
                     console.log(response2.data);
