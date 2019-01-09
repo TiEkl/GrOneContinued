@@ -17,7 +17,7 @@ const load_balancer_port = 8002;
 
 //I removed http:// from all these since is-reachable would say some of them are offline if i included it 
 const bbServer1withPort = '127.0.0.1:8000';
-const bbServer2withPort = '127.0.0.1:8000'; 
+const bbServer2withPort = '192.168.1.102:8000'; 
 
 // array of server ip intended to be used in the loadbalancer
 var serverips = [bbServer2withPort,bbServer1withPort];
@@ -60,7 +60,7 @@ function balanceLoad(req,res){
 ///All the stuff an app.js needs. (Not sure if we need all of them).
 //Now we can run balanceController.js on port 8002 so that we can make a request from the front end to port 8002
 //and the balancer will reroute it
-app.use(bodyParser.json({limit: '50mb', extended: true}));
+app.use(bodyParser.json({limit: '150mb', extended: true}));
 // HTTP request logger
 app.use(morgan('dev'));
 // Serve static assets (for frontend client)
@@ -74,7 +74,7 @@ app.set('appPath', 'client');
 // LOCAL TESTING - POINTS TO SELF
         let load_balancer = '127.0.0.1';
 
-app.listen(load_balancer_port, load_balancer, function(err) {
+app.listen(load_balancer_port, function(err) {
     if ( err ) throw err;
     console.log("load_balancer listening on port " + load_balancer_port);
 });

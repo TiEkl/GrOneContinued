@@ -1,5 +1,6 @@
 <template>
   <div>
+      <h3 v-bind='bbResponder'>Request handled by {{bbResponder.ip}}</h3> 
      <div id="sidebar" style="display: none;">
     <div class="item-group">
         <label class="item-label">Filter</label> 
@@ -88,6 +89,7 @@
             return {
             height : 1000,
             width : 1000,
+            bbResponder: {ip: null},
 
             }
         },
@@ -333,9 +335,10 @@
         }
 
         console.log('above D3!!  ');
-        const parameters = this.$route.params.graphId;
-        console.log(parameters);
-        //console.log(this.$route.params);
+        const ownerName = this.$route.params.ownerName;
+        const repoName = this.$route.params.repoName;
+        
+        console.log(this.$route.params);
         
         $(document).ready(function() {
             $('#checkAll').click(function() {
@@ -345,20 +348,21 @@
             })
         })
         
-        d3.json("/api/bb/" + parameters)
+        d3.json(`/api/bb/${ownerName}/${repoName}` )
         .then( (data) =>  {
-
-            if(data.data === null){
+            console.log(data);
+            this.bbResponder.ip = data.ip;
+            if(data === null){
                 return setTimeout(()=>{
-                    d3.json("/api/bb/" + parameters)
+                    d3.json(`/api/bb/${ownerName}/${repoName}`)
                     .then((data)=>{
                         console.log('in the timeout method!');
-                        var graphData = data.data.classes;
+                        var graphData = data.projectNode.classes;
                         this.drawChart(graphData, drag, stringToColour,linkColour);
                     });
                 }, 2000)
             }
-            var graphData = data.data.classes;
+            var graphData = data.projectNode.classes;
             this.drawChart(graphData, drag, stringToColour,linkColour);
         });
     

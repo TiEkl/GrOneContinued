@@ -32,7 +32,7 @@ var app = express();
 //use cors to allow github
 app.use(cors());
 // Parse requests of content-type 'application/json'
-app.use(bodyParser.json({limit: '50mb', extended: true}));
+app.use(bodyParser.json({limit: '150mb', extended: true}));
 // HTTP request logger
 app.use(morgan('dev'));
 // Serve static assets (for frontend client)
@@ -54,7 +54,7 @@ app.use(require('./index'));
 let repo_fetcher = '127.0.0.1';
 
 
-app.listen(repo_fetcher_port, repo_fetcher, function(err) {
+app.listen(repo_fetcher_port, function(err) {
     if ( err ) throw err;
     console.log("repo_fetcher listening on port " + repo_fetcher_port);
 });

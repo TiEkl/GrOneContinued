@@ -5,7 +5,6 @@ var xml2js = require('xml2js');
 var parseString = require('xml2js').parseString;
 const fs = require('fs');
 const perf = require('execution-time')();
-var uniqid = require('uniqid');
 
 var projectSchema = require('../models/projectNode.js');
 
@@ -25,8 +24,6 @@ router.route('/api/dependencies').post(function(req,res) {
 
     var repoName = req.body.repoName;
     var ownerName = req.body.owner;
-
-
     // repoName is used to obtain the correct projectName
         findDependencies(repoName, ownerName, xml, function(result) {
             //console.log('**postREQjsonRES** '+ JSON.stringify(result) + ' end jsonRES***');
@@ -48,15 +45,12 @@ function findDependencies(repoName, owner, xml, callback) {
       var object;
 
       if (result != undefined) {
-         console.log("  result:" + result);
          object = result;
 
          if (result.unit != undefined) {
-            console.log("     result.unit: " + result.unit);
             object = result.unit;
 
             if (result.unit.unit != undefined) {
-               // console.log("        res.unit.unit: " + result.unit.unit);
                object = result.unit.unit;  //each .java file in json
             }
          }
@@ -67,20 +61,11 @@ function findDependencies(repoName, owner, xml, callback) {
 
       // end
 
-        // var object = result.unit.unit;  //each .java file in json
-        // // if (result != undefined) {
-        //    throw Error("error! result undefined");
-        // }
-
-
         var project;
         //Project name will probably be have to be fetched from the xmlhttprequest once that's implemented
         if(object[0].$.filename != null) {
-            // project = object[0].$.filename.toString().split("\\")[1];
             project = repoName;
         }
-
-        var generatedID = uniqid();
 
         var graphData = {
             "nodes":[],
@@ -95,10 +80,8 @@ function findDependencies(repoName, owner, xml, callback) {
 
             //For loop that creates each Node for the graphData, checks for classes and interfaces.
             //Also stringifies each class/interface to prepare for the regex matching.
-            console.log("object.length : " + object.length);
             for (var i = 0; i < object.length; i++) {
 
-               console.log("              Current object iteration: >>  " + i);
                var currentNode = {"id": "", "package": "", "count": 0};
 
                if (object[i].class != null) {      //check if the java file includes any class
@@ -265,16 +248,7 @@ function findDependencies(repoName, owner, xml, callback) {
                 }
                 graphData.nodes[i].count = countDep;
             }
-            var projectNode = new projectSchema({
-                classes: graphData,
-                graphid: project + owner
-            });
-            projectNode.save( function(error) {
-                console.log("project node and its dependencies saved");
-                if (error){
-                    console.error(error);
-                }
-            });
+
             //Stops execution timing and logs the time to the console
             const results = perf.stop();
             console.log(results.time);

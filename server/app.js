@@ -46,7 +46,7 @@ app.use(cors());
 proxyRequestTo(repo_fetcher,repo_fetcher_port,'/api/gitProjects');
 proxyRequestTo(dependency_finder,dependency_finder_port,'/api/dependencies');
 
-app.use(bodyParser.json({limit: '50mb', extended: true}));
+app.use(bodyParser.json({limit: '150mb', extended: true}));
 app.use(bodyParser.urlencoded({extended: true}));
 // HTTP request logger
 app.use(morgan('dev'));
@@ -87,7 +87,7 @@ function proxyRequestTo (ip,port,endpoint){
 }
 
 var localURL = 'http://'+ localIp + ':' + port + '/api/bb';
-var remoteURL = 'http://'+ remoteIp + ':' + port + '/api/bb';
+var remoteURL = 'http://'+ remoteIp + ':' + port + '/api/bb/project';
 
 console.log("     REMOTE IP: " + remoteIp);
 console.log("     LOCAL IP: " + localIp);
@@ -98,7 +98,6 @@ function syncDb() {
      request(localURL, function (err, response, body) { //body has local objects
         var localData = JSON.parse(body);
         if(localData != undefined) { 
-        //if(typeof body != undefined){
 
              // console.log("    Local JSON Data: " + JSON.stringify(localData.projectSchemas));
              console.log("       Local data length: " + localData.projectSchemas.length);
@@ -107,7 +106,6 @@ function syncDb() {
              request(remoteURL, function (error, response2, resRemoteBody) { //remotebody has remote objects
                 var remoteData = JSON.parse(resRemoteBody);                 
                 if(remoteData != undefined) {
-                //if(typeof resRemoteBody != undefined) {
 
                      // console.log("    Remote JSON Data: " + JSON.stringify(remoteData.projectSchemas));
                      console.log("       Remote data length: " + remoteData.projectSchemas.length);
@@ -129,7 +127,6 @@ function syncDb() {
                                 }
                             };
                             request(options, function(err,res,body){
-                               // console.log("res: " + JSON.stringify(res));
                                 if(!err && res.statusCode == 201) {
                                    // console.log("body: " + body);
                                 }
