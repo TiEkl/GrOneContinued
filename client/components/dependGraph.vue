@@ -1,14 +1,17 @@
 <template>
   <div>
+      <button id="filterBtn" v-bind="filterBtn" @click='hideFilter()'>{{filterBtn.txt}}</button>
       <h3 v-bind='bbResponder'>Request handled by {{bbResponder.ip}}</h3> 
-     <div id="sidebar" style="display: none;">
-    <div class="item-group">
-        <label class="item-label">Filter</label> 
-        <input id="checkAll" type="checkbox" checked/>
-        <label for="checkAll"> Check / uncheck all</label> 
+    <div id="sidebar" style="display: none;">
+        <div class="item-group">
+            <label class="item-label">Filter</label>
+            <div>
+                <input id="checkAll" type="checkbox" checked/>
+                <label for="checkAll"> Check / uncheck all</label>
+            </div>
             <div id="filterContainer" class="filterContainer checkbox-interaction-group"></div>
+        </div>
     </div>
-</div>
   <div class="frame">
       
   </div>
@@ -17,6 +20,8 @@
 
 
 <style>
+
+
 #sidebar {
     position: absolute;
     z-index: 2;
@@ -90,7 +95,8 @@
             height : 1000,
             width : 1000,
             bbResponder: {ip: null},
-
+            loading: true,
+            filterBtn: {txt: 'Hide filter', visible: true },
             }
         },
     
@@ -284,6 +290,17 @@
             .force("charge", d3.forceManyBody().distanceMax(180).strength(-80))
             .force("collide", d3.forceCollide().radius(20))
             .force("center", d3.forceCenter());
+      },
+      hideFilter : function() {
+            if(this.filterBtn.visible === true) {
+                this.filterBtn.txt = 'Show filter';
+                this.filterBtn.visible = false;
+            }
+            else {
+                this.filterBtn.txt = 'Hide filter';
+                this.filterBtn.visible = true;
+            }
+            $('#sidebar').toggle(1000);
       }
     },
     mounted() {       
@@ -352,6 +369,7 @@
         .then( (data) =>  {
             console.log(data);
             this.bbResponder.ip = data.ip;
+            this.loading = false;
             if(data === null){
                 return setTimeout(()=>{
                     d3.json(`/api/bb/${ownerName}/${repoName}`)
