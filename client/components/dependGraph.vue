@@ -1,7 +1,7 @@
 <template>
   <div>
-      <button id="filterBtn" v-bind="filterBtn" @click='hideFilter()'>{{filterBtn.txt}}</button>
-      <h3 v-bind='bbResponder'>Request handled by {{bbResponder.ip}}</h3> 
+      <button v-if="!loading" id="filterBtn" v-bind="filterBtn" @click='hideFilter()'>{{filterBtn.txt}}</button>
+      <h3 v-if='!loading' v-bind='bbResponder'>Request handled by {{bbResponder.ip}}</h3> 
     <div id="sidebar" style="display: none;">
         <div class="item-group">
             <label class="item-label">Filter</label>
