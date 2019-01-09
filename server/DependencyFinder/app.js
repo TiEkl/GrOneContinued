@@ -12,7 +12,7 @@ var port = process.env.PORT || 9000;
 var app = express();
 
 // Parse requests of content-type 'application/json'
-app.use(bodyParser.json({limit: '50mb', extended: true}));
+app.use(bodyParser.json({limit: '500mb', extended: true}));
 //use cors to allow github
 app.use(cors());
 // HTTP request logger

@@ -46,7 +46,7 @@ app.use(cors());
 proxyRequestTo(repo_fetcher,repo_fetcher_port,'/api/gitProjects');
 proxyRequestTo(dependency_finder,dependency_finder_port,'/api/dependencies');
 
-app.use(bodyParser.json({limit: '50mb', extended: true}));
+app.use(bodyParser.json({limit: '500mb', extended: true}));
 app.use(bodyParser.urlencoded({extended: true}));
 // HTTP request logger
 app.use(morgan('dev'));

@@ -60,7 +60,7 @@ function balanceLoad(req,res){
 ///All the stuff an app.js needs. (Not sure if we need all of them).
 //Now we can run balanceController.js on port 8002 so that we can make a request from the front end to port 8002
 //and the balancer will reroute it
-app.use(bodyParser.json({limit: '50mb', extended: true}));
+app.use(bodyParser.json({limit: '500mb', extended: true}));
 // HTTP request logger
 app.use(morgan('dev'));
 // Serve static assets (for frontend client)

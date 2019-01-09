@@ -56,6 +56,9 @@ router.get('/:ownerName/:repoName', function (req, res, next) {
                     res.status(201).json(data);
                     })
                 })
+                .catch((error)=>{
+                    res.status(500).send({message: 'Error in process'});
+                });
         }
         if (err) {
             return next(err)

@@ -3,9 +3,16 @@
       
     <h3 v-if="bbResponder.ip!=null" v-bind='bbResponder'>Request handled by {{bbResponder.ip}}</h3> 
 
-    <div v-if="graphLoaded === false" class="loadingBar">
+    <div v-if="graphLoaded === false && error_in_process===false" class="loadingBar">
         <div id="progress">
             <div class="stripes animated" id="bar">{{processMsg}}</div>
+        </div>
+    </div>
+
+     <!-- Error message that is displayed if the processing of a project failed -->
+    <div v-if="error_in_process===true">
+        <div id="showProgress">
+            <div id="progressBar">Error! Please try with another GitHub Project</div>
         </div>
     </div>
 
@@ -144,7 +151,7 @@
             bbResponder: {ip: null},
             graphLoaded: false,
             processMsg: 'Processing request!',
-            counter: 0
+            error_in_process: false
             }
         },
     
@@ -437,6 +444,9 @@
             var graphData = data.projectNode.classes;
             this.graphLoaded = true;
             this.drawChart(graphData, drag, stringToColour,linkColour);
+        })
+        .catch((error)=>{
+            this.error_in_process = true;
         });
     
         }
