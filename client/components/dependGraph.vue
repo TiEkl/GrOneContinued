@@ -1,11 +1,13 @@
 <template>
   <div>
       
-    <h3 v-if="bbResponder.ip!=null" v-bind='bbResponder'>Request handled by {{bbResponder.ip}}</h3> 
+    <h5 v-if="bbResponder.ip!=null" v-bind='bbResponder'>Request handled by {{bbResponder.ip}}</h5> 
 
     <div v-if="graphLoaded === false && error_in_process===false" class="loadingBar">
         <div id="progress">
-            <div class="stripes animated" id="bar">{{processMsg}}</div>
+            <div class="stripes animated" id="bar">
+                Processing request
+            </div>
         </div>
     </div>
 
@@ -150,7 +152,6 @@
             width : 1000,
             bbResponder: {ip: null},
             graphLoaded: false,
-            processMsg: 'Processing request!',
             error_in_process: false
             }
         },
@@ -160,12 +161,10 @@
                 
                 var width = 1;
                 var loadingbar = document.getElementById("bar");
-                var currentLoad = setInterval(frame, 10);
-                if(width>=50){
-                    this.processMsg = 'Loading visualization';
-                }
+                var currentLoad = setInterval(frame, 20);
                 function frame() {
                     if (width >= 100) {
+                        loadingbar.textContent="Loading visualization";
                         clearInterval(currentLoad);
                     } else {
                         width++;
