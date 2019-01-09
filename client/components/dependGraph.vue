@@ -14,7 +14,7 @@
      <!-- Error message that is displayed if the processing of a project failed -->
     <div v-if="error_in_process===true">
         <div id="showProgress">
-            <div id="progressBar">Error! Please try with another GitHub Project</div>
+            <div id="progressBar">Error! Service unavailable or not able to process GitHub repository</div>
         </div>
     </div>
 

@@ -27,6 +27,7 @@ router.route('/api/dependencies').post(function(req,res) {
     // repoName is used to obtain the correct projectName
         findDependencies(repoName, ownerName, xml, function(result) {
             //console.log('**postREQjsonRES** '+ JSON.stringify(result) + ' end jsonRES***');
+            console.log('Finding dependencies success!');
             res.status(201).json(result);
         });
 
@@ -185,8 +186,8 @@ function findDependencies(repoName, owner, xml, callback) {
                        // As a temp fix i have set it to an empty string, allowing the visualization to work,
                        // but the links' color to be always red(outside of package).
                        if (object[j].package == undefined) {
-                          console.log(" There is no package defined to compare to. Defaulting to 'unknown'.");
-                          console.log(" Also Tim says Put your files in proper packages or get off my lawn.");
+                          //console.log(" There is no package defined to compare to. Defaulting to 'unknown'.");
+                          //console.log(" Also Tim says Put your files in proper packages or get off my lawn.");
                           comparePackage = ["unknown"];
                        }
                         if (object[j].package != undefined) {
