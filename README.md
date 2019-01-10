@@ -28,7 +28,8 @@ The GrOne Visualizer is optimally run on 5 separate physical systems (6 if clien
 Several prerequisites are required to be downloaded by the physical systems before the system can function.
 
 1. srcML is required by *Repo Handler*.
-    - It should be noted that srcML cannot be installed in a physical system running macOS as of the time of writing. Therefore, *Repo Handler* must be either running Windows or Linux.
+    - It should be noted that only __macOS 10.9, 10.10, and 10.11 support srcML__. srcML cannot be installed in a physical system running other versions other than the aforementioned versions of macOS as of the time of writing. Therefore, it is recommended that the node running *Repo Handler* be running Windows as the OS instead.  
+    A full list of supported Operating Systems can be found [here](https://www.srcml.org/#download).
 2. Node.js (v10) is required by all nodes.
 3. The npm manager is also required. However, npm is distributed with node, and thus if Node.js is installed, npm should be as well. npm is also required by all nodes.
 4. MongoDB(v4) is required by by *Manager A* and *Manager B* and must be running locally on both.
