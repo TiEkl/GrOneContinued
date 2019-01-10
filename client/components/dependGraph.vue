@@ -157,21 +157,6 @@
         },
     
         methods: {
-            barProgression: function () {
-                
-                var width = 1;
-                var loadingbar = document.getElementById("bar");
-                var currentLoad = setInterval(frame, 20);
-                function frame() {
-                    if (width >= 100) {
-                        loadingbar.textContent="Loading visualization";
-                        clearInterval(currentLoad);
-                    } else {
-                        width++;
-                        loadingbar.style.width = width + '%';
-                    }
-                }
-            },
             drawChart : function(data, drag, stringToColour, linkColour) {
                 var packageSet = new Set();
                 const links = data.links.map(d => Object.create(d));
@@ -363,8 +348,7 @@
             .force("center", d3.forceCenter());
       }
     },
-    mounted() {
-        this.barProgression();     
+    mounted() {  
         var drag = simulation => {
         
         function dragstarted(d) {
