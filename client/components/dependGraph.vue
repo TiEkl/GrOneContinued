@@ -1,8 +1,14 @@
 <template>
   <div>
     <div class="row">
-        <button v-if="!loading" id="filterBtn" v-bind="filterBtn" @click='hideFilter()'>{{filterBtn.txt}}</button>
-        <h3 v-if='!loading' v-bind='bbResponder'>Request handled by {{bbResponder.ip}}</h3> 
+        <div class="col-sm-1">
+            <button class="btn btn-secondary" align="left" v-if="!loading" id="filterBtn" v-bind="filterBtn" @click='hideFilter()'>{{filterBtn.txt}}</button>
+        </div>
+        <div class="col-sm-2"/>
+        <div class="col-sm-6">
+           <h3 align="center" v-if='!loading' v-bind='bbResponder'>Request handled by {{bbResponder.ip}}</h3> 
+        </div>
+        <div class="col-sm-3"/>
     </div>
 
     <div id="sidebar" style="display: none;">
@@ -24,6 +30,11 @@
 
 <style>
 
+#filterBtn {
+    background-color: #353a3f;
+    color: white;
+}
+
 .frame {
     min-height : 100vh;
     min-width : 100vw;
@@ -35,11 +46,14 @@
 
 #sidebar {
     position: absolute;
+    border-radius: 5px;
     z-index: 2;
-    background-color: #FFF;
     padding: 10px;
     margin: 5px;
-    border: 1px solid #6895b4;
+    margin-left: -2px;
+    border-right: 5px solid #353a3f;
+    border-bottom: 5px solid #353a3f;
+    border-top: 5px solid #353a3f;
     min-height: 3px;
     min-width: 8px;
 }
@@ -319,7 +333,7 @@
                 this.filterBtn.txt = 'Hide filter';
                 this.filterBtn.visible = true;
             }
-            $('#sidebar').toggle();
+            $('#sidebar').toggle('slide', {direction: 'left'}, 750);
       },
         reDraw : function() {
             let width = document.getElementById("svgFrame").clientWidth;
