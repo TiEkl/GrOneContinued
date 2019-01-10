@@ -15,13 +15,13 @@ To arrive at the website, the URL is structured as such:
 
 
 # Deployment
-The GrOne Visualizer is optimally run on 3 separate physical systems at the moment before a user can use the system.  
+The GrOne Visualizer is optimally run on 3 separate physical systems at the moment before a user can use the system. These will also be referred to as "nodes" further down.   
    + The first physical component runs the __LoadBalancer__.  
-    For the sake of clarity we will call this physical system the *Load Balancer* from here onwards.
+    For the sake of clarity we will call this node the *Load Balancer* from here onwards.
    + The second physical component runs an instance of the __Blackboard__, __RepoHandler__, and __DependencyFinder__.  
-   For the sake of clarity we will call this physical system *Manager A*.
+   For the sake of clarity we will call this node *Manager A*.
    + The third physical component runs another instance of the __Blackboard__, __RepoHandler__, and __DependencyFinder__.  
-   For the sake of clarity we will call this physical system the *Manager B*.
+   For the sake of clarity we will call this node the *Manager B*.
 
 ## Prerequisites
 Several prerequisites are required to be downloaded by the physical systems before the system can function.
@@ -37,6 +37,23 @@ It is recommended that all 3 physical systems install all of these prerequisites
 All of the separate physical systems running parts of the system must be within the same network. To make sure the system communicates properly, all of the firewalls of all the participating systems must be disabled.
 
 Furthermore, __the IP address of all 3 systems must be known, and changed accordingly within the source code for it to function properly.__
+
+### Changing the IP addresses in the source code
+The IP addresses should be changed before beginning the deployment steps. 
+There are different steps to perform for each node.
+To find out the IP address of a physical system, ```ipconfig``` can be entered in the terminal. The IPv4 address is used for this system.
+
+For *Load Balancer*:
+1. Open the file ```balanceController.js```, located within the folder ```server/loadBalancer```.
+2. The constant ```bbServer1withPort``` should be changed as such: '[IP from *Manager A*]:8000' at Line 19. 
+3. The constant ```bbServer2withPort``` should be changed as such: '[IP from *Manager B*]:8000' at Line 20.
+4. Save the file.
+
+For *Manager A* and *Manager B*:
+1. Open the file ```app.js``` located inside the directory ```server```.
+2. The constant ```main_server```, on line 66, should be changed as such: '[IP from *Manager A*]'. 
+3. The constant ```remote_server```, on line 67,  should be changed as such: '[IP from *Manager B*]'.
+4. Save the file.
 
 ## Deployment Steps
 After the installation of the prerequisites, follow these instructions:
