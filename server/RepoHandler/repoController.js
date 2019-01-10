@@ -36,6 +36,7 @@ router.post("/", function(req, res, next) {
         console.log(err ? 'Error, dl repo unsuccessful': 'Successfully downloaded repository.')
         if (err) {
             console.log(err);
+            return next(err);
         }
         else {
             filterDir(destination, '.java', res, repo, function(res, repo) {

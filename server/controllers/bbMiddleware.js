@@ -37,13 +37,16 @@ router.get('/:ownerName/:repoName', function (req, res, next) {
             };
             res.status(200).json(data);
         } else {
+            console.log('Sending data to RepoHandler');
             axios.post( 'http://' + repoHandler + '/api/gitProjects', { owner: ownerName, repo: repoName })
                 .then((response) => {
-                    console.log("get xml Success: " + response.status);
+                    console.log("Get XML from RepoHandler Success: " + response.status);
                     //send XML data to the dependency finder
+                    console.log('Sending XML to DependencyFinder');
                     return axios.post('http://' + dependencyFinder + '/api/dependencies', { xml: response.data, repoName: repoName, owner: ownerName });
                 }).then((response2) => {
-                    console.log(response2.data);
+                    console.log('DepdendencyFinder conversion success, sending data for visualization');
+                    //console.log(response2.data);
                     var projectNode = new projectSchema({
                         classes: response2.data,
                         graphid: ownerName + repoName
@@ -60,6 +63,9 @@ router.get('/:ownerName/:repoName', function (req, res, next) {
                     res.status(201).json(data);
                     })
                 })
+                .catch((error)=>{
+                    res.status(500).send({message: 'Error in process'});
+                });
         }
         if (err) {
             return next(err)

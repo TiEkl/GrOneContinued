@@ -20,7 +20,7 @@
                 <div v-if="url_accepted===false" text-center mx-auto>
                     <form>
                         <label for="url_input_form">Please enter a valid GitHub project url</label>
-                        <input id="url_input_form" class="form-control" type ="url" v-model="Url_Input.url" required pattern="https?://.+">
+                        <input id="url_input_form" class="form-control" type ="url" v-model="Url_Input.url" required pattern="https?://.+" placeholder="Example: https://github.com/hanien/GarageIOTest">
                         <button class="btn btn-info" type="button" @click="postProject(), btn_clicked=true">Create visualization</button>
                         <div v-if="wrong_url===true">
                             <p>This is not a valid url</p>
@@ -42,7 +42,7 @@
                 <!-- Error message that is displayed if the processing of a project failed -->
                 <div v-if="error_in_process===true">
                     <div id="showProgress">
-                        <div id="progressBar">Error! Please try with another GitHub Project</div>
+                        <div id="progressBar">Error! Service unavailable or not able to process inputted GitHub repository</div>
                     </div>
                 </div>
                 
@@ -66,6 +66,7 @@
 
 <script>
     var axios = require('axios');
+    var isGithubUrl = require('is-github-url');
     module.exports = {
         name:"InputScreen",
         data(){
@@ -85,9 +86,11 @@
             // will make a post request and subsequent requests if a proper URL has been provided
             postProject: function(){
 
-                var pattern = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+                //var pattern = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
 
-                if(pattern.test(this.Url_Input.url)){
+                if(isGithubUrl(this.Url_Input.url, { repository: true })){
+
+                //if(pattern.test(this.Url_Input.url)){
                     this.wrong_url = false;
 
                     console.log('Provided URL: '+this.Url_Input.url);
