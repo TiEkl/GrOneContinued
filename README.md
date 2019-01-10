@@ -1,16 +1,13 @@
 # GrOne Visualizer
 
-The GrOne visualizer illustrates the dependencies of a public Github Java project.
-
+The GrOne visualizer illustrates the dependencies of a public Github Java project.  
 Only public Github repositories are officially accepted as input for the URL.
-Although not officially supported, some Gitlab and Bitbucket repositories may still present a visualization.
 
 The URL inputted must be structured like this:
   
 > https://github.com/[owner]/[repository]
 
 To arrive at the website, the URL is structured as such:
-
 > {IP address of *Load Balancer*}:8002
 
 
@@ -18,9 +15,9 @@ To arrive at the website, the URL is structured as such:
 The GrOne Visualizer is optimally run on 3 separate physical systems at the moment before a user can use the system. These will also be referred to as "nodes" further down.   
    + The first physical component runs the __LoadBalancer__.  
     For the sake of clarity we will call this node the *Load Balancer* from here onwards.
-   + The second physical component runs an instance of the __Blackboard__, __RepoHandler__, and __DependencyFinder__.  
+   + The second physical component runs an instance of the __BlackboardManager__, __RepoHandler__, and __DependencyFinder__.  
    For the sake of clarity we will call this node *Manager A*.
-   + The third physical component runs another instance of the __Blackboard__, __RepoHandler__, and __DependencyFinder__.  
+   + The third physical component runs another instance of the __BlackboardManager__, __RepoHandler__, and __DependencyFinder__.  
    For the sake of clarity we will call this node the *Manager B*.
 
 ## Prerequisites
@@ -61,13 +58,17 @@ After the installation of the prerequisites, follow these instructions:
 For *Load Balancer*:
 1. Open a terminal.
 2. ```npm install``` to install all the required dependencies and build the frontend.
-3. ```npm run loadbalancer``` to start the __LoadBalancer__ component.
+3. ```npm run lb``` to start the __LoadBalancer__ component.
 
 For *Manager A* and *Manager B*:
 1. Open a terminal and enter ```npm install``` to install dependencies and build the frontend.
-2. In the same terminal, enter ```npm run dev``` to start the __Blackboard__ component.
-3. Open another terminal and enter ```npm run dependencyfinder ``` to start the __DependencyFinder__ component.  
-4. Open a third terminal and enter ```npm run repohandler ``` to start the __RepoHandler__ component.  
+2. In the same terminal, enter ```npm run dev``` to start the __BlackboardManager__ component.
+3. Open another terminal and enter ```npm run df ``` to start the __DependencyFinder__ component.  
+4. Open a third terminal and enter ```npm run rh ``` to start the __RepoHandler__ component.  
+
+___
+**The website can be accessed and fully functional only after the steps above are done.**
+___
 
 # File Organization
 ## Client
@@ -78,13 +79,13 @@ The client is contained in the ```client``` folder of the repository.
 
 
 ## Backend
-We have defined the "backend" as the contents within the ```server``` folder. This maps to the __LoadBalancer__, __Blackboard__, __RepoHandler__ and the __DependencyFinder__ components in our component diagram.
+We have defined the "backend" as the contents within the ```server``` folder. This maps to the __LoadBalancer__, __BlackboardManager__, __RepoHandler__ and the __DependencyFinder__ components in our component diagram.
 
 Naturally, the directories corresponding to each component are similarly named:
 + The __LoadBalancer__ is in the directory ```loadBalancer```.
 + The __RepoHandler__ lies within the directory ```RepoHandler```.
 + The __DependencyFinder__ maps to the directory ```DependencyFinder```.
-+ The __Blackboard__ is made up of several files in different directories, but generally maps to the app.js in the ```server``` folder.
++ The __BlackboardManager__ is made up of several files in different directories, but generally maps to the app.js in the ```server``` folder.
 + There is additional middleware to allow communication between these components. The files within the ```controller``` and the index.js inside ```DependencyFinder``` makes up for the majority of the communication middleware.
 
 
