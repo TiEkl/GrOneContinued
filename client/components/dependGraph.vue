@@ -1,7 +1,10 @@
 <template>
   <div>
-      <button v-if="!loading" id="filterBtn" v-bind="filterBtn" @click='hideFilter()'>{{filterBtn.txt}}</button>
-      <h3 v-if='!loading' v-bind='bbResponder'>Request handled by {{bbResponder.ip}}</h3> 
+    <div class="row">
+        <button v-if="!loading" id="filterBtn" v-bind="filterBtn" @click='hideFilter()'>{{filterBtn.txt}}</button>
+        <h3 v-if='!loading' v-bind='bbResponder'>Request handled by {{bbResponder.ip}}</h3> 
+    </div>
+
     <div id="sidebar" style="display: none;">
         <div class="item-group">
             <label class="item-label">Filter</label>
@@ -12,7 +15,7 @@
             <div id="filterContainer" class="filterContainer checkbox-interaction-group"></div>
         </div>
     </div>
-  <div class="frame">
+  <div class="frame" id="svgFrame">
       
   </div>
 </div>
@@ -21,6 +24,13 @@
 
 <style>
 
+.frame {
+    min-height : 100vh;
+    min-width : 100vw;
+    position: absolute;
+    overflow: auto;
+    
+}
 
 #sidebar {
     position: absolute;
@@ -92,8 +102,6 @@
         name:"dependGraph",
         data() {
             return {
-            height : 1000,
-            width : 1000,
             bbResponder: {ip: null},
             loading: true,
             filterBtn: {txt: 'Hide filter', visible: true },
@@ -103,8 +111,12 @@
         methods: {
             drawChart : function(data, drag, stringToColour, linkColour) {
                 var packageSet = new Set();
-                var height = 1000;
-                var width = 1000;
+                var height = document.getElementById("svgFrame").clientHeight;
+                var width = document.getElementById("svgFrame").clientWidth;
+
+                console.log("Drawchart height " + height)
+                console.log("drawchart width " + width)
+                
                 const links = data.links.map(d => Object.create(d));
                 const nodes = data.nodes.map(d => Object.create(d));
                 const simulation = this.forceSimulation(nodes, links).on("tick", ticked);
@@ -134,7 +146,7 @@
                 .data(links)
                 .enter().append("line")
                 .attr("class", "line")
-                    .attr("stroke-width", d => Math.sqrt(d.value))
+                    .attr("stroke-width", d => Math.sqrt(d.value)*2)
             
             
                 const node = svg.append("g")
@@ -144,7 +156,7 @@
                 .data(nodes)
                 .enter().append("circle")
                 .attr("class", "circle")
-                    .attr("r", d => Math.sqrt(d.count)+3)
+                    .attr("r", d => (Math.sqrt(d.count)+3)*2)
                             .attr("fill",  d => stringToColour(d.package))
                             .call(drag(simulation))
                             .on("mouseover", mouseOver(.2))
@@ -152,7 +164,8 @@
         
 
                 function ticked() {
-                    
+                console.log("ticked height " + height); 
+                console.log("ticked width " + width);
                 link
                     .attr("x1", d => d.source.x)
                     .attr("y1", d => d.source.y)
@@ -293,9 +306,10 @@
       },
         boxingForce : function(nodes) {
 
-            let width = 1000;
-            let height = 1000;
-            console.log(nodes);
+            let width = document.getElementById("svgFrame").clientWidth;
+            let height = document.getElementById("svgFrame").clientHeight;
+            console.log("boxingFOrce height" + height);
+            console.log("boxingForce width" + width)
             for (let i = 0; i < nodes.length; i++) {
                 let radius = Math.sqrt(nodes[i].count)+3;
                 console.log(nodes[i]);
@@ -305,11 +319,14 @@
 
         },
       forceSimulation : function(nodes, links) {
+            let width = document.getElementById("svgFrame").clientWidth;
+            let height = document.getElementById("svgFrame").clientHeight;
+
          return d3.forceSimulation(nodes)
             .force("link", d3.forceLink(links).id(d => d.id)) //.distance(100))
-            .force("charge", d3.forceManyBody().distanceMax(180).strength(-80))
+            .force("charge", d3.forceManyBody().strength(-250))
             .force("collide", d3.forceCollide().radius(20))
-            .force("center", d3.forceCenter(500 , 500))
+            .force("center", d3.forceCenter(width /2 , height/2))
  
            // .force("bounds", this.boxingForce(nodes));
       },
@@ -324,11 +341,18 @@
                 this.filterBtn.visible = true;
             }
             $('#sidebar').toggle();
-      }
+      },
+        reDraw : function() {
+            let width = document.getElementById("svgFrame").clientWidth;
+            let height = document.getElementById("svgFrame").clientHeight;
+            let svg = d3.select('svg');
+            svg.attr("width", width)
+                .attr("height", height);
+      },
     },
     mounted() {       
         var drag = simulation => {
-        
+        window.addEventListener('resize', this.reDraw);
         function dragstarted(d) {
             if (!d3.event.active) simulation.alphaTarget(0.3).restart();
             d.fx = d.x;
@@ -336,11 +360,13 @@
         }
         
         function dragged(d) {
-            const radius2 = 1000
+            let width = document.getElementById("svgFrame").clientWidth;
+            let height = document.getElementById("svgFrame").clientHeight;
+
              //d.fx = d3.event.x;
             // d.fy = d3.event.y;
-            d.fx = Math.max(0, Math.min(radius2, d3.event.x));
-            d.fy = Math.max(0, Math.min(radius2, d3.event.y));
+            d.fx = Math.max(0 +Math.sqrt(d.count), Math.min(width -Math.sqrt(d.count) , d3.event.x));
+            d.fy = Math.max(0 +Math.sqrt(d.count), Math.min(height -Math.sqrt(d.count), d3.event.y));
         }
         
         function dragended(d) {
