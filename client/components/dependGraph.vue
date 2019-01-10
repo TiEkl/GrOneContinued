@@ -32,6 +32,7 @@
     
 }
 
+
 #sidebar {
     position: absolute;
     z-index: 2;
@@ -80,18 +81,12 @@
     stroke-width: 1;
     shape-rendering: crispEdges;
 }
-         .text {
-           fill: black;
-            font: 12px sans-serif;
-            }
-           
-         .circle:hover .text{
-             fill:black;
-             font: 25px sans-serif;
-         }
-         .text:hover{
-             fill:black;
-         }   
+.text {
+    fill: black;
+    font: 18px sans-serif;
+    pointer-events: none;
+}
+ 
 </style>
 
 
@@ -130,38 +125,38 @@
                     .style("width", width)
                     .style("height", height)
                     //.attr("viewBox", [0,0 , this.width, this.height])
-                        var text = svg.append("g").selectAll("text")
-                                .data(nodes)
-                                .enter().append("text")
-                                .attr("class", "text")
-                                .attr("opacity", 0)
-                                .attr("x", 20)
-                                .attr("y", ".31em")
-                                .text(function(d) { return d.id; });
+
         
                 const link = svg.append("g")
                     .attr("stroke", "#ddd")
                     .attr("stroke-opacity", 0.3)
-                .selectAll("line")
-                .data(links)
-                .enter().append("line")
-                .attr("class", "line")
+                    .selectAll("line")
+                    .data(links)
+                    .enter().append("line")
+                    .attr("class", "line")
                     .attr("stroke-width", d => Math.sqrt(d.value)*2)
             
             
                 const node = svg.append("g")
                     .attr("stroke", "#fff")
                     .attr("stroke-width", 1)
-                .selectAll("circle")
-                .data(nodes)
-                .enter().append("circle")
-                .attr("class", "circle")
+                    .selectAll("circle")
+                    .data(nodes)
+                    .enter().append("circle")
+                    .attr("class", "circle")
                     .attr("r", d => (Math.sqrt(d.count)+3)*2)
-                            .attr("fill",  d => stringToColour(d.package))
-                            .call(drag(simulation))
-                            .on("mouseover", mouseOver(.2))
-                        .on("mouseout", mouseOut)
-        
+                    .attr("fill",  d => stringToColour(d.package))
+                    .call(drag(simulation))
+                    .on("mouseover", mouseOver(.2))
+                    .on("mouseout", mouseOut)
+                var text = svg.append("g").selectAll("text")
+                    .data(nodes)
+                    .enter().append("text")
+                    .attr("class", "text")
+                    .attr("opacity", 0)
+                    .attr("x", 20)
+                    .attr("y", ".31em")
+                    .text(function(d) { return d.id; });
 
                 function ticked() {
                 console.log("ticked height " + height); 
@@ -248,25 +243,23 @@
                     .each(function(d) {
                 // create checkbox for each data
                     d3.select(this)
-                    .append("input")
-                    .attr("type", "checkbox")
-                    .attr("id", function(d) {
-                    return "chk_" + d;
+                        .append("input")
+                        .attr("type", "checkbox")
+                        .attr("id", function(d) {
+                        return "chk_" + d;
                     })
-
-                    .attr("checked", true)
-                    .on("click", function(d, i) {
+                        .attr("checked", true)
+                        .on("click", function(d, i) {
                     // register on click event
                     var lVisibility = this.checked ? "visible" : "hidden";
                     filterGraph(d, lVisibility);
                     });
-                d3.select(this)
-                    .append("span")
-                    .text(function(d) {
-                    return d;
-                    });
+                    d3.select(this)
+                        .append("span")
+                        .text(function(d) {
+                        return d;
+                        });
                 });
-
                     $("#sidebar").show(); // show sidebar
                 }
                 function filterGraph(aType, aVisibility) {
@@ -304,28 +297,14 @@
                 };
         return svg.node();
       },
-        boxingForce : function(nodes) {
-
-            let width = document.getElementById("svgFrame").clientWidth;
-            let height = document.getElementById("svgFrame").clientHeight;
-            console.log("boxingFOrce height" + height);
-            console.log("boxingForce width" + width)
-            for (let i = 0; i < nodes.length; i++) {
-                let radius = Math.sqrt(nodes[i].count)+3;
-                console.log(nodes[i]);
-                nodes[i].x = Math.max(width - radius, Math.min(0 + radius, nodes[i].x));
-                nodes[i].y = Math.max(height - radius, Math.min(0 + radius, nodes[i].y));
-            }
-
-        },
       forceSimulation : function(nodes, links) {
             let width = document.getElementById("svgFrame").clientWidth;
             let height = document.getElementById("svgFrame").clientHeight;
 
          return d3.forceSimulation(nodes)
             .force("link", d3.forceLink(links).id(d => d.id)) //.distance(100))
-            .force("charge", d3.forceManyBody().strength(-250))
-            .force("collide", d3.forceCollide().radius(20))
+            .force("charge", d3.forceManyBody().distanceMax(250).strength(-100))
+            .force("collide", d3.forceCollide().radius(30))
             .force("center", d3.forceCenter(width /2 , height/2))
  
            // .force("bounds", this.boxingForce(nodes));
@@ -365,8 +344,8 @@
 
              //d.fx = d3.event.x;
             // d.fy = d3.event.y;
-            d.fx = Math.max(0 +Math.sqrt(d.count), Math.min(width -Math.sqrt(d.count) , d3.event.x));
-            d.fy = Math.max(0 +Math.sqrt(d.count), Math.min(height -Math.sqrt(d.count), d3.event.y));
+            d.fx = Math.max(0 +(Math.sqrt(d.count)*2), Math.min(width -(Math.sqrt(d.count)*2) , d3.event.x));
+            d.fy = Math.max(0 +(Math.sqrt(d.count)*2), Math.min(height -(Math.sqrt(d.count)*2), d3.event.y));
         }
         
         function dragended(d) {
