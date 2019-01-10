@@ -2,9 +2,23 @@
   <div>
     <div class="row">
         <div class="col-sm-1">
+
             <button class="btn btn-secondary" align="left" v-if="!loading" id="filterBtn" v-bind="filterBtn" @click='hideFilter()'>{{filterBtn.txt}}</button>
         </div>
-        <div class="col-sm-2"/>
+        <div class="col-sm-1">
+            <div class="dropdown">
+                <button class="btn btn-secondary" id="legend" align="left" v-if="!loading">Legend</button>
+                <div class="dropdown-content">
+                    <p><b style="color:#f90000;">Red</b> links are between different packages </p>
+                    <p><b style="color:#00f904;">Green</b> links are within the same package </p>
+                    <p>Nodes are colored based on the package name </p>
+                    <p>Links and nodes are only shown for the checked packages in the filter </p>
+                    <p>The size of nodes depends on their own dependencies</p>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-1"/>
         <div class="col-sm-6">
            <h3 align="center" v-if='!loading' v-bind='bbResponder'>Request handled by {{bbResponder.ip}}</h3> 
         </div>
@@ -30,20 +44,39 @@
 
 <style>
 
-#filterBtn {
+.btn-secondary {
+    background-color: #353a3f;
+    color: white; 
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+.dropdown-content {
+    display: none;
+    position: absolute;
     background-color: #353a3f;
     color: white;
+    min-width: 500px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 3;
+    border-radius: 10px;
+    border: 5px solid #353a3f;
+    text-align:left;
+    padding-left: 5px;
 }
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
 
 .frame {
     min-height : 100vh;
     min-width : 100vw;
     position: absolute;
-    overflow: auto;
-    
+    overflow: auto; 
 }
-
-
 #sidebar {
     position: absolute;
     border-radius: 5px;
