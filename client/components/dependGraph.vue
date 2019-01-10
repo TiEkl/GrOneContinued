@@ -72,7 +72,7 @@
 
 
 .frame {
-    min-height : 100vh;
+    min-height : 200vh;
     min-width : 100vw;
     position: absolute;
     overflow: auto; 
@@ -217,8 +217,8 @@
                 node
                     //.attr("cx", d => d.x)
                     //.attr("cy", d => d.y);
-                    .attr("cx", function(d) { return d.x = Math.max(0 +(Math.sqrt(d.count)+3), Math.min(width - (Math.sqrt(d.count)+3), d.x)); })
-                    .attr("cy", function(d) { return d.y = Math.max(0 +(Math.sqrt(d.count)+3), Math.min(height - (Math.sqrt(d.count)+3), d.y)); });
+                    .attr("cx", function(d) { return d.x = Math.max(0 +((Math.sqrt(d.count)+3)*2), Math.min(width - ((Math.sqrt(d.count)+3)*2), d.x)); })
+                    .attr("cy", function(d) { return d.y = Math.max(0 +((Math.sqrt(d.count)+3)*2), Math.min(height - ((Math.sqrt(d.count)+3)*2), d.y)); });
                     text.attr("transform", transform);
                 }
 
@@ -391,8 +391,8 @@
 
              //d.fx = d3.event.x;
             // d.fy = d3.event.y;
-            d.fx = Math.max(0 +(Math.sqrt(d.count)*2), Math.min(width -(Math.sqrt(d.count)*2) , d3.event.x));
-            d.fy = Math.max(0 +(Math.sqrt(d.count)*2), Math.min(height -(Math.sqrt(d.count)*2), d3.event.y));
+            d.fx = Math.max(0 +((Math.sqrt(d.count)+3)*2), Math.min(width -((Math.sqrt(d.count)+3)*2) , d3.event.x));
+            d.fy = Math.max(0 +((Math.sqrt(d.count)+3)*2), Math.min(height -((Math.sqrt(d.count)+3)*2), d3.event.y));
         }
         
         function dragended(d) {
