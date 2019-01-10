@@ -103,6 +103,8 @@
         methods: {
             drawChart : function(data, drag, stringToColour, linkColour) {
                 var packageSet = new Set();
+                var height = 1000;
+                var width = 1000;
                 const links = data.links.map(d => Object.create(d));
                 const nodes = data.nodes.map(d => Object.create(d));
                 const simulation = this.forceSimulation(nodes, links).on("tick", ticked);
@@ -113,7 +115,9 @@
                 var packageArr = [...packageSet];
 
                 const svg = d3.select(".frame").append("svg")
-                    .attr("viewBox", [-this.width / 2, -this.height /2, this.width, this.height])
+                    .style("width", width)
+                    .style("height", height)
+                    //.attr("viewBox", [0,0 , this.width, this.height])
                         var text = svg.append("g").selectAll("text")
                                 .data(nodes)
                                 .enter().append("text")
@@ -148,6 +152,7 @@
         
 
                 function ticked() {
+                    
                 link
                     .attr("x1", d => d.source.x)
                     .attr("y1", d => d.source.y)
@@ -155,8 +160,10 @@
                     .attr("y2", d => d.target.y);
           
                 node
-                    .attr("cx", d => d.x)
-                    .attr("cy", d => d.y);
+                    //.attr("cx", d => d.x)
+                    //.attr("cy", d => d.y);
+                    .attr("cx", function(d) { return d.x = Math.max(0 +(Math.sqrt(d.count)+3), Math.min(width - (Math.sqrt(d.count)+3), d.x)); })
+                    .attr("cy", function(d) { return d.y = Math.max(0 +(Math.sqrt(d.count)+3), Math.min(height - (Math.sqrt(d.count)+3), d.y)); });
                     text.attr("transform", transform);
                 }
 
@@ -213,6 +220,7 @@
                     
                     
                 }
+
                 createFilter(); 
                 function createFilter() {
                     d3.select(".filterContainer")
@@ -283,14 +291,29 @@
                 };
         return svg.node();
       },
+        boxingForce : function(nodes) {
 
+            let width = 1000;
+            let height = 1000;
+            console.log(nodes);
+            for (let i = 0; i < nodes.length; i++) {
+                let radius = Math.sqrt(nodes[i].count)+3;
+                console.log(nodes[i]);
+                nodes[i].x = Math.max(width - radius, Math.min(0 + radius, nodes[i].x));
+                nodes[i].y = Math.max(height - radius, Math.min(0 + radius, nodes[i].y));
+            }
+
+        },
       forceSimulation : function(nodes, links) {
          return d3.forceSimulation(nodes)
             .force("link", d3.forceLink(links).id(d => d.id)) //.distance(100))
             .force("charge", d3.forceManyBody().distanceMax(180).strength(-80))
             .force("collide", d3.forceCollide().radius(20))
-            .force("center", d3.forceCenter());
+            .force("center", d3.forceCenter(500 , 500))
+ 
+           // .force("bounds", this.boxingForce(nodes));
       },
+
       hideFilter : function() {
             if(this.filterBtn.visible === true) {
                 this.filterBtn.txt = 'Show filter';
@@ -300,7 +323,7 @@
                 this.filterBtn.txt = 'Hide filter';
                 this.filterBtn.visible = true;
             }
-            $('#sidebar').toggle(1000);
+            $('#sidebar').toggle();
       }
     },
     mounted() {       
@@ -313,8 +336,11 @@
         }
         
         function dragged(d) {
-         d.fx = d3.event.x;
-         d.fy = d3.event.y;
+            const radius2 = 1000
+             //d.fx = d3.event.x;
+            // d.fy = d3.event.y;
+            d.fx = Math.max(0, Math.min(radius2, d3.event.x));
+            d.fy = Math.max(0, Math.min(radius2, d3.event.y));
         }
         
         function dragended(d) {
