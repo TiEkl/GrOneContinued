@@ -33,7 +33,7 @@ app.use(bodyParser.urlencoded({extended: true}));
 // HTTP request logger
 app.use(morgan('dev'));
 // Serve static assets (for frontend client)
-var root = path.normalize(__dirname + '/..');
+var root = path.normalize(__dirname + '/../..');
 app.use(express.static(path.join(root, 'client')));
 app.set('appPath', 'client');
 

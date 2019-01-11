@@ -6,7 +6,7 @@
   },
   "private": true,
   "description": "GrOne Vis",
-  "main": "server/bbManagerApp.js",
+  "main": "server/bbManager/bbManagerApp.js",
   "scripts": {
     "postinstall": "browserify -t vueify -e client/main.js -o client/build/mainBuild.js",
     "start": "node ./server/bbManager/bbManagerApp.js",
