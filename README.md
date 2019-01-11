@@ -105,6 +105,8 @@ In order to test all components locally:
 1. Set the IP addresses of all components to point ```127.0.0.1```.
 2. Run the command ```npm run local```.
 
+If testing locally, the syncing of data is disabled, as only one bbManagerApp.js instance is created.
+
 # File Organization
 ## User Interface
 The "User Interface" refers to the component that processes the visualization and contains what is presented to the user. This can be mapped to the __Visualization__ component in our component diagram which describes the architecture of the system.
@@ -120,8 +122,8 @@ Naturally, the directories corresponding to each component are similarly named:
 + The __LoadBalancer__ is in the directory ```loadBalancer```.
 + The __RepoHandler__ lies within the directory ```RepoHandler```.
 + The __DependencyFinder__ maps to the directory ```DependencyFinder```.
-+ The __BlackboardManager__ is made up of several files in different directories, but generally maps to the app.js in the ```server``` folder.
-+ There is additional middleware to allow communication between these components. The files within the ```controller``` and the index.js inside ```DependencyFinder``` makes up for the majority of the communication middleware.
++ The __BlackboardManager__ is made up of several files in different directories, but generally maps to the ```bbManagerApp.js``` in the ```server``` folder.
++ There is additional middleware to allow communication between these components. The files within the ```controller``` directory and the ```index.js``` inside ```DependencyFinder``` makes up for the majority of the communication middleware.
 
 
 

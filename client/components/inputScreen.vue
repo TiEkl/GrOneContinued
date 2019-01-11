@@ -1,7 +1,6 @@
 <template>
     <div>
     <!-- This is the main screen the user sees when they go on the website -->
-
        <!-- Header and explanation of the product -->
        <div class="row">
            <div class="col-sm-12">
@@ -16,8 +15,8 @@
             <div class="col-sm-3"></div>
             <div class="col-sm-6 middle_div">
 
-                <!-- input field and button (is hidden after user presses submit button for a valid url) -->
-                <div v-if="url_accepted===false" text-center mx-auto>
+                <!-- input field and button -->
+                <div text-center mx-auto>
                     <form>
                         <label for="url_input_form">Please enter a valid GitHub project url</label>
                         <input id="url_input_form" class="form-control" type ="url" v-model="Url_Input.url" required pattern="https?://.+" placeholder="Example: https://github.com/hanien/GarageIOTest">
@@ -31,38 +30,25 @@
                     </form>
                 </div>
 
-                <!-- hidden loading screen that only shows up
-                when the user has submitted valid url by pressing the btn -->
-                <div v-if="url_accepted===true && error_in_process===false">
-                    <div id="showProgress">
-                        <div id="progressBar">Now loading visualization!</div>
-                    </div>
-                </div>
-
                 <!-- Error message that is displayed if the processing of a project failed -->
                 <div v-if="error_in_process===true">
-                    <div id="showProgress">
-                        <div id="progressBar">Error! Service unavailable or not able to process inputted GitHub repository</div>
+                    <div>
+                        <div>Error! Service unavailable or not able to process inputted GitHub repository</div>
                     </div>
-                </div>
-                
+                </div>    
                 <div v-if="servers_offline===true">
-                    <div id="showProgress">
-                        <div id="progressBar">Error! Servers currently unavailable, please try again shortly!</div>
+                    <div>
+                        <div>Error! Servers currently unavailable, please try again shortly!</div>
                     </div>
                 </div>
 
-                <!-- when loading is complete: replace the view with another component where we show the result -->
+                <!-- when url is accepted: replace the view with another component where we show the result -->
 
             </div>
             <div class="col-sm-3"></div>
        </div>
-
-
-
     </div>
 </template>
-
 
 <script>
     var axios = require('axios');
@@ -74,7 +60,6 @@
                 Url_Input:{
                     url:''
                 },
-                url_accepted: false,
                 wrong_url: false,
                 error_in_process: false,
                 btn_clicked: false,
@@ -83,7 +68,7 @@
         },
         methods:{
             // method to process the URL input
-            // will make a post request and subsequent requests if a proper URL has been provided
+            // will make a push to the graph vue component if the url was accepted
             postProject: function(){
 
                 //var pattern = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;

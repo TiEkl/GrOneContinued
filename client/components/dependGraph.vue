@@ -18,7 +18,9 @@
         </div>
         <div class="col-sm-1"/>
         <div class="col-sm-6">
-           <h3 align="center" v-if='!loading' v-bind='bbResponder'>Request handled by {{bbResponder.ip}}</h3>        
+            
+            <h3 align="center" v-if='!loading' v-bind='bbResponder'>Request handled by {{bbResponder.ip}}</h3>        
+            
             <div v-if="loading && error_in_process===false" class="loadingBar">
                 <div id="progress">
                     <div class="stripes animated" id="bar">
@@ -26,7 +28,8 @@
                     </div>
                 </div>
             </div>
-             <!-- Error message that is displayed if the processing of a project failed -->
+            
+            <!-- Error message that is displayed if the processing of a project failed -->
             <div v-if="error_in_process===true">
                 <div >
                     <div >Error! Service unavailable or not able to process GitHub repository</div>

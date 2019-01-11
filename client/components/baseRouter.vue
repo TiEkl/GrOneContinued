@@ -26,8 +26,6 @@
           <div class="col-sm-0">
           </div>
         </div>
-
-        <!-- footer below (not yet implemented) -->
         
     </div>
 </template>
