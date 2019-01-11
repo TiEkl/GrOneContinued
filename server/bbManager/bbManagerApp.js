@@ -38,7 +38,7 @@ app.use(express.static(path.join(root, 'client')));
 app.set('appPath', 'client');
 
 // Import routes
-app.use('/api/bb', require('./controllers/bbMiddleware'));
+app.use('/api/bb', require('./bbMiddleware'));
 
 // FOR syncing
 const main_server = '192.168.43.26';

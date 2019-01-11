@@ -14,7 +14,7 @@ app.use(cors());
 // HTTP request logger
 app.use(morgan('dev'));
 // Import routes
-app.use(require('../controllers/dependencyController'));
+app.use(require('./dependencyController'));
 // Error handler (must be registered last)
 var env = app.get('env');
 app.use(function(err, req, res, next) {

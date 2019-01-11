@@ -17,7 +17,7 @@ app.use(bodyParser.json({limit: '150mb', extended: true}));
 app.use(morgan('dev'));
 
 // Import routes
-app.use('/api/repo', require('../controllers/repoController.js'));
+app.use('/api/repo', require('./repoController.js'));
 app.listen(repoHandlerPort, function(err) {
     if ( err ) throw err;
     console.log("repoHandler listening on port " + repoHandlerPort);

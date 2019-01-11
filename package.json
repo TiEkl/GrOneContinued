@@ -9,9 +9,9 @@
   "main": "server/bbManagerApp.js",
   "scripts": {
     "postinstall": "browserify -t vueify -e client/main.js -o client/build/mainBuild.js",
-    "start": "node ./server/bbManagerApp.js",
+    "start": "node ./server/bbManager/bbManagerApp.js",
     "df": "nodemon ./server/DependencyFinder/dependencyFinderApp.js",
-    "dev": "nodemon ./server/bbManagerApp.js",
+    "dev": "nodemon ./server/bbManager/bbManagerApp.js",
     "rh": "nodemon ./server/RepoHandler/repoHandlerApp.js",
     "lb": "nodemon ./server/loadBalancer/loadBalancerApp.js",
     "build": "browserify -t vueify -e client/main.js -o client/build/mainBuild.js",
