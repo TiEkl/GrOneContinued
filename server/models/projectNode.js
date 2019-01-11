@@ -7,8 +7,6 @@ var classSchema = new Schema ({
 });
 
 var projectSchema = new Schema ({
-    //user: { type: String },
-    //projectName: { type: String },
     classes: classSchema,
     graphid:{
         type: String

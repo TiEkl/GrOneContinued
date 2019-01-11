@@ -10,10 +10,10 @@
   "scripts": {
     "postinstall": "browserify -t vueify -e client/main.js -o client/build/mainBuild.js",
     "start": "node ./server/bbManagerApp.js",
-    "df": "nodemon ./server/DependencyFinder/app.js",
+    "df": "nodemon ./server/DependencyFinder/dependencyFinderApp.js",
     "dev": "nodemon ./server/bbManagerApp.js",
-    "rh": "nodemon ./server/RepoHandler/app.js",
-    "lb": "nodemon ./server/loadBalancer/balanceController.js",
+    "rh": "nodemon ./server/RepoHandler/repoHandlerApp.js",
+    "lb": "nodemon ./server/loadBalancer/loadBalancerApp.js",
     "build": "browserify -t vueify -e client/main.js -o client/build/mainBuild.js",
     "local": "concurrently --kill-others \"npm run df\" \"npm run dev\" \"npm run rh\" \"npm run lb\""
   },

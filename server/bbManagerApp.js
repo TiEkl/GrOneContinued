@@ -53,27 +53,16 @@ console.log("     REMOTE IP: " + remoteIp);
 console.log("     LOCAL IP: " + localIp);
 
 function syncDb() {
-    console.log(ip.address())
     // GET Local server's projects
      request(localURL, function (err, response, body) { //body has local objects
         var localData = JSON.parse(body);
         if(localData != undefined) { 
-
-             console.log("       Local data length: " + localData.projectSchemas.length);
-
              // GET remote server's projects
              request(remoteURL, function (error, response2, resRemoteBody) { //remotebody has remote objects
                 var remoteData = JSON.parse(resRemoteBody);                 
                 if(remoteData != undefined) {
-
-                     // console.log("    Remote JSON Data: " + JSON.stringify(remoteData.projectSchemas));
-                     console.log("       Remote data length: " + remoteData.projectSchemas.length);
-
                      //Iterate through all local projects
                      for(var i = 0 ; i < localData.projectSchemas.length; i++) {
-                         // do get request of remoteDB to check if all ids present in remote
-                         // if not add object of that id
-
                          // First check if remote server is empty > if empty put everything
                          if (remoteData.projectSchemas.length <= 0) {
                             var options = {

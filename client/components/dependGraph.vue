@@ -2,9 +2,11 @@
   <div>
     <div class="row">
         <div class="col-sm-1">
+            <!-- Button for hiding the filter-sidebar -->
             <button class="btn btn-secondary" align="left" v-if="!loading" id="filterBtn" v-bind="filterBtn" @click='hideFilter()'>{{filterBtn.txt}}</button>
         </div>
         <div class="col-sm-1">
+            <!-- Div for the legend dropdown -->
             <div class="dropdown">
                 <button class="btn btn-secondary" id="legend" align="left" v-if="!loading">Legend</button>
                 <div class="dropdown-content">
@@ -17,18 +19,17 @@
             </div>
         </div>
         <div class="col-sm-1"/>
-        <div class="col-sm-6">
-            
-            <h3 align="center" v-if='!loading' v-bind='bbResponder'>Request handled by {{bbResponder.ip}}</h3>        
-            
+        <div class="col-sm-6"> 
+            <!-- Message about which bbManager handled the request after the graph has loaded -->
+            <h3 align="center" v-if='!loading' v-bind='bbResponder'>Request handled by {{bbResponder.ip}}</h3>  
+            <!-- Loadingbar shown before the request for the graph data is completed -->      
             <div v-if="loading && error_in_process===false" class="loadingBar">
                 <div id="progress">
                     <div class="stripes animated" id="bar">
                         Processing request
                     </div>
                 </div>
-            </div>
-            
+            </div>           
             <!-- Error message that is displayed if the processing of a project failed -->
             <div v-if="error_in_process===true">
                 <div >
@@ -38,7 +39,7 @@
         </div>
         <div class="col-sm-3"/>      
     </div>
-
+    <!-- div for the filter-sidebar -->
         <div id="sidebar" style="display: none;">
             <div class="item-group">
                 <label class="item-label">Filter</label> 
@@ -47,6 +48,7 @@
                 <div id="filterContainer" class="filterContainer checkbox-interaction-group"></div>
             </div>
         </div>
+        <!-- Div where we put the graph -->
   <div class="frame" id="svgFrame"></div>
 </div>
 </template>
@@ -199,27 +201,28 @@
         },
     
         methods: {
+            //Method that creates the graph
             drawChart : function(data, drag, stringToColour, linkColour) {
                 var packageSet = new Set();
+                //Get the size of the frame for the svg
                 var height = document.getElementById("svgFrame").clientHeight;
                 var width = document.getElementById("svgFrame").clientWidth;
-
-                console.log("Drawchart height " + height)
-                console.log("drawchart width " + width)
                 
                 const links = data.links.map(d => Object.create(d));
                 const nodes = data.nodes.map(d => Object.create(d));
                 const simulation = this.forceSimulation(nodes, links).on("tick", ticked);
-        
+                //Finds all the packages in the graphdata and puts them into a unique set
                 for(let i=0; i < data.nodes.length; i++) {
                     packageSet.add(data.nodes[i].package);
                 }
+                //Make an array out of the set
                 var packageArr = [...packageSet];
 
+                //Adds the SVG to the frame div, and sets the height and width 
                 const svg = d3.select(".frame").append("svg")
                     .style("width", width)
                     .style("height", height)
-        
+                //adds and configures the links to the SVG 
                 const link = svg.append("g")
                     .attr("stroke", "#ddd")
                     .attr("stroke-opacity", 0.3)
@@ -229,7 +232,7 @@
                     .attr("class", "line")
                     .attr("stroke-width", d => Math.sqrt(d.value)*2)
             
-            
+                //adds and configures the nodes to the SVG 
                 const node = svg.append("g")
                     .attr("stroke", "#fff")
                     .attr("stroke-width", 1)
@@ -242,6 +245,8 @@
                     .call(drag(simulation))
                     .on("mouseover", mouseOver(.2))
                     .on("mouseout", mouseOut)
+                
+                //adds and configures the text for the nodes to the SVG 
                 var text = svg.append("g").selectAll("text")
                     .data(nodes)
                     .enter().append("text")
@@ -250,40 +255,41 @@
                     .attr("x", 20)
                     .attr("y", ".31em")
                     .text(function(d) { return d.id; });
-
+                //Updates the position of the components of the SVG
                 function ticked() {
-
                 link
                     .attr("x1", d => d.source.x)
                     .attr("y1", d => d.source.y)
                     .attr("x2", d => d.target.x)
                     .attr("y2", d => d.target.y);
-          
                 node
                     .attr("cx", function(d) { return d.x = Math.max(0 +((Math.sqrt(d.count)+3)*2), Math.min(width - ((Math.sqrt(d.count)+3)*2), d.x)); })
                     .attr("cy", function(d) { return d.y = Math.max(0 +((Math.sqrt(d.count)+3)*2), Math.min(height - ((Math.sqrt(d.count)+3)*2), d.y)); });
-                    text.attr("transform", transform);
+                text
+                    .attr("transform", transform);
                 }
-
+                //Function to have the text follow the node it's attached to
                 function transform(d) {
                     return "translate(" + d.x + "," + d.y + ")";
                 }
 
                 var linkedByIndex = {};
+
                 links.forEach(function(d) {
                     linkedByIndex[d.source.index + "," + d.target.index] = 1;
                 });
+                //Checks if link A is connected to link B
                 function isConnected(a, b) {
                     return linkedByIndex[a.index + "," + b.index] || linkedByIndex[b.index + "," + a.index] || a.index == b.index;
                 }
 
-    // fade nodes on hover
+                // fade nodes on hover
                 function mouseOver(opacity) {
                     return function(d) {
                         // check all other nodes to see if they're connected
                         // to this one. if so, keep the opacity at 1, otherwise
                         // fade
-                        // also style link accordingly
+                        // also style links/nodes/text accordingly
                         node.style("stroke-opacity", function(o) {
                             var thisOpacity = isConnected(d, o) ? 1 : opacity;
                             return thisOpacity;})
@@ -309,16 +315,15 @@
                             return thisOpacity;})
                     };
                 }
+                //After mouse is moved away
                 function mouseOut() {
                     node.style("stroke-opacity", 1).transition().duration(1000);
                     node.style("fill-opacity", 1).transition().duration(1000);
                     link.style("stroke-opacity", 0.3).transition().duration(1000);
                     link.style("stroke", "#ddd").transition().duration(1000);
-                    text.style("opacity", 0).transition().duration(1000);
-                    
-                    
+                    text.style("opacity", 0).transition().duration(1000); 
                 }
-
+                //Create the filter-sidebar
                 createFilter(); 
                 function createFilter() {
                     d3.select(".filterContainer")
@@ -331,7 +336,7 @@
                     .style("color", d => stringToColour(d))
                     .style("font-weight", "bold")
                     .each(function(d) {
-                // create checkbox for each data
+                    // create checkbox for each data
                     d3.select(this)
                         .append("input")
                         .attr("type", "checkbox")
@@ -352,9 +357,8 @@
                 });
                     $("#sidebar").show(); // show sidebar
                 }
+                //Functionality of the sidebar
                 function filterGraph(aType, aVisibility) {
-
-                    
                     //Checks if the checkbox for the node's package is checked or not
                     //if un-checked, hide the node
                     node.style("visibility", function(o) {
@@ -368,12 +372,9 @@
                         var lOriginalVisibility = $(this).css("visibility");
                         return o.package === aType ? aVisibility : lOriginalVisibility;
                     });
-                    
-
                     //Hide the links. Checks the checkbox for the srcPkg
                     //and targetPkg, if either of them is un-checked, hide the link
                     link.style("visibility", function(o, i) {
-
                         var sourceOriVis = $("#chk_" + o.srcPkg).prop('checked')
                         var targetOriVis = $("#chk_" + o.targetPkg).prop('checked')
                         if (sourceOriVis == false || targetOriVis == false) {
@@ -387,6 +388,7 @@
                 };
         return svg.node();
       },
+      //Creates the forces that impact the nodes in the graph
       forceSimulation : function(nodes, links) {
             let width = document.getElementById("svgFrame").clientWidth;
             let height = document.getElementById("svgFrame").clientHeight;
@@ -410,6 +412,7 @@
             }
             $('#sidebar').toggle('slide', {direction: 'left'}, 750);
       },
+      //Not currently functioning
         reDraw : function() {
             let width = document.getElementById("svgFrame").clientWidth;
             let height = document.getElementById("svgFrame").clientHeight;
@@ -419,32 +422,34 @@
       },
     },
     mounted() {  
-        var drag = simulation => {
         window.addEventListener('resize', this.reDraw);
-        function dragstarted(d) {
-            if (!d3.event.active) simulation.alphaTarget(0.3).restart();
-            d.fx = d.x;
-            d.fy = d.y;
-        }
-        
-        function dragged(d) {
-            let width = document.getElementById("svgFrame").clientWidth;
-            let height = document.getElementById("svgFrame").clientHeight;
+        //function for dragging nodes
+        var drag = simulation => {
+            function dragstarted(d) {
+                if (!d3.event.active) simulation.alphaTarget(0.3).restart();
+                d.fx = d.x;
+                d.fy = d.y;
+            }
+            
+            function dragged(d) {
+                let width = document.getElementById("svgFrame").clientWidth;
+                let height = document.getElementById("svgFrame").clientHeight;
 
-            d.fx = Math.max(0 +((Math.sqrt(d.count)+3)*2), Math.min(width -((Math.sqrt(d.count)+3)*2) , d3.event.x));
-            d.fy = Math.max(0 +((Math.sqrt(d.count)+3)*2), Math.min(height -((Math.sqrt(d.count)+3)*2), d3.event.y));
-        }
-        
-        function dragended(d) {
-            if (!d3.event.active) simulation.alphaTarget(0);
-            d.fx = null;
-            d.fy = null;
-        }
-        return d3.drag()
-            .on("start", dragstarted)
-            .on("drag", dragged)
-            .on("end", dragended);
+                d.fx = Math.max(0 +((Math.sqrt(d.count)+3)*2), Math.min(width -((Math.sqrt(d.count)+3)*2) , d3.event.x));
+                d.fy = Math.max(0 +((Math.sqrt(d.count)+3)*2), Math.min(height -((Math.sqrt(d.count)+3)*2), d3.event.y));
+            }
+            
+            function dragended(d) {
+                if (!d3.event.active) simulation.alphaTarget(0);
+                d.fx = null;
+                d.fy = null;
+            }
+            return d3.drag()
+                .on("start", dragstarted)
+                .on("drag", dragged)
+                .on("end", dragended);
         } 
+        //Function for turning a string into colour in hexcode
         var stringToColour = str => {
             var hash = 0;
             for (var i = 0; i < str.length; i++) {
@@ -457,22 +462,19 @@
             }
             return colour;
         }    
-
-            var linkColour = check => {
-
-        if(check === true) {
-            return '#00f904';
+        //Sets colour of links by whether or not they're within the same package
+        //during the mouseover event
+        var linkColour = check => {
+            if(check === true) {
+                return '#00f904';
+            }
+            else if (check === false) {
+                return '#f90000';
+            }
         }
-        else if (check === false) {
-            return '#f90000';
-        }
-
-        }
-
         const ownerName = this.$route.params.ownerName;
         const repoName = this.$route.params.repoName;
-        
-        
+        //Adds function for checking/unchecking all packages in the filter sidebar
         $(document).ready(function() {
             $('#checkAll').click(function() {
                 var checked = $(this).prop('checked');
@@ -480,7 +482,7 @@
                 $('#filterContainer').find('input:checkbox').click();
             })
         })
-        
+        //D3 get request for the data required to create the graph
         d3.json(`/api/bb/${ownerName}/${repoName}` )
         .then( (data) =>  {
             this.bbResponder.ip = data.ip;
