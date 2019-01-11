@@ -21,10 +21,10 @@ var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
 var port = process.env.PORT || 8000;
 //var localSyncTestPort = process.env.PORT' || 7999;
 // This variable is here for the proxy request.
-var repo_fetcher_port = process.env.PORT || 8001;
+var repo_handler_port = process.env.PORT || 8001;
 var dependency_finder_port = process.env.PORT || 9000;
 
-var repo_fetcher = '192.168.43.56';
+var repo_handler = '192.168.43.56';
 var dependency_finder = '192.168.43.34';
 
 // Connect to MongoDB
@@ -43,7 +43,7 @@ var app = express();
 app.use(cors());
 
 
-proxyRequestTo(repo_fetcher,repo_fetcher_port,'/api/gitProjects');
+proxyRequestTo(repo_handler,repo_handler_port,'/api/gitProjects');
 proxyRequestTo(dependency_finder,dependency_finder_port,'/api/dependencies');
 
 app.use(bodyParser.json({limit: '150mb', extended: true}));
