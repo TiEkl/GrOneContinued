@@ -2,7 +2,6 @@
   <div>
     <div class="row">
         <div class="col-sm-1">
-
             <button class="btn btn-secondary" align="left" v-if="!loading" id="filterBtn" v-bind="filterBtn" @click='hideFilter()'>{{filterBtn.txt}}</button>
         </div>
         <div class="col-sm-1">
@@ -13,133 +12,178 @@
                     <p><b style="color:#00f904;">Green</b> links are within the same package </p>
                     <p>Nodes are colored based on the package name </p>
                     <p>Links and nodes are only shown for the checked packages in the filter </p>
-                    <p>The size of nodes depends on their own dependencies</p>
-                    
+                    <p>The size of nodes depends on their own dependencies</p>  
                 </div>
             </div>
         </div>
         <div class="col-sm-1"/>
         <div class="col-sm-6">
-           <h3 align="center" v-if='!loading' v-bind='bbResponder'>Request handled by {{bbResponder.ip}}</h3> 
+           <h3 align="center" v-if='!loading' v-bind='bbResponder'>Request handled by {{bbResponder.ip}}</h3>        
+            <div v-if="loading && error_in_process===false" class="loadingBar">
+                <div id="progress">
+                    <div class="stripes animated" id="bar">
+                        Processing request
+                    </div>
+                </div>
+            </div>
+             <!-- Error message that is displayed if the processing of a project failed -->
+            <div v-if="error_in_process===true">
+                <div >
+                    <div >Error! Service unavailable or not able to process GitHub repository</div>
+                </div>
+            </div>
         </div>
-        <div class="col-sm-3"/>
+        <div class="col-sm-3"/>      
     </div>
 
-    <div id="sidebar" style="display: none;">
-        <div class="item-group">
-            <label class="item-label">Filter</label>
-            <div>
+        <div id="sidebar" style="display: none;">
+            <div class="item-group">
+                <label class="item-label">Filter</label> 
                 <input id="checkAll" type="checkbox" checked/>
-                <label for="checkAll"> Check / uncheck all</label>
+                <label for="checkAll"> Check / uncheck all</label> 
+                <div id="filterContainer" class="filterContainer checkbox-interaction-group"></div>
             </div>
-            <div id="filterContainer" class="filterContainer checkbox-interaction-group"></div>
         </div>
-    </div>
-  <div class="frame" id="svgFrame">
-      
-  </div>
+  <div class="frame" id="svgFrame"></div>
 </div>
 </template>
 
 
 <style>
 
-.btn-secondary {
-    background-color: #353a3f;
-    color: white; 
-}
+    .btn-secondary {
+        background-color: #353a3f;
+        color: white; 
+    }
 
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-.dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #353a3f;
-    color: white;
-    min-width: 500px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    z-index: 3;
-    border-radius: 10px;
-    border: 5px solid #353a3f;
-    text-align:left;
-    padding-left: 5px;
-}
-.dropdown:hover .dropdown-content {
-    display: block;
-}
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: #353a3f;
+        color: white;
+        min-width: 500px;
+        box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+        z-index: 3;
+        border-radius: 10px;
+        border: 5px solid #353a3f;
+        text-align:left;
+        padding-left: 5px;
+    }
+    .dropdown:hover .dropdown-content {
+        display: block;
+    }
 
 
-.frame {
-    min-height : 200vh;
-    min-width : 100vw;
-    position: absolute;
-    overflow: auto; 
-}
-#sidebar {
-    position: absolute;
-    border-radius: 5px;
-    z-index: 2;
-    padding: 10px;
-    margin: 5px;
-    margin-left: -2px;
-    border-right: 5px solid #353a3f;
-    border-bottom: 5px solid #353a3f;
-    border-top: 5px solid #353a3f;
-    min-height: 3px;
-    min-width: 8px;
-}
-.item-group {
-    margin-bottom: 5px;
-}
-.item-group .item-label {
-    width: 90px;
-    text-align: right;
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-    font-weight: bold;
-    position: relative;
-    min-height: 1px;
-    margin-top: 5px;
-    display: inline;
-    padding-right: 5px;
-    font-size: .90em;
-}
-.checkbox-interaction-group {
-    margin-left: 10px;
-    margin-top: 5px;
-    clear: both;
-}
-.checkbox-container {
-    display: block;
-    min-height: 22px;
-    vertical-align: middle;
-    margin-left: 10px;
-}
-.checkbox-container label {
-    display:inline;
-    margin-bottom: 0px;
-}
-.axis path,
-.axis line {
-    fill: none;
-    stroke: grey;
-    stroke-width: 1;
-    shape-rendering: crispEdges;
-}
-.text {
-    fill: black;
-    font: 18px sans-serif;
-    pointer-events: none;
-}
- 
+    .frame {
+        min-height : 200vh;
+        min-width : 100vw;
+        position: absolute;
+        overflow: auto; 
+    }
+    #sidebar {
+        position: absolute;
+        border-radius: 5px;
+        z-index: 2;
+        padding: 10px;
+        margin: 5px;
+        margin-left: -2px;
+        border-right: 5px solid #353a3f;
+        border-bottom: 5px solid #353a3f;
+        border-top: 5px solid #353a3f;
+        min-height: 3px;
+        min-width: 8px;
+    }
+    .item-group {
+        margin-bottom: 5px;
+    }
+    .item-group .item-label {
+        width: 90px;
+        text-align: right;
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        font-weight: bold;
+        position: relative;
+        min-height: 1px;
+        margin-top: 5px;
+        display: inline;
+        padding-right: 5px;
+        font-size: .90em;
+    }
+    .checkbox-interaction-group {
+        margin-left: 10px;
+        margin-top: 5px;
+        clear: both;
+    }
+    .checkbox-container {
+        display: block;
+        min-height: 22px;
+        vertical-align: middle;
+        margin-left: 10px;
+    }
+    .checkbox-container label {
+        display:inline;
+        margin-bottom: 0px;
+    }
+    .axis path,
+    .axis line {
+        fill: none;
+        stroke: grey;
+        stroke-width: 1;
+        shape-rendering: crispEdges;
+    }
+    .text {
+        fill: black;
+        font: 18px sans-serif;
+        pointer-events: none;
+    }
+
+   #progress{
+        width: 100%;
+        background-color: lightgray;
+        border-radius: 20px;
+    }
+    #bar{
+        height: 30px;
+        background-color: green;
+        color: white;
+        border-radius: 20px;
+    }
+       @keyframes animate-stripes {
+        0% {
+       background-position: 0 0;
+        }
+
+        100% {
+       background-position: 60px 0;
+        }
+    }
+    .stripes{
+        background-size: 30px 30px;
+        background-image: linear-gradient(
+       135deg,
+       rgba(255, 255, 255, .15) 25%,
+       transparent 25%,
+       transparent 50%,
+       rgba(255, 255, 255, .15) 50%,
+       rgba(255, 255, 255, .15) 75%,
+       transparent 75%,
+       transparent
+        );
+    }
+    .stripes.animated {
+         animation: animate-stripes 0.6s linear infinite;
+         animation-duration: 1.75s;
+    }
+
 </style>
 
 
 <script>
     import * as d3 from 'd3';
-    var axios = require('axios');
     module.exports = {
         name:"dependGraph",
         data() {
@@ -147,6 +191,7 @@
             bbResponder: {ip: null},
             loading: true,
             filterBtn: {txt: 'Hide filter', visible: true },
+            error_in_process: false
             }
         },
     
@@ -206,8 +251,7 @@
                     .text(function(d) { return d.id; });
 
                 function ticked() {
-                console.log("ticked height " + height); 
-                console.log("ticked width " + width);
+
                 link
                     .attr("x1", d => d.source.x)
                     .attr("y1", d => d.source.y)
@@ -310,7 +354,7 @@
                     $("#sidebar").show(); // show sidebar
                 }
                 function filterGraph(aType, aVisibility) {
-                    console.log(aType +" space " +  aVisibility);
+
                     
                     //Checks if the checkbox for the node's package is checked or not
                     //if un-checked, hide the node
@@ -376,7 +420,7 @@
                 .attr("height", height);
       },
     },
-    mounted() {       
+    mounted() {  
         var drag = simulation => {
         window.addEventListener('resize', this.reDraw);
         function dragstarted(d) {
@@ -429,11 +473,9 @@
 
         }
 
-        console.log('above D3!!  ');
         const ownerName = this.$route.params.ownerName;
         const repoName = this.$route.params.repoName;
         
-        console.log(this.$route.params);
         
         $(document).ready(function() {
             $('#checkAll').click(function() {
@@ -445,14 +487,12 @@
         
         d3.json(`/api/bb/${ownerName}/${repoName}` )
         .then( (data) =>  {
-            console.log(data);
             this.bbResponder.ip = data.ip;
             this.loading = false;
             if(data === null){
                 return setTimeout(()=>{
                     d3.json(`/api/bb/${ownerName}/${repoName}`)
                     .then((data)=>{
-                        console.log('in the timeout method!');
                         var graphData = data.projectNode.classes;
                         this.drawChart(graphData, drag, stringToColour,linkColour);
                     });
@@ -460,6 +500,9 @@
             }
             var graphData = data.projectNode.classes;
             this.drawChart(graphData, drag, stringToColour,linkColour);
+        })
+        .catch((error)=>{
+            this.error_in_process = true;
         });
     
         }

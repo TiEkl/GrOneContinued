@@ -22,7 +22,7 @@ const bbServer2withPort = '192.168.1.102:8000';
 // array of server ip intended to be used in the loadbalancer
 var serverips = [bbServer2withPort,bbServer1withPort];
 // round robin selection of server
-var ips = roundround(serverips);
+var ips = roundround(serverips); 
 app.use(cors());
 
 //LoadBalancer for requests, if all servers are down we send error back
@@ -31,7 +31,7 @@ app.use(cors());
 function balanceLoad(req,res){
     var http = 'http://';
     var current_ip = ips();
-    console.log('           ***current: '+current_ip);
+    //console.log('           ***current: '+current_ip);
     (async ()=>{
         if( !await isReachable(bbServer1withPort) && !await isReachable(bbServer2withPort) ){ //these should be if(false and false)
             //both servers are down, nothing we can do but wait for them to go back up and redo request
@@ -40,7 +40,7 @@ function balanceLoad(req,res){
         }
         else if(await isReachable(current_ip)){
             const request_url = http + current_ip + req.url;
-            console.log('The first server tried was online');
+            console.log('Rerouting to: ' + request_url);
             const request_server = request({ url: request_url}).on('error', (error) => {
                 res.status(500).send(error.message);
             }); 
