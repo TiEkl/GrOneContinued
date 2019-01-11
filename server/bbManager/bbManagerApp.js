@@ -41,10 +41,10 @@ app.set('appPath', 'client');
 app.use('/api/bb', require('./bbMiddleware'));
 
 // FOR syncing
-const main_server = '192.168.43.26';
-const remote_server = '192.168.43.168';   //want to replace this later with a constant from the constants file
-var remoteIp = ip.address() === main_server ? remote_server : main_server;
-var localIp =  ip.address() === main_server ? ip.address() : remote_server;
+const mainServer = '192.168.43.26';
+const remoteServer = '192.168.43.168';   //want to replace this later with a constant from the constants file
+var remoteIp = ip.address() === mainServer ? remoteServer : mainServer;
+var localIp =  ip.address() === mainServer ? ip.address() : remoteServer;
 
 var localURL = 'http://'+ localIp + ':' + port + '/api/bb';
 var remoteURL = 'http://'+ remoteIp + ':' + port + '/api/bb/';
