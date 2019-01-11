@@ -216,8 +216,6 @@
                 const svg = d3.select(".frame").append("svg")
                     .style("width", width)
                     .style("height", height)
-                    //.attr("viewBox", [0,0 , this.width, this.height])
-
         
                 const link = svg.append("g")
                     .attr("stroke", "#ddd")
@@ -259,8 +257,6 @@
                     .attr("y2", d => d.target.y);
           
                 node
-                    //.attr("cx", d => d.x)
-                    //.attr("cy", d => d.y);
                     .attr("cx", function(d) { return d.x = Math.max(0 +((Math.sqrt(d.count)+3)*2), Math.min(width - ((Math.sqrt(d.count)+3)*2), d.x)); })
                     .attr("cy", function(d) { return d.y = Math.max(0 +((Math.sqrt(d.count)+3)*2), Math.min(height - ((Math.sqrt(d.count)+3)*2), d.y)); });
                     text.attr("transform", transform);
@@ -397,8 +393,7 @@
             .force("charge", d3.forceManyBody().distanceMax(250).strength(-100))
             .force("collide", d3.forceCollide().radius(30))
             .force("center", d3.forceCenter(width /2 , height/2))
- 
-           // .force("bounds", this.boxingForce(nodes));
+
       },
 
       hideFilter : function() {
@@ -433,8 +428,6 @@
             let width = document.getElementById("svgFrame").clientWidth;
             let height = document.getElementById("svgFrame").clientHeight;
 
-             //d.fx = d3.event.x;
-            // d.fy = d3.event.y;
             d.fx = Math.max(0 +((Math.sqrt(d.count)+3)*2), Math.min(width -((Math.sqrt(d.count)+3)*2) , d3.event.x));
             d.fy = Math.max(0 +((Math.sqrt(d.count)+3)*2), Math.min(height -((Math.sqrt(d.count)+3)*2), d3.event.y));
         }

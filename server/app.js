@@ -17,15 +17,15 @@ var request = require('request');
 // Variables
 var mongoURI = process.env.MONGODB_URI || 'mongodb://localhost:27017/urlDB';
 
-// Please only modify the port here ffs
+// Please only modify the port here
 var port = process.env.PORT || 8000;
-//var localSyncTestPort = process.env.PORT || 7999;
+//var localSyncTestPort = process.env.PORT' || 7999;
 // This variable is here for the proxy request.
 var repo_fetcher_port = process.env.PORT || 8001;
 var dependency_finder_port = process.env.PORT || 9000;
 
-var repo_fetcher = '127.0.0.1';
-var dependency_finder = '127.0.0.1';
+var repo_fetcher = '192.168.43.56';
+var dependency_finder = '192.168.43.34';
 
 // Connect to MongoDB
 mongoose.connect(mongoURI, { useNewUrlParser: true }, function (err) {
@@ -63,7 +63,7 @@ app.use('/api/bb', require('./controllers/bbMiddleware'));
 ///PROXY REQUESTS START
 
 // FOR syncing
-const main_server = '192.168.43.56';
+const main_server = '192.168.43.26';
 const remote_server = '192.168.43.168';   //want to replace this later with a constant from the constants file
 var remoteIp = ip.address() === main_server ? remote_server : main_server;
 var localIp =  ip.address() === main_server ? ip.address() : remote_server;
