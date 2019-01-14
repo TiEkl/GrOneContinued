@@ -91,7 +91,7 @@ function syncDb() {
                             }
                              //if the project is not in remote, then push it
                              if (!hasProject) {
-                                 console.log("Syncing: " + localData.projectSchemas[i]);
+                                 console.log("****** Syncing: " + localData.projectSchemas[i].graphid + " ******");
                                  var options = {
                                      method: 'POST',
                                      body: localData.projectSchemas[i],
