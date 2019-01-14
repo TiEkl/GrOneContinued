@@ -85,15 +85,13 @@ function syncDb() {
                          else if (remoteData.projectSchemas.length > 0) {
                              var hasProject = false;
                             for(var n = 0; n < remoteData.projectSchemas.length; n++) {
-                                console.log("    Current Remote: >> " + remoteData.projectSchemas[n].graphid);
-                                console.log("    Current Local: >> " + localData.projectSchemas[i].graphid);
-
                                 if(remoteData.projectSchemas[n].graphid === localData.projectSchemas[i].graphid){
                                     hasProject = true;
                                 }
                             }
                              //if the project is not in remote, then push it
                              if (!hasProject) {
+                                 console.log("Syncing: " + localData.projectSchemas[i]);
                                  var options = {
                                      method: 'POST',
                                      body: localData.projectSchemas[i],
