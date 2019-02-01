@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var axios = require('axios');
+var config = require('../config');
 var ip = require('ip');
 
 const followRedirects = require('follow-redirects');
@@ -10,8 +11,8 @@ followRedirects.maxBodyLength = 500 * 1024 * 1024 * 1024;
 var projectSchema = require('../models/projectNode.js');
 
 // These variables should change to whichever computer carries the individual components
-var repoHandler = '192.168.43.56:8001';
-var dependencyFinder = '192.168.43.34:9000';
+var repoHandler = config.RepoHandler;
+var dependencyFinder = config.DepenencyFinder;
 
 //GET find all projects for syncing 
 router.get('/', function (req, res) {

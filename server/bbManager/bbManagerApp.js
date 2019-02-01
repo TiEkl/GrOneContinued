@@ -5,6 +5,7 @@ var morgan = require('morgan');
 var path = require('path');
 var cors = require('cors');
 var ip = require('ip');
+var config = require('../config');
 const portscanner = require('portscanner');
 var request = require('request');
 
@@ -41,8 +42,8 @@ app.set('appPath', 'client');
 app.use('/api/bb', require('./bbMiddleware'));
 
 // FOR syncing
-const mainServer = '192.168.43.26';
-const remoteServer = '192.168.43.168';   //want to replace this later with a constant from the constants file
+const mainServer = config.bbManager1;
+const remoteServer = config.bbManager2;   //want to replace this later with a constant from the constants file
 var remoteIp = ip.address() === mainServer ? remoteServer : mainServer;
 var localIp =  ip.address() === mainServer ? ip.address() : remoteServer;
 
