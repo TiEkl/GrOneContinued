@@ -45,29 +45,7 @@ The IP addresses should be changed before beginning the deployment steps.
 There are different steps to perform for each node.
 The IP addresses must be known for each physical node. The IPv4 address is used for this system.
 
-For *Load Balancer*:
-1. Open the file ```loadBalancerApp.js```, located within the folder ```server/loadBalancer```.
-2. The constant ```bbServer1withPort``` should be changed as such: '[IP of *Manager A*]:8000' at Line 17. 
-3. The constant ```bbServer2withPort``` should be changed as such: '[IP of *Manager B*]:8000' at Line 18.
-4. Save the file.
-
-For *Manager A*:
-1. Open the file ```bbManagerApp.js``` located inside the directory ```server/bbManager```.
-2. The constant ```mainServer```, on line 44, should be changed as such: '[IP of *Manager A*]'. 
-3. The constant ```remoteServer```, on line 45,  should be changed as such: '[IP of *Manager B*]'.
-4. Save the file.
-
-For *Manager B*:
-1. Open the file ```bbManagerApp.js``` located inside the directory ```server/bbManager```.
-2. The constant ```mainServer```, on line 44, should be changed as such: '[IP of *Manager A*]'. 
-3.  The constant ```remoteServer```, on line 45,  should be changed as such: '[IP of *Manager B*]'.
-4. Save the file.
-
-The Communications Middleware also needs to direct to the correct IP addresses of the *Repo Handler* and *Dependency Finder*:
-1. Open the file ```bbMiddleware.js``` located inside the directory ```server/bbManager```.
-2. The variable ```repoHandler``` should be changed as such: '[IP of *Repo Handler*]:8001' at Line 13. 
-3. The variable ```dependencyFinder``` should be changed as such: '[IP of *DependencyFinder*]:9000' at Line 14.
-4. Save the file.
+Use the config.js file in the server folder to set up the different IPs.
 
 
 ## Deployment Steps
