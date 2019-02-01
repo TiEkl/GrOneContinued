@@ -10,6 +10,7 @@ module.exports = {
 }
 
 //Local Testing
+//Use local file if testing on system that doesn't support srcML
 /*module.exports = {
     bbManager1: "127.0.0.1:8000",
     bbManager2: "127.0.0.1:8000",
