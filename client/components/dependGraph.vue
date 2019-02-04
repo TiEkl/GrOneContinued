@@ -188,6 +188,7 @@
 
 
 <script>
+    import * as config from '../../server/config.js';
     import * as d3 from 'd3';
     module.exports = {
         name:"dependGraph",
@@ -472,8 +473,8 @@
                 return '#f90000';
             }
         }
-        const ownerName = this.$route.params.ownerName;
-        const repoName = this.$route.params.repoName;
+        var ownerName = this.$route.params.ownerName;
+        var repoName = this.$route.params.repoName;
         //Adds function for checking/unchecking all packages in the filter sidebar
         $(document).ready(function() {
             $('#checkAll').click(function() {
@@ -483,13 +484,15 @@
             })
         })
         //D3 get request for the data required to create the graph
-        d3.json(`/api/bb/${ownerName}/${repoName}` )
+        d3.json(config.d3Get(ownerName, repoName))
         .then( (data) =>  {
-            this.bbResponder.ip = data.ip;
+            if(data.ip) {
+                this.bbResponder.ip = data.ip;
+            }
             this.loading = false;
             if(data === null){
                 return setTimeout(()=>{
-                    d3.json(`/api/bb/${ownerName}/${repoName}`)
+                    d3.json(config.d3Get(ownerName, repoName))
                     .then((data)=>{
                         var graphData = data.projectNode.classes;
                         this.drawChart(graphData, drag, stringToColour,linkColour);
