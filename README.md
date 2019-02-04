@@ -45,33 +45,7 @@ The IP addresses should be changed before beginning the deployment steps.
 There are different steps to perform for each node.
 The IP addresses must be known for each physical node. The IPv4 address is used for this system.
 
-For *Load Balancer*:
-1. Open the file ```balanceController.js```, located within the folder ```server/loadBalancer```.
-2. The constant ```bbServer1withPort``` should be changed as such: '[IP of *Manager A*]:8000' at Line 19. 
-3. The constant ```bbServer2withPort``` should be changed as such: '[IP of *Manager B*]:8000' at Line 20.
-4. Save the file.
-
-For *Manager A*:
-1. Open the file ```app.js``` located inside the directory ```server```.
-2. The constant ```main_server```, on line 66, should be changed as such: '[IP of *Manager A*]'. 
-3. The constant ```remote_server```, on line 67,  should be changed as such: '[IP of *Manager B*]'.
-4. The variable ```repo_fetcher```, on line 27, should be changed as such: '[IP of *Repo Handler*]'.
-5. The variable ```dependency_finder```, on line 28, should be changed as such: '[IP of *Dependency Finder*]'.
-6. Save the file.
-
-For *Manager B*:
-1. Open the file ```app.js``` located inside the directory ```server```.
-2. The constant ```main_server```, on line 66, should be changed as such: '[IP of *Manager B*]'. 
-3. The constant ```remote_server```, on line 67,  should be changed as such: '[IP of *Manager A*]'.
-4. The variable ```repo_fetcher```, on line 27, should be changed as such: '[IP of *Repo Handler*]'.
-5. The variable ```dependency_finder```, on line 28, should be changed as such: '[IP of *Dependency Finder*]'.
-4. Save the file.
-
-The Communications Middleware also needs to direct to the correct IP addresses of the *Repo Handler* and *Dependency Finder*:
-1. Open the file ```bbMiddleware.js``` located inside the directory ```server/controllers```.
-2. The variable ```repoHandler``` should be changed as such: '[IP of *Repo Handler*]:8001' at Line 13. 
-3. The variable ```dependencyFinder``` should be changed as such: '[IP of *DependencyFinder*]:9000' at Line 14.
-4. Save the file.
+Use the config.js file in the server folder to set up the different IPs.
 
 
 ## Deployment Steps
@@ -105,6 +79,8 @@ In order to test all components locally:
 1. Set the IP addresses of all components to point ```127.0.0.1```.
 2. Run the command ```npm run local```.
 
+If testing locally, the syncing of data is disabled, as only one bbManagerApp.js instance is created.
+
 # File Organization
 ## User Interface
 The "User Interface" refers to the component that processes the visualization and contains what is presented to the user. This can be mapped to the __Visualization__ component in our component diagram which describes the architecture of the system.
@@ -120,8 +96,8 @@ Naturally, the directories corresponding to each component are similarly named:
 + The __LoadBalancer__ is in the directory ```loadBalancer```.
 + The __RepoHandler__ lies within the directory ```RepoHandler```.
 + The __DependencyFinder__ maps to the directory ```DependencyFinder```.
-+ The __BlackboardManager__ is made up of several files in different directories, but generally maps to the app.js in the ```server``` folder.
-+ There is additional middleware to allow communication between these components. The files within the ```controller``` and the index.js inside ```DependencyFinder``` makes up for the majority of the communication middleware.
++ The __BlackboardManager__ is in the directory ```bbManager```, but generally maps to the ```bbManagerApp.js``` in the directory. 
++ There is additional middleware to allow communication between these components. The ```bbMiddleware.js``` within the ```bbManager``` directory.
 
 
 

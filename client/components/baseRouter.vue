@@ -19,6 +19,7 @@
    
           <div class="col-sm-12 text-center mx-auto">
             <div class="text-center">
+              <!-- vue components mounted here -->
                <router-view></router-view>
             </div>
           </div>
@@ -26,8 +27,6 @@
           <div class="col-sm-0">
           </div>
         </div>
-
-        <!-- footer below (not yet implemented) -->
         
     </div>
 </template>
@@ -39,8 +38,3 @@
   }
    
 </script>
-
-<style>
-.frame{
-}
-</style>

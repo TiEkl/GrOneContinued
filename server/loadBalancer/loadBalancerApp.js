@@ -4,22 +4,21 @@ var cors = require('cors');
 var request = require('request');
 var app = express().post('*', balanceLoad).get('*', balanceLoad);
 var roundround = require('roundround');
-
 var bodyParser = require('body-parser');
 var morgan = require('morgan');
 var path = require('path');
-
+var config = require('../config.js');
 const isReachable = require('is-reachable');
 /**********IMPORTS END**********/
 
 //THIS LOAD BALANCER IS RUNNING ON PORT 8002
-const load_balancer_port = 8002;
+const loadBalancerPort = config.loadBalancerPort;
 
-//I removed http:// from all these since is-reachable would say some of them are offline if i included it 
-const bbServer1withPort = '127.0.0.1:8000';
-const bbServer2withPort = '192.168.1.102:8000'; 
+//Constants for the bbManagers
+const bbServer1withPort = config.bbManager1;
+const bbServer2withPort = config.bbManager2; 
 
-// array of server ip intended to be used in the loadbalancer
+// array of server ips intended to be used in the loadbalancer
 var serverips = [bbServer2withPort,bbServer1withPort];
 // round robin selection of server
 var ips = roundround(serverips); 
@@ -31,9 +30,9 @@ app.use(cors());
 function balanceLoad(req,res){
     var http = 'http://';
     var current_ip = ips();
-    //console.log('           ***current: '+current_ip);
     (async ()=>{
-        if( !await isReachable(bbServer1withPort) && !await isReachable(bbServer2withPort) ){ //these should be if(false and false)
+        if( !await isReachable(bbServer1withPort) && !await isReachable(bbServer2withPort) ){ 
+            //these should be if(false and false)
             //both servers are down, nothing we can do but wait for them to go back up and redo request
             console.log('ALL SERVERS OFFLINE');
             res.status(500).send({message:'Server offline'}); //should send back error msg to front end so that it can go into the catch brackets
@@ -57,26 +56,14 @@ function balanceLoad(req,res){
 
 
 ///***************************************************************/
-///All the stuff an app.js needs. (Not sure if we need all of them).
+///All the stuff a node app needs.
 //Now we can run balanceController.js on port 8002 so that we can make a request from the front end to port 8002
 //and the balancer will reroute it
-app.use(bodyParser.json({limit: '150mb', extended: true}));
 // HTTP request logger
 app.use(morgan('dev'));
-// Serve static assets (for frontend client)
-var root = path.normalize(__dirname + '/..');
-app.use(express.static(path.join(root, 'client')));
-app.set('appPath', 'client');
-
-/********** Listening to a port **************/
-// DISTRIBUTED
-        // let load_balancer = '192.168.43.168';      //want to replace this later with a constand from the constants file
-// LOCAL TESTING - POINTS TO SELF
-        let load_balancer = '127.0.0.1';
-
-app.listen(load_balancer_port, function(err) {
+app.listen(loadBalancerPort, function(err) {
     if ( err ) throw err;
-    console.log("load_balancer listening on port " + load_balancer_port);
+    console.log("Load Balancer listening on port " + loadBalancerPort);
 });
 /**************************************/
 
